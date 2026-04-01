@@ -1,5 +1,7 @@
 window.scenes = window.scenes || {};
-var scenes = window.scenes;
+
+(() => {
+const scenes = window.scenes;
 
 scenes["title"] = {
     desc: `《谜语遗产：七重谜域》\n\n黑幕中，七条弧线交织的徽记在黑暗中旋转，逐渐化作七道光芒...\n远处，一座维多利亚风格的庄园若隐若现。`,
@@ -4238,4 +4240,6 @@ scenes["game_over"] = {
         { text: "--", target: "hall_main" }
     ]
 };
+
+})();
 
