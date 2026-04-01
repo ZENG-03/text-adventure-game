@@ -330,9 +330,11 @@ window.toggleInventory = function() {
     if (!panel || !overlay) return;
     if(panel.classList.contains("open")){
         panel.classList.remove("open");
+        panel.style.display = "none";
         overlay.style.display = "none";
     } else {
         updateInventoryDisplay();
+        panel.style.display = "block";
         panel.classList.add("open");
         overlay.style.display = "block";
     }
