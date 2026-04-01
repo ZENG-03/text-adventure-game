@@ -4246,55 +4246,55 @@ scenes["game_over"] = {
 // --- auto-filled missing scenes ---
 
 scenes["basement_activate_planets"] = {
-    desc: `该剧情节点（basement_activate_planets）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `如果你没有线索，盲目尝试激活，可能触发陷阱。你可以选择一种顺序： - 火→水→土→气循环三次 [前往 basement_stone_trap] - 土→水→火→气循环三次 [前往 basement_stone_correct? 但需配合七金] 实际上，正确的激活顺序与祭坛的转化流程有关。笔记中提到“土→水→火→气，循环三次”，但这是元素调和炉火的顺序，而非符文石板。石板可能需要按行星的顺序激活，与七金对应。 为了简化，我们设计两种正确路径： 1. 先完成七金炼制，将金属精粹放在石板上，石板自然激活。 2. 或者通过元素调和与祭坛联动。 我们设计一个独立的分支：如果玩家在没有七金的情况下尝`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "火→水→土→气循环三次", target: "basement_stone_trap" }
     ]
 };
 
 scenes["basement_extract_essence"] = {
-    desc: `该剧情节点（basement_extract_essence）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `条件：拥有熔炉钥匙、七种金属材料 你打开炉门，将七种金属分别放入对应的坩埚中。然后你需要调和四元素点燃炉火。根据笔记的配方，你需要准备： - 火元素：硫磺（工作台架子上有硫磺粉） - 水元素：水银（使用汞瓶中的水银，但水银需要用于炼制，你可能需要另外的水银来源？笔记中水元素用的是水银，但水银也是七金之一。这里可能冲突。我们设计为：水元素可用“蒸馏水”替代，工作台有蒸馏水瓶） - 土元素：盐（工作台有食盐） - 气元素：硝石（工作台有硝石粉） 你找到这些材料，按等量（各一小勺）放入炉膛的燃烧室。将刻度盘依次转到土、水、火、气各一次，然后按下点火按钮。炉膛内升起蓝色火焰，温度逐渐升高。坩埚中的`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "火元素：硫磺（工作台架子上有硫磺粉） - 水元素：水银（使用汞瓶中的水银，但水银需要用于炼制，你可能需要另外的水银来源？笔记中水元素用的是水银，但水银也是七金之一。这里可能冲突。我们设计为：水元素可用“蒸馏水”替代，工作台有蒸馏水瓶） - 土元素：盐（工作台有食盐） - 气元素：硝石（工作台有硝石粉） 你找到这些材料，按等量（各一小勺）放入炉膛的燃烧室。将刻度盘依次转到土、水、火、气各一次，然后按下点火按钮。炉膛内升起蓝色火焰，温度逐渐升高。坩埚中的金属开始熔化，通过管道流入中央收集器，形成七种不同颜色的“精粹”液滴，分别滴入七个小瓶（你从工作台取来空瓶接取）。 **获得：七金精粹（七瓶）** **选项：** - 将精粹放在符文石板上", target: "basement_place_essence" }
     ]
 };
 
 scenes["basement_furnace_with_key"] = {
-    desc: `该剧情节点（basement_furnace_with_key）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `熔炉是一座齐腰高的砖砌结构，炉门是铸铁的，上面铸有火焰纹章。炉门紧锁，你需要钥匙才能打开。炉顶有一个烟囱直通上方，烟道口有一个风门调节杆。炉前的地面上散落着一些煤渣和铁屑。 如果你已经获得了熔炉钥匙（从蒸馏装置或别处），可以打开炉门。 选项： - 用熔炉钥匙打开炉门 [前往 basement_open_furnace] - 检查炉门周围是否有其他机关 [前往 basement_furnace_surround] - 尝试强行撬开炉门 [前往 basement_force_furnace]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "用熔炉钥匙打开炉门", target: "basement_open_furnace" },
+        { text: "检查炉门周围是否有其他机关", target: "basement_furnace_surround" },
+        { text: "尝试强行撬开炉门", target: "basement_force_furnace" }
     ]
 };
 
 scenes["basement_periodic_table"] = {
-    desc: `该剧情节点（basement_periodic_table）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `工作台覆盖着一层薄灰，但仪器摆放整齐。你注意到台面上有几样东西值得仔细检查： - 一本皮革封面的《炼金术士笔记》，书页泛黄，字迹潦草 - 一套玻璃蒸馏装置，连接着各种曲颈瓶 - 一个铜制天平，左右托盘各有一个小碗 - 一个研钵，里面残留着某种黑色粉末 - 一个木架，上面放着七个小瓶子，分别标有七种金属的炼金符号，但大部分是空的，只有“金”和“汞”两个瓶子里还有少量物质 选项： - 阅读《炼金术士笔记》 [前往 basement_read_notes] - 检查蒸馏装置 [前往 basement_distillation] - 检查天平和研钵 [前往 basement_balance]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "一本皮革封面的《炼金术士笔记》，书页泛黄，字迹潦草 - 一套玻璃蒸馏装置，连接着各种曲颈瓶 - 一个铜制天平，左右托盘各有一个小碗 - 一个研钵，里面残留着某种黑色粉末 - 一个木架，上面放着七个小瓶子，分别标有七种金属的炼金符号，但大部分是空的，只有“金”和“汞”两个瓶子里还有少量物质 **选项：** - 阅读《炼金术士笔记》", target: "basement_read_notes" },
+        { text: "检查蒸馏装置", target: "basement_distillation" },
+        { text: "检查天平和研钵", target: "basement_balance" },
+        { text: "查看七个小瓶子", target: "basement_vials" }
     ]
 };
 
 scenes["basement_prepare_materials"] = {
-    desc: `该剧情节点（basement_prepare_materials）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `笔记的前半部分是炼金术记录，后半部分是日记。你快速翻阅，找到几页关键内容： “第四十七日：终于完成了七金的提纯。金从王水中还原，银从硝酸银中析出，铜……但汞总是难以固化，只能以液态保存。” “第七十二日：主人要求我将七金之‘魂’注入符文石板。所谓魂，并非金属本身，而是其‘精粹’——经过炼金术转化的活性形态。我熔炼了金、银、铜、铁、锡、铅，但汞无法熔炼，只能以原态使用。” “第一百零三日：熔炉的火焰必须达到‘白热’才能完成转化。我设计了七个坩埚，分别对应七种金属。但熔炉的燃料不足，只有将四种元素调和到平衡状态，炉火才能达到所需温度。” “最后一页：祭坛的符文需要按正确的元素顺序激活。土→`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "根据配方准备材料", target: "basement_prepare_materials" },
+        { text: "检查熔炉", target: "basement_furnace" }
     ]
 };
 
 scenes["basement_put_metals"] = {
-    desc: `该剧情节点（basement_put_metals）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你需要七种金属材料（金、银、铜、铁、锡、铅、汞）来炼制“精粹”。你在房间内搜寻： - 金：工作台的金瓶里有一小片金箔，但量太少。你在熔炉的灰烬里发现了一枚金戒指（可能是之前炼金术士遗落的）。 - 银：在祭坛的底座缝隙里，你找到一枚银币。 - 铜：蒸馏装置的管道是铜制的，可以拆下一小段。 - 铁：熔炉门上的铰链是铁的，可以拆下几颗铁钉。 - 锡：工作台的一个抽屉里有一块焊锡条。 - 铅：天平的砝码是铅的，可以取下一个。 - 汞：工作台的汞瓶里有水银。 获得：七种金属材料（每种一份） 选项： - 去熔炉炼制精粹 [前往`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "**金**：工作台的金瓶里有一小片金箔，但量太少。你在熔炉的灰烬里发现了一枚金戒指（可能是之前炼金术士遗落的）。 - **银**：在祭坛的底座缝隙里，你找到一枚银币。 - **铜**：蒸馏装置的管道是铜制的，可以拆下一小段。 - **铁**：熔炉门上的铰链是铁的，可以拆下几颗铁钉。 - **锡**：工作台的一个抽屉里有一块焊锡条。 - **铅**：天平的砝码是铅的，可以取下一个。 - **汞**：工作台的汞瓶里有水银。 **获得：七种金属材料（每种一份）** **选项：** - 去熔炉炼制精粹", target: "basement_smelt_essence" }
     ]
 };
 
 scenes["basement_runes"] = {
-    desc: `该剧情节点（basement_runes）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `如果你在未完成祭坛准备的情况下强行触碰所有符文石板，符文会释放诅咒，你的身体逐渐石化。在你完全变成石像前，你听见管家的叹息：“鲁莽的代价。” （游戏结束）`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4302,63 +4302,61 @@ scenes["basement_runes"] = {
 };
 
 scenes["basement_search_metals"] = {
-    desc: `该剧情节点（basement_search_metals）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `如果你触发了祭坛封印（例如用血激活失败），需要找到重置方法。你可以在炼金工作台找到一瓶“净化之水”，将其倒在祭坛上，符文会恢复原状。 选项： - 使用净化之水 [前往 basement_reset_success]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "使用净化之水", target: "basement_reset_success" }
     ]
 };
 
 scenes["basement_weigh_metals"] = {
-    desc: `该剧情节点（basement_weigh_metals）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你需要七种金属材料（金、银、铜、铁、锡、铅、汞）来炼制“精粹”。你在房间内搜寻： - 金：工作台的金瓶里有一小片金箔，但量太少。你在熔炉的灰烬里发现了一枚金戒指（可能是之前炼金术士遗落的）。 - 银：在祭坛的底座缝隙里，你找到一枚银币。 - 铜：蒸馏装置的管道是铜制的，可以拆下一小段。 - 铁：熔炉门上的铰链是铁的，可以拆下几颗铁钉。 - 锡：工作台的一个抽屉里有一块焊锡条。 - 铅：天平的砝码是铅的，可以取下一个。 - 汞：工作台的汞瓶里有水银。 获得：七种金属材料（每种一份） 选项： - 去熔炉炼制精粹 [前往`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "**金**：工作台的金瓶里有一小片金箔，但量太少。你在熔炉的灰烬里发现了一枚金戒指（可能是之前炼金术士遗落的）。 - **银**：在祭坛的底座缝隙里，你找到一枚银币。 - **铜**：蒸馏装置的管道是铜制的，可以拆下一小段。 - **铁**：熔炉门上的铰链是铁的，可以拆下几颗铁钉。 - **锡**：工作台的一个抽屉里有一块焊锡条。 - **铅**：天平的砝码是铅的，可以取下一个。 - **汞**：工作台的汞瓶里有水银。 **获得：七种金属材料（每种一份）** **选项：** - 去熔炉炼制精粹", target: "basement_smelt_essence" }
     ]
 };
 
 scenes["bedroom_candle_midnight"] = {
-    desc: `该剧情节点（bedroom_candle_midnight）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你想起音乐室的彩色玻璃窗或画室的调色板，但那些在别的房间。卧室里有没有彩色光源？你检查台灯、窗帘，发现窗帘的材质在月光下会透出淡淡的彩虹色（其实是灰尘和霉菌造成的衍射）。但效果太微弱。你想起梳妆台上的粉盒镜片，它可能是一个棱镜，可以将白光分解成七色。你取下粉盒盖上的小镜片，对着月光调整角度，果然在天花板上投射出七色光斑。你将这些光斑逐一引导到油画上卧室窗口，每引导一个颜色，画面中卧室的烛火就亮一分。当七色光斑全部汇聚，卧室窗口终于完全点亮。 油画开始变化：画面中的镜子突然变得清晰，镜中倒映出你的脸，但你的脸上戴着和画中其他人物一样的面具。面具的眼睛部位突然发光，射出一道光线，照在房间的某个角`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "检查衣柜背后", target: "bedroom_closet_back" }
     ]
 };
 
 scenes["bedroom_midnight_mirror"] = {
-    desc: `该剧情节点（bedroom_midnight_mirror）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `子夜时分，月光直射喷泉池底，水面虽然干涸，但月光在池底马赛克上形成反射，将七角星的投影投射到卧室的墙壁上。投影中，七角星的每个角都指向油画上的一个房间。你根据投影，将七枚徽章按照投影指向的顺序重新排列在画框凹槽中。当最后一枚徽章放入，油画中的卧室窗户终于亮起稳定的烛光。 但烛光只亮了片刻，又熄灭了。油画底部浮现出一行字：“徽章归位，但你仍未理解谜语的含义。请告诉我，我为何建造谜语馆？” 获得线索：需要回答主人的问题 选项： - 根据日记和家训回答（谜语精神、传承等）[前往 bedroom_answer_correct] - 回答错误 [前往 bedroom_answer_`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "根据日记和家训回答（谜语精神、传承等）", target: "bedroom_answer_correct" },
+        { text: "回答错误", target: "bedroom_answer_wrong" }
     ]
 };
 
 scenes["bedroom_order_clue"] = {
-    desc: `该剧情节点（bedroom_order_clue）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你趴下查看床底，黑暗中似乎有什么东西在反光。你伸手去够，摸到一个木盒。拉出来一看，是一个鞋盒大小的匣子，上面刻着“最后的谜题”。盒盖上有七个按钮，每个按钮上有一个房间的图标。你需要按正确的顺序按下按钮。顺序是什么？也许是你解谜的顺序，或者是主人建造的顺序。如果你之前没有注意，可以随机尝试。 - 尝试按解谜顺序 [前往 bedroom_box_correct] - 尝试按其他顺序 [前往 bedroom_box_trap]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "尝试按解谜顺序", target: "bedroom_box_correct" },
+        { text: "尝试按其他顺序", target: "bedroom_box_trap" }
     ]
 };
 
 scenes["bedroom_painting_details"] = {
-    desc: `该剧情节点（bedroom_painting_details）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `油画是卧室的核心谜题。画框底部有七个凹槽，你已经嵌入了六枚徽章（如果你已经获得了前六枚）。第七个凹槽空着。画中的六个房间亮着烛光，只有卧室是黑暗的。 你仔细观察油画，发现画面中的细节非常丰富。在亮着烛光的六个房间里，你可以看到微小的、几乎不可见的符号： - 图书馆窗口内有一本书 - 钟楼窗口内有一个齿轮 - 音乐室窗口内有一个音符 - 画室窗口内有一个调色板 - 温室窗口内有一朵花 - 地下室窗口内有一个符文 这些符号似乎与每个谜题的核心道具对应。卧室窗口是空的，但画面中卧室的墙壁上挂着一面镜子，镜中倒映着七角星图案。你意识到，卧室的烛光需要通过“镜像”来点亮——可能是将其他房间的光芒反射`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "图书馆窗口内有一本书 - 钟楼窗口内有一个齿轮 - 音乐室窗口内有一个音符 - 画室窗口内有一个调色板 - 温室窗口内有一朵花 - 地下室窗口内有一个符文 这些符号似乎与每个谜题的核心道具对应。卧室窗口是空的，但画面中卧室的墙壁上挂着一面镜子，镜中倒映着七角星图案。你意识到，卧室的烛光需要通过“镜像”来点亮——可能是将其他房间的光芒反射进卧室。 **选项：** - 尝试用梳妆镜反射光线", target: "bedroom_mirror_reflection" },
+        { text: "用望远镜观察油画细节", target: "bedroom_painting_details" },
+        { text: "将符文石（若从地下室获得）放在油画上", target: "bedroom_rune_solution" }
     ]
 };
 
 scenes["bedroom_telescope"] = {
-    desc: `该剧情节点（bedroom_telescope）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `四柱床的四根柱子雕刻着藤蔓和花蕾，帷幔是深红色的天鹅绒，落满灰尘。你掀开帷幔，床上的丝绸被褥已经发黄。枕头下有一个硬物，是一把黄铜钥匙，钥匙柄上刻着“衣柜”。 床架是实木的，你可以检查床板。掀起被褥，床板上刻着几行字：“我在梦中建造了七个谜题，却在醒来时忘记最后一个。请将我的梦归还于我。” 床头板有一个隐藏的暗格，你摸索着找到了一个弹簧按钮，按下后弹出一个抽屉，里面放着一只怀表。怀表已经停止，指针指向11:55（与钟楼谜题相同）。表盖内侧刻着“时间停止的地方，答案开始。” 获得：衣柜钥匙 获得：停止的怀表 选项： - 用钥匙打开衣柜 [前往 bedroom_cl`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "用钥匙打开衣柜", target: "bedroom_closet_key" },
+        { text: "研究怀表", target: "bedroom_pocket_watch" }
     ]
 };
 
 scenes["clocktower_behind_clock"] = {
-    desc: `该剧情节点（clocktower_behind_clock）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `在工坊角落里有一个老式座钟，指针停在21:47，旁边有一张纸条：“最后的校准时刻”。玩家可以将这个时间作为目标。 选项： 将钟楼时间调至座钟时间 [前往 clocktower_set_moonrise_detailed]（若已断电） 隐藏区域与额外道具`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4366,7 +4364,7 @@ scenes["clocktower_behind_clock"] = {
 };
 
 scenes["clocktower_door"] = {
-    desc: `该剧情节点（clocktower_door）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `第二层是一个半圆形平台，设有三个拱形观察窗，可以俯瞰庄园的庭院、花园和远处的山谷。每个窗户旁都有一个望远镜架，但镜片已经模糊。墙上挂着一块布告板，上面钉着几份泛黄的观测记录和一张星图。 选项： 检查观测记录 [前往 clocktower_observations] 研究星图 [前往 clocktower_starchart] 检查窗户边缘是否有机关 [前往 clocktower_window_mechanism]`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4374,7 +4372,7 @@ scenes["clocktower_door"] = {
 };
 
 scenes["clocktower_gear_clues"] = {
-    desc: `该剧情节点（clocktower_gear_clues）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `如果在更换擒纵轮时操作失误，齿轮突然转动，手指被卷入齿轮组，造成严重伤害甚至死亡。`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4382,7 +4380,7 @@ scenes["clocktower_gear_clues"] = {
 };
 
 scenes["clocktower_gears"] = {
-    desc: `该剧情节点（clocktower_gears）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `工作台上散落着各种齿轮、弹簧和螺丝。你注意到其中有一个齿轮的齿有明显磨损，旁边放着一个崭新的齿轮，标签上写着“擒纵轮，备用”。你拿起备用齿轮，觉得它可能有用。 获得：备用擒纵轮 选项： 继续探索 [返回 clocktower_workshop]`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4390,7 +4388,7 @@ scenes["clocktower_gears"] = {
 };
 
 scenes["final_test_3_wrong"] = {
-    desc: `该剧情节点（final_test_3_wrong）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `如果你按错了顺序，宝石会发出刺目的红光，镜子中投射出一束强光，照得你头晕目眩。你踉跄后退，暂时无法操作镜子。宝石需要一段时间才能重置。 状态：镜子暂时无法使用`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4398,7 +4396,7 @@ scenes["final_test_3_wrong"] = {
 };
 
 scenes["greenhouse_basin"] = {
-    desc: `该剧情节点（greenhouse_basin）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `水培墙后面有一个大型风扇，但需要电力。你找到苗圃后面的小发电机，发现它是一台手摇发电机。你摇动把手，发电机嗡嗡作响，风扇开始旋转。你将风扇的出风口对准绿花坛方向。 状态：气条件满足`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4406,23 +4404,23 @@ scenes["greenhouse_basin"] = {
 };
 
 scenes["greenhouse_check_seeds"] = {
-    desc: `该剧情节点（greenhouse_check_seeds）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `条件：拥有七色花琥珀 你将琥珀放在古树下的石台上。琥珀中的七色花微微发光，随即碎裂，七颗颜色各异的种子滚落出来，分别滚向对应颜色的花坛，自行埋入土中。每个花坛的泥土表面浮现出对应颜色的微光，但很快暗淡下去——种子需要特定的生长条件才能发芽。 获得线索：需要为每个花坛提供对应的元素条件 选项： - 去工具房寻找提供条件的方法 [前往 greenhouse_tool_shed] - 研究水井和水培系统 [前往 greenhouse_well]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "去工具房寻找提供条件的方法", target: "greenhouse_tool_shed" },
+        { text: "研究水井和水培系统", target: "greenhouse_well" }
     ]
 };
 
 scenes["greenhouse_clean_pipes"] = {
-    desc: `该剧情节点（greenhouse_clean_pipes）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `条件：拥有七色花琥珀 你将琥珀放在古树下的石台上。琥珀中的七色花微微发光，随即碎裂，七颗颜色各异的种子滚落出来，分别滚向对应颜色的花坛，自行埋入土中。每个花坛的泥土表面浮现出对应颜色的微光，但很快暗淡下去——种子需要特定的生长条件才能发芽。 获得线索：需要为每个花坛提供对应的元素条件 选项： - 去工具房寻找提供条件的方法 [前往 greenhouse_tool_shed] - 研究水井和水培系统 [前往 greenhouse_well]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "去工具房寻找提供条件的方法", target: "greenhouse_tool_shed" },
+        { text: "研究水井和水培系统", target: "greenhouse_well" }
     ]
 };
 
 scenes["greenhouse_fix_pump"] = {
-    desc: `该剧情节点（greenhouse_fix_pump）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `水培墙后面有一个大型风扇，但需要电力。你找到苗圃后面的小发电机，发现它是一台手摇发电机。你摇动把手，发电机嗡嗡作响，风扇开始旋转。你将风扇的出风口对准绿花坛方向。 状态：气条件满足`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4430,31 +4428,35 @@ scenes["greenhouse_fix_pump"] = {
 };
 
 scenes["greenhouse_mix_dead"] = {
-    desc: `该剧情节点（greenhouse_mix_dead）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你将七瓶血液倒入石盆（先清理掉原来的脏水）。溶液在盆中旋转，逐渐变成透明的液体，散发出清新的草木香气。古树的树根开始微微颤动，树干上的铭文发出绿光。你将溶液浇在古树根部，古树以肉眼可见的速度复苏：树皮重新变得湿润，枝头冒出嫩芽，枯叶脱落，新叶展开。古树活了！ 古树复苏后，树冠中垂下七根藤蔓，每根藤蔓的末端有一朵发光的花苞，分别对应七种颜色。花苞朝向七个花坛，似乎要将花粉传递给七色花种子。 获得：古树复苏（七色花生长条件之一：生命元素充足） 选项： - 检查花坛中的种子是否发芽 [前往 greenhouse_check_seeds]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "检查花坛中的种子是否发芽", target: "greenhouse_check_seeds" }
     ]
 };
 
 scenes["greenhouse_mix_nutrient"] = {
-    desc: `该剧情节点（greenhouse_mix_nutrient）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `古树粗壮的树干需要两人才能合抱。树皮上刻着的文字“生命之水，需以七色之血唤醒”旁边，还有一个更小的铭文，被苔藓覆盖。你刮掉苔藓，看到：“七色者，赤橙黄绿青蓝紫。七血者，根茎叶花果种苗。” 树干底部有一个碗口大的树洞，向内窥视，里面漆黑一片，隐约可见一些细小的根须。 石盆直径约半米，盆沿雕刻着波浪纹。盆中的液体呈灰绿色，散发着刺鼻的气味。你用小棍搅动，发现底部有一层厚厚的淤泥。淤泥中似乎埋着什么东西。如果你有工具，可以捞出来看看。 选项： - 伸手入盆捞取 [前往 greenhouse_pond_dip] - 用工具捞取（需要从工具房找工具） [前往 greenhouse_pond_`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "伸手入盆捞取", target: "greenhouse_pond_dip" },
+        { text: "用工具捞取（需要从工具房找工具）", target: "greenhouse_pond_tool" },
+        { text: "检查树洞", target: "greenhouse_tree_hole" }
     ]
 };
 
 scenes["greenhouse_nursery"] = {
-    desc: `该剧情节点（greenhouse_nursery）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `温室位于庄园西侧，是一座巨大的玻璃穹顶建筑，与主建筑通过一条鹅卵石小径相连。推开生锈的铁门，一股潮湿腐朽的气息扑面而来。玻璃穹顶上爬满了枯死的藤蔓，破碎的玻璃缺口处漏下几束惨白的月光。 内部是一个热带花园的废墟。曾经繁茂的植物如今只剩下枯黄的骨架：棕榈树的叶片卷曲发脆，蕨类植物的孢子囊干瘪开裂，藤蔓从穹顶垂落，像绞刑架的绳索。空气中弥漫着一股腐烂的甜腻，混合着泥土和霉菌的气味。 房间中央有一棵巨大的古树，树干粗壮如石柱，树冠几乎触及穹顶。古树已经完全枯死，树皮剥落，露出灰白的木质。树干上刻着一行古老的文字：“生命之水，需以七色之血唤醒。”树干底部有一个石盆，盆中盛着浑浊的液体，水面漂浮着枯`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "检查中央古树和石盆", target: "greenhouse_tree" },
+        { text: "探索七个花坛", target: "greenhouse_flower_beds" },
+        { text: "进入工具房", target: "greenhouse_tool_shed" },
+        { text: "检查苗圃", target: "greenhouse_nursery" },
+        { text: "查看水井", target: "greenhouse_well" },
+        { text: "研究水培墙", target: "greenhouse_hydroponic" }
     ]
 };
 
 scenes["greenhouse_pipes"] = {
-    desc: `该剧情节点（greenhouse_pipes）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你将错误的液体倒入石盆，枯树中喷出腐臭的毒气，你来不及逃离，窒息倒下。 （游戏结束） （注：实际实现时，可设计更多分支与失败结局，此处仅展示核心成功路线与部分失败场景，文本总量已接近一万字。您可在此基础上扩展更多选项与描述，以满足完整分支需求。）`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4462,7 +4464,7 @@ scenes["greenhouse_pipes"] = {
 };
 
 scenes["greenhouse_use_fertilizer"] = {
-    desc: `该剧情节点（greenhouse_use_fertilizer）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `条件：拥有七色花肥料 你将七色花肥料均匀撒在黄花坛的土壤表面，用锄头轻轻翻入土中。 状态：土条件满足`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4470,7 +4472,7 @@ scenes["greenhouse_use_fertilizer"] = {
 };
 
 scenes["hall_injured"] = {
-    desc: `该剧情节点（hall_injured）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `> 门厅内，水晶吊灯蒙着薄灰，墙壁上挂着七幅抽象画，每一幅都似乎在注视着你。一位身着燕尾服、面容古板的老人无声地出现在你面前，眼睛如同深不见底的黑曜石。 > > “欢迎，探索者。我是管家奥尔德斯，主人的意志将由我传达。”他的声音沙哑而平静，“主人留下遗嘱：庄园内设有七道谜题，分别位于七个房间。每解开一道，你将获得一枚宝石徽章。集齐七枚徽章，便可开启中央密室，获取遗产。但请记住——谜题可能致命，而选择不可逆转。你确定要开始吗？” > > 选项： > - 我准备好了 [显示七房间选择] > - 我想先了解庄园的历史 [管家讲述简要背景] > - 询问关于谜题的具体提示 [管家拒`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4478,47 +4480,47 @@ scenes["hall_injured"] = {
 };
 
 scenes["library_astrolabe_success"] = {
-    desc: `该剧情节点（library_astrolabe_success）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `星盘和天球仪放置在书架旁的一张高脚桌上。星盘由多层圆盘组成，可以旋转；天球仪上标注着星座和行星轨道。星盘的边缘刻着一圈铭文：“当七曜归位，真理之门将敞开。” 天球仪的底座上有一行字：“黄道十二宫，唯缺一宫。” 你仔细观察，发现天球仪上的黄道十二宫符号中，天蝎座的符号被磨掉了，取而代之的是一小块空白区域，似乎可以镶嵌什么东西。星盘的指针可以转动，但需要特定的时间与星位数据。 选项： - 尝试调整星盘至当前时间 [前往 library_astrolabe_fail] - 检查天球仪的空白区域 [前往 library_globe_gap] - 使用星盘钥匙（若有） [前往 library`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "尝试调整星盘至当前时间", target: "library_astrolabe_fail" },
+        { text: "检查天球仪的空白区域", target: "library_globe_gap" },
+        { text: "使用星盘钥匙（若有）", target: "library_astrolabe_success" }
     ]
 };
 
 scenes["library_gaps"] = {
-    desc: `该剧情节点（library_gaps）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `当你拉动《密码学简史》时，书架后突然射出一排毒针！你勉强侧身避开，但手臂还是被划伤了一道。毒素让你感到眩晕，你不得不退出图书馆，回到大厅休息。 （状态：受伤，但无生命危险。但解谜失败，暂时无法再次尝试。你需要找到解药或从其他房间获得线索才能重返。） 选项： - 返回大厅 [前往 hall_injured]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "返回大厅", target: "hall_injured" }
     ]
 };
 
 scenes["library_labels"] = {
-    desc: `该剧情节点（library_labels）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `星盘和天球仪放置在书架旁的一张高脚桌上。星盘由多层圆盘组成，可以旋转；天球仪上标注着星座和行星轨道。星盘的边缘刻着一圈铭文：“当七曜归位，真理之门将敞开。” 天球仪的底座上有一行字：“黄道十二宫，唯缺一宫。” 你仔细观察，发现天球仪上的黄道十二宫符号中，天蝎座的符号被磨掉了，取而代之的是一小块空白区域，似乎可以镶嵌什么东西。星盘的指针可以转动，但需要特定的时间与星位数据。 选项： - 尝试调整星盘至当前时间 [前往 library_astrolabe_fail] - 检查天球仪的空白区域 [前往 library_globe_gap] - 使用星盘钥匙（若有） [前往 library`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "尝试调整星盘至当前时间", target: "library_astrolabe_fail" },
+        { text: "检查天球仪的空白区域", target: "library_globe_gap" },
+        { text: "使用星盘钥匙（若有）", target: "library_astrolabe_success" }
     ]
 };
 
 scenes["library_sort_attempt"] = {
-    desc: `该剧情节点（library_sort_attempt）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `当你拉动《密码学简史》时，书架后突然射出一排毒针！你勉强侧身避开，但手臂还是被划伤了一道。毒素让你感到眩晕，你不得不退出图书馆，回到大厅休息。 （状态：受伤，但无生命危险。但解谜失败，暂时无法再次尝试。你需要找到解药或从其他房间获得线索才能重返。） 选项： - 返回大厅 [前往 hall_injured]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "返回大厅", target: "hall_injured" }
     ]
 };
 
 scenes["library_window_move"] = {
-    desc: `该剧情节点（library_window_move）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `彩色玻璃窗在图书馆北墙，由七块不同颜色的玻璃拼成：红、橙、黄、绿、蓝、靛、紫。月光透过时，在地板上投下七色光斑。你发现光斑的位置随着时间移动，而且似乎与书架上的某些书籍位置有对应关系。当光斑落在某本书上时，那本书的书脊会微微发光。 选项： - 等待光斑移动，记录对应的书 [前往 library_light_tracking] - 尝试移动窗户上的玻璃 [前往 library_window_move]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "等待光斑移动，记录对应的书", target: "library_light_tracking" },
+        { text: "尝试移动窗户上的玻璃", target: "library_window_move" }
     ]
 };
 
 scenes["musicroom_autoplayer"] = {
-    desc: `该剧情节点（musicroom_autoplayer）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `如果演奏时使用错误的音栓组合，管风琴会发出不和谐的强音，震碎穹顶玻璃，碎片落下砸伤你。 （游戏结束）`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4526,87 +4528,87 @@ scenes["musicroom_autoplayer"] = {
 };
 
 scenes["musicroom_copy_score"] = {
-    desc: `该剧情节点（musicroom_copy_score）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `根据线索，你需要按照七元素顺序（水、火、土、气、光、暗、生命）依次用音叉激发对应的乐器，使乐谱空缺部分显现。但元素与乐器的对应关系需要从其他线索中获得。你可以从乐谱的标题推断：第一乐章“水”对应什么乐器？也许是长笛（水般流动）？或者竖琴（水波）？需要更明确的对应。 在乐谱的第一页（水乐章），涂黑的小节旁边有一个很小的水波纹图案。图案的旁边画着一个乐器轮廓——看起来像长笛。第二页（火）旁边画着圆号（火焰般的音色）。第三页（土）旁边画着大提琴（深沉如大地）。第四页（气）旁边画着单簧管（轻盈如风）。第五页（光）旁边画着小提琴（明亮光辉）。第六页（暗）旁边画着中提琴（柔和暗淡）。第七页（生命）旁边画`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "在管风琴上演奏完整乐谱", target: "musicroom_play_full_score" }
     ]
 };
 
 scenes["musicroom_find_score_parts"] = {
-    desc: `该剧情节点（musicroom_find_score_parts）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `根据线索，你需要按照七元素顺序（水、火、土、气、光、暗、生命）依次用音叉激发对应的乐器，使乐谱空缺部分显现。但元素与乐器的对应关系需要从其他线索中获得。你可以从乐谱的标题推断：第一乐章“水”对应什么乐器？也许是长笛（水般流动）？或者竖琴（水波）？需要更明确的对应。 在乐谱的第一页（水乐章），涂黑的小节旁边有一个很小的水波纹图案。图案的旁边画着一个乐器轮廓——看起来像长笛。第二页（火）旁边画着圆号（火焰般的音色）。第三页（土）旁边画着大提琴（深沉如大地）。第四页（气）旁边画着单簧管（轻盈如风）。第五页（光）旁边画着小提琴（明亮光辉）。第六页（暗）旁边画着中提琴（柔和暗淡）。第七页（生命）旁边画`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "在管风琴上演奏完整乐谱", target: "musicroom_play_full_score" }
     ]
 };
 
 scenes["musicroom_inside"] = {
-    desc: `该剧情节点（musicroom_inside）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `三角钢琴的琴盖布满灰尘，你掀开盖子，琴键发黄，但还能按下。琴谱架上放着一本《七重奏鸣曲》手稿，封面有克劳利的签名。乐谱共七页，每页标题为“第一乐章：水”“第二乐章：火”“第三乐章：土”“第四乐章：气”“第五乐章：光”“第六乐章：暗”“第七乐章：生命”。 乐谱上标注了音符，但每页都有几个小节被墨水涂黑，无法辨认。涂黑的地方用铅笔写着小字：“唯有共鸣之心，可补全遗失之章。” 乐谱最后一页的空白处，画着一个七角星，每个角上标有一个音符符号，星中央有一颗水晶的图案。 钢琴的琴盖内侧贴着一张泛黄的纸条：“此琴之音可调，旋动调音钉，可使音高偏移。共鸣水晶可校准音准。” 如果你已经获得了“共鸣水晶”（`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "尝试弹奏乐谱", target: "musicroom_play_piano" },
+        { text: "检查钢琴的调音钉", target: "musicroom_tuning_pins" },
+        { text: "寻找共鸣水晶（尚未获得，但可先记录）", target: "musicroom_search_crystal" }
     ]
 };
 
 scenes["musicroom_inspect"] = {
-    desc: `该剧情节点（musicroom_inspect）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `展柜中的乐器虽然陈旧，但保存完好。小提琴、长笛等都可以取用。你注意到每件乐器的某个部位都刻有一个数字：小提琴刻着“1”，中提琴“2”，大提琴“3”，竖琴“4”，长笛“5”，单簧管“6”，圆号“7”。似乎与七重奏鸣曲的七个乐章对应。 展柜的玻璃门上有锁，但锁是简单的搭扣，可以撬开。你找到一根铁丝，拨开搭扣，取出乐器。但乐器都需要调音才能使用。 选项： - 取出小提琴并尝试调音 [前往 musicroom_violin] - 取出其他乐器 [类似分支，略] - 观察乐器的摆放顺序 [前往 musicroom_instrument_order]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "取出小提琴并尝试调音", target: "musicroom_violin" },
+        { text: "观察乐器的摆放顺序", target: "musicroom_instrument_order" }
     ]
 };
 
 scenes["musicroom_instrument_order"] = {
-    desc: `该剧情节点（musicroom_instrument_order）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `展柜中的乐器虽然陈旧，但保存完好。小提琴、长笛等都可以取用。你注意到每件乐器的某个部位都刻有一个数字：小提琴刻着“1”，中提琴“2”，大提琴“3”，竖琴“4”，长笛“5”，单簧管“6”，圆号“7”。似乎与七重奏鸣曲的七个乐章对应。 展柜的玻璃门上有锁，但锁是简单的搭扣，可以撬开。你找到一根铁丝，拨开搭扣，取出乐器。但乐器都需要调音才能使用。 选项： - 取出小提琴并尝试调音 [前往 musicroom_violin] - 取出其他乐器 [类似分支，略] - 观察乐器的摆放顺序 [前往 musicroom_instrument_order]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "取出小提琴并尝试调音", target: "musicroom_violin" },
+        { text: "观察乐器的摆放顺序", target: "musicroom_instrument_order" }
     ]
 };
 
 scenes["musicroom_order_by_score"] = {
-    desc: `该剧情节点（musicroom_order_by_score）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `根据线索，你需要按照七元素顺序（水、火、土、气、光、暗、生命）依次用音叉激发对应的乐器，使乐谱空缺部分显现。但元素与乐器的对应关系需要从其他线索中获得。你可以从乐谱的标题推断：第一乐章“水”对应什么乐器？也许是长笛（水般流动）？或者竖琴（水波）？需要更明确的对应。 在乐谱的第一页（水乐章），涂黑的小节旁边有一个很小的水波纹图案。图案的旁边画着一个乐器轮廓——看起来像长笛。第二页（火）旁边画着圆号（火焰般的音色）。第三页（土）旁边画着大提琴（深沉如大地）。第四页（气）旁边画着单簧管（轻盈如风）。第五页（光）旁边画着小提琴（明亮光辉）。第六页（暗）旁边画着中提琴（柔和暗淡）。第七页（生命）旁边画`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "在管风琴上演奏完整乐谱", target: "musicroom_play_full_score" }
     ]
 };
 
 scenes["musicroom_place_keycaps_unlocked"] = {
-    desc: `该剧情节点（musicroom_place_keycaps_unlocked）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你将七枚键帽分别放到对应音符的音栓上（Do、Re、Mi、Fa、Sol、La、Si）。但键帽放上去后没有反应，音栓仍然拉不动。也许需要按特定的顺序放置，或者需要先激活气流。 获得线索：可能需要先启动鼓风机或按正确顺序 选项： - 尝试摇动鼓风机 [前往 musicroom_bellows] - 尝试按乐谱顺序放置键帽 [前往 musicroom_order_by_score]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "尝试摇动鼓风机", target: "musicroom_bellows" },
+        { text: "尝试按乐谱顺序放置键帽", target: "musicroom_order_by_score" }
     ]
 };
 
 scenes["musicroom_play_instruments_order"] = {
-    desc: `该剧情节点（musicroom_play_instruments_order）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `展柜中的乐器虽然陈旧，但保存完好。小提琴、长笛等都可以取用。你注意到每件乐器的某个部位都刻有一个数字：小提琴刻着“1”，中提琴“2”，大提琴“3”，竖琴“4”，长笛“5”，单簧管“6”，圆号“7”。似乎与七重奏鸣曲的七个乐章对应。 展柜的玻璃门上有锁，但锁是简单的搭扣，可以撬开。你找到一根铁丝，拨开搭扣，取出乐器。但乐器都需要调音才能使用。 选项： - 取出小提琴并尝试调音 [前往 musicroom_violin] - 取出其他乐器 [类似分支，略] - 观察乐器的摆放顺序 [前往 musicroom_instrument_order]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "取出小提琴并尝试调音", target: "musicroom_violin" },
+        { text: "观察乐器的摆放顺序", target: "musicroom_instrument_order" }
     ]
 };
 
 scenes["musicroom_play_organ"] = {
-    desc: `该剧情节点（musicroom_play_organ）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `管风琴的琴键有上下两排，共数十个。目前只有中央区域的几个键可以按下，其他的似乎被锁住了。琴键上方的音栓（控制音色的拉杆）有七个，每个音栓上都刻着一个音符符号，但拉不动。琴键上散落的七枚金属键帽显然是用来激活音栓的。 琴身侧面有一个齿轮状的凹槽，大小与你之前在钟楼获得的“机械齿轮”完全吻合。如果你已经获得了机械齿轮，可以嵌入。 管风琴的背面有一个手摇鼓风机，用于产生气流。鼓风机的手柄很沉，需要用力摇动才能产生足够的风压。 选项： - 尝试将金属键帽放到音栓上 [前往 musicroom_place_keycaps] - 嵌入机械齿轮（若有） [前往 musicroom_use_ge`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "尝试将金属键帽放到音栓上", target: "musicroom_place_keycaps" },
+        { text: "嵌入机械齿轮（若有）", target: "musicroom_use_gear" },
+        { text: "摇动鼓风机", target: "musicroom_bellows" },
+        { text: "检查管风琴内部", target: "musicroom_inside" }
     ]
 };
 
 scenes["musicroom_reflector_ropes"] = {
-    desc: `该剧情节点（musicroom_reflector_ropes）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `天花板上的反射板可以通过墙壁上的拉绳调节角度。每块反射板都对应一个乐器位置，可以改变声音的传播路径。反射板的边缘刻有音符符号，你可以将它们对准不同的方向。 选项： - 调节反射板角度 [前往 musicroom_adjust_reflectors] - 检查反射板的连接绳索 [前往 musicroom_reflector_ropes]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "调节反射板角度", target: "musicroom_adjust_reflectors" },
+        { text: "检查反射板的连接绳索", target: "musicroom_reflector_ropes" }
     ]
 };
 
 scenes["musicroom_search_crystal"] = {
-    desc: `该剧情节点（musicroom_search_crystal）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `条件：拥有共鸣水晶 如果你已经通过其他途径获得了共鸣水晶（例如画室，但按顺序画室应在音乐室之后，所以这里主要是为多周目或灵活顺序设计），可以将共鸣水晶放在管风琴的中央音栓位置。水晶会发出七彩光芒，自动校准所有音栓，并补全乐谱。然后你只需按下启动按钮，管风琴就会自动演奏，获得徽章。这是快速解法。 获得：翠绿徽章（3/7）`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4614,55 +4616,57 @@ scenes["musicroom_search_crystal"] = {
 };
 
 scenes["musicroom_tune_by_ear"] = {
-    desc: `该剧情节点（musicroom_tune_by_ear）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `条件：拥有机械齿轮 你将机械齿轮嵌入管风琴侧面的凹槽，齿轮与内部机构咬合。你转动齿轮，听到一连串咔哒声，音栓上的锁扣全部松开，七个音栓都可以拉动了。但音栓本身还是需要键帽才能操作。 状态：音栓解锁 选项： - 放置键帽 [前往 musicroom_place_keycaps_unlocked]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "放置键帽", target: "musicroom_place_keycaps_unlocked" }
     ]
 };
 
 scenes["side_alternate_path"] = {
-    desc: `该剧情节点（side_alternate_path）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `条件：拥有符文石或星盘钥匙 你将符文石（从地下室获得）放入石柱的凹槽。石柱开始发出低沉的嗡鸣，表面的符号依次亮起，光芒沿着柱身向上蔓延，最终汇聚到穹顶。穹顶上出现了一幅星图，七颗明亮的星辰以某种规律旋转。 星图下方浮现出一行字：“选择你的道路：求知者，将获得古老的知识，但代价是失去部分记忆。守护者，将获得封印的力量，但必须终身守护此地的秘密。” 这是一个选择。如果你选择“求知者”，你会获得关于这种古老能量的大量知识，但会忘记自己的一部分过去（比如忘记某个谜题的解法，或忘记与某个人的联系）。如果你选择“守护者”，你会获得封印这股能量的能力，但必须承诺终身不离开谜语馆一定范围。 选项：`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "选择成为求知者", target: "side_seeker" },
+        { text: "选择成为守护者", target: "side_guardian" },
+        { text: "拒绝选择，取出符文石", target: "side_refuse" }
     ]
 };
 
 scenes["side_ask_butler"] = {
-    desc: `该剧情节点（side_ask_butler）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `条件：已触发管家支线或管家仍在大厅 你找到管家，向他展示小提琴上的刻字。他的表情瞬间凝固，沉默了很久，才缓缓开口：“埃莉诺·布莱克伍德……这个名字我已经二十多年没有听到了。” “她是谁？” “她是一位天才制琴师，也是作曲家。更重要的是……” 管家停顿了一下，“她是我哥哥爱过的女人。在伊莲娜之前。” 你愣住了。画室支线中你已经知道伊莲娜的故事，没想到在伊莲娜之前还有一位埃莉诺。 “哥哥年轻时在维也纳学习音乐，遇到了埃莉诺。她比他大几岁，已经是小有名气的制琴师。两人相爱，但埃莉诺患有不治之症——肺痨。医生说她活不过三十岁。哥哥带她回到谜语馆，希望庄园的空气能让她好转。她在这里度过了生命中`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "询问更多关于交响曲的事", target: "side_symphony_details" },
+        { text: "询问埃莉诺的安息之处", target: "side_elenor_grave" }
     ]
 };
 
 scenes["side_attic"] = {
-    desc: `该剧情节点（side_attic）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `管家展开羊皮纸，在灯光下念出内容： “我，阿斯特·克劳利，在此立下最后遗嘱。若有人通过七谜考验，他将继承谜语馆的所有财产和谜题收藏。但在此之前，他必须做出选择：是成为谜语馆的主人，还是成为谜语精神的传播者。 若他选择成为主人，他将获得一切物质财富，但必须终身守护谜语馆，不得离开。 若他选择成为传播者，他可以将谜语馆的谜题公之于众，让更多人体验解谜的乐趣，但他将失去物质遗产，只能带走一本我的谜题笔记。 我的弟弟奥尔德斯，将作为见证者，确保选择被忠实执行。 此外，我在中央密室暗格中藏了一封信，信中写有我的真实死因——不是病故，而是我选择结束自己的生命，因为我发现谜语馆变成了禁锢我灵魂的牢`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "选择成为主人", target: "side_ending_master" },
+        { text: "选择成为传播者", target: "side_ending_spreader" },
+        { text: "询问更多关于阿斯特自杀的细节", target: "side_ask_more" }
     ]
 };
 
 scenes["side_cave_deeper"] = {
-    desc: `该剧情节点（side_cave_deeper）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `帆布包里有一本笔记本、几块矿石标本、一封揉皱的信，和一张褪色的照片。笔记本封面写着“托马斯·赫胥黎，地质考察笔记，1892年”。你翻开笔记本，快速浏览： “第47天：在庄园下方发现异常的地质结构。这里的岩层有明显的热液活动痕迹，但该地区没有火山活动记录。岩石样本中含有罕见的七种金属元素，且纯度极高。” “第63天：向克劳利先生报告了发现。他非常感兴趣，邀请我在庄园长期驻留研究。他似乎在寻找什么——某种‘能量源’？他没有明说。” “第89天：我在地下更深处发现了一个巨大的空洞，洞壁上有古老的壁画，描绘着七颗星辰和一条蛇。这些壁画至少有数千年历史。克劳利先生得知后，变得异常兴奋。他说这就是他`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "继续深入洞穴", target: "side_cave_deeper" },
+        { text: "研究墙壁笔记", target: "side_cave_notes" }
     ]
 };
 
 scenes["side_cellar_key"] = {
-    desc: `该剧情节点（side_cellar_key）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `地窖的入口在地下室入口旁，是一扇低矮的木门。你用生锈的钥匙打开锁，门后是一段向下延伸的石阶。空气潮湿阴冷，墙壁上挂着一盏油灯，你点燃后继续下行。 地窖比地下室更深，是一个天然岩洞改造的空间。洞壁上刻着古老的符文，与地下室祭坛上的符文相似。房间中央有一座石棺，石棺盖半开。石棺上刻着“克劳利家族之墓”。你走近，发现石棺里是空的，但内壁上有一行血字：“我在这里等了你七年。” 你后背发凉，突然听见身后有脚步声。你猛地转身，管家奥尔德斯站在阴影中，手中提着一盏灯，面无表情。 “你找到了这里。”他的声音平静如水，“我本以为你会更早发现。” 选项： - 质问他的身份 [前往 side_rev`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "质问他的身份", target: "side_reveal_1" },
+        { text: "询问血字的意思", target: "side_reveal_2" },
+        { text: "保持警惕，准备战斗", target: "side_reveal_3" }
     ]
 };
 
 scenes["side_dig_with_hammer"] = {
-    desc: `该剧情节点（side_dig_with_hammer）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `如果你在探索洞穴时选择过于冒险的行动（比如无视警告继续深入、强行使用炸药导致大面积塌方），洞穴可能坍塌，将你永远埋在岩石之下。 多年后，管家会在洞穴入口立一块石碑：“献给一位勇敢的探索者，他找到了最后的谜题，但未能带回答案。” （游戏结束：葬身地下）`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4670,23 +4674,25 @@ scenes["side_dig_with_hammer"] = {
 };
 
 scenes["side_elenor_grave"] = {
-    desc: `该剧情节点（side_elenor_grave）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你在工作室里继续搜寻。桌子抽屉里有一本小册子，记录了伊莲娜离开庄园后的行踪。阿斯特雇了侦探寻找她，但始终没有找到。最后一页写着：“侦探最后一次报告：伊莲娜·韦恩于1890年11月在伦敦街头因贫病交加去世。她始终没有回到庄园。” 你的眼眶湿润了。两个相爱的人，一个因过度痴迷而失去所爱，一个因恐惧而逃离，最终在孤独中死去。而谜语馆，这座看似辉煌的建筑，竟是一座巨大的哀悼纪念碑。 你将阿斯特的信和伊莲娜的日记放在一起，放在工作室的桌上。突然，室内的蜡烛全部自动点燃，墙壁上所有的素描画中的伊莲娜都露出了微笑。一个轻柔的声音在空气中回荡：“谢谢。我终于被完整地看见了。” 声音消散后，工作室的墙壁上`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "将徽章带回大厅", target: "side_ending_reconciliation" },
+        { text: "将徽章留在画室", target: "side_ending_legacy" }
     ]
 };
 
 scenes["side_hidden_drawer"] = {
-    desc: `该剧情节点（side_hidden_drawer）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你进入一个巨大的天然空洞，穹顶高达十几米，洞壁上布满了壁画和雕刻。洞中央有一根天然石柱，石柱上刻满了符号——与你见过的七谜徽章、地下室符文同源的符号，但更加古老和复杂。石柱底部有一个凹槽，形状与你在图书馆获得的“星盘钥匙”或“符文石”相似。 洞壁上有一幅巨大的壁画，描绘着一个仪式场景：七个人围绕一个祭坛站立，每人手持一种颜色的光球，祭坛中央是一颗旋转的星辰。壁画下方有一段文字，但不是任何你认识的文字。然而，当你凝视时，文字似乎在流动，变换成你能理解的语言： “当七曜之力汇聚，沉睡者将苏醒。但唤醒者须付出代价——以记忆换力量，以自由换智慧。此乃远古契约，不可违背。” 你感到一阵眩晕。这段文`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "将符文石放入石柱凹槽（若有）", target: "side_activate_pillar" },
+        { text: "研究壁画的其他部分", target: "side_study_murals" },
+        { text: "寻找托马斯的踪迹（他可能来过这里）", target: "side_thomas_trail" },
+        { text: "记录一切后离开", target: "side_leave_cave" }
     ]
 };
 
 scenes["side_leave_cave"] = {
-    desc: `该剧情节点（side_leave_cave）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你选择接受古老的知识。石柱的光芒笼罩了你，你的脑海中涌入无数画面、符号和文字——关于远古文明、七曜之力、以及这种能量的运作原理。你感到自己的记忆在翻涌，一些不重要的细节开始模糊：你忘了童年时住过的街道，忘了最喜欢的书的书名，忘了某位故人的面孔。但你也获得了前所未有的洞察力——谜语馆的每一个谜题在你眼中都变得透明，你能看穿它们的结构、原理和隐藏的陷阱。 光芒消散后，你发现自己的额头上出现了一个淡金色的符号——七角星。你可以用手遮住它，但它永远存在。 获得：远古知识（所有谜题的解法自动知晓） 获得：星之印记（额头） 失去：部分个人记忆（具体由玩家选择或随机）`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4694,7 +4700,7 @@ scenes["side_leave_cave"] = {
 };
 
 scenes["side_mirror_again"] = {
-    desc: `该剧情节点（side_mirror_again）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `如果你在镜子前做出错误操作（比如用力敲击镜子），镜子碎裂，露出后面的机关，射出毒针。 （游戏结束）`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4702,7 +4708,7 @@ scenes["side_mirror_again"] = {
 };
 
 scenes["side_music_hidden"] = {
-    desc: `该剧情节点（side_music_hidden）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你仔细检查放置日记的暗格，发现底部还有一层隔板。撬开后，里面是一束干枯的紫藤花，用丝带扎着，旁边有一张褪色的照片——照片中，伊莲娜和阿斯特并肩站在紫藤花架下，两人都年轻而幸福。照片背面写着：“1890年春，我们曾拥有过一切。” 在照片下面，还有一小块画布碎片。碎片上画着一只眼睛，是伊莲娜的眼睛，画得极其传神，仿佛在凝视着你。画布背面有字：“我的灵魂在这里。” 你感到一阵莫名的心酸。你将照片和画布碎片小心收好。 获得：紫藤花束、照片、画布碎片`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4710,23 +4716,23 @@ scenes["side_music_hidden"] = {
 };
 
 scenes["side_music_room_play"] = {
-    desc: `该剧情节点（side_music_room_play）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你试着按乐谱弹奏，但由于缺少几个小节，旋律不完整。弹到空缺处时，钢琴发出刺耳的不和谐音，整个房间的乐器都跟着共鸣，震得你耳膜发疼。你必须停下来。 获得线索：需要补全乐谱 选项： - 寻找其他乐器或线索来补全乐谱 [前往 musicroom_find_score_parts]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "寻找其他乐器或线索来补全乐谱", target: "musicroom_find_score_parts" }
     ]
 };
 
 scenes["side_palette_clue"] = {
-    desc: `该剧情节点（side_palette_clue）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `现在七个颜料槽里充满了鲜艳的颜料：赤、橙、黄、绿、青、蓝、紫。你用画笔蘸取颜料，在旁边的试纸上试画，色彩饱满。但是，当你用这些颜料在空白画布上作画时，颜色会很快褪去，无法留下痕迹。你需要一种“定色剂”或某种特殊的光线条件才能让画作永久保存。 你想起肖像画中的镜子，也许需要正确的光线照射。 选项： - 尝试在肖像画上作画 [前往 studio_paint_portrait] - 研究彩色玻璃窗 [前往 studio_stained_glass] - 寻找定色剂 [前往 studio_fixative]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "尝试在肖像画上作画", target: "studio_paint_portrait" },
+        { text: "研究彩色玻璃窗", target: "studio_stained_glass" },
+        { text: "寻找定色剂", target: "studio_fixative" }
     ]
 };
 
 scenes["side_play_violin"] = {
-    desc: `该剧情节点（side_play_violin）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你拿起埃莉诺的小提琴，装上她的琴弓，深吸一口气，拉响空弦。琴声比任何乐器都纯净，带着一种穿透灵魂的温暖。你试着拉出埃莉诺日记中哼过的第七乐章主题旋律——那是一个简单而优美的旋律，像是夜莺的歌声，又像是一个人在轻声诉说。 琴声在音乐室里回荡，墙壁上的反射板开始微微振动。然后，神奇的事情发生了——其他六件有夜莺标记的乐器开始共鸣，不需要人演奏，它们自己发出了声音。小提琴、中提琴、大提琴、低音提琴、长笛、双簧管、单簧管，七件乐器同时奏响，合奏出第七乐章的旋律——不，不只是主题，是完整的第七乐章！埃莉诺把第七乐章“藏”在了这些乐器里，只有用她的琴弓演奏主题，其他乐器才会回应，将乐章完整地呈现出来。`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4734,7 +4740,7 @@ scenes["side_play_violin"] = {
 };
 
 scenes["side_score_details"] = {
-    desc: `该剧情节点（side_score_details）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `“那首交响曲，她写了多少？” 管家沉思片刻：“前六个乐章是完整的。第七乐章只写了主题，她是在病床上哼出那个旋律的。哥哥把它记了下来，就是你现在看到的那份手稿。他想找人完成它，但没有人能做到——那是埃莉诺的音乐，只有她能完成。” “前六个乐章的乐谱呢？” “在三角钢琴的琴凳里。哥哥把它们藏在那里，再也没有打开过。” 获得线索：前六个乐章的乐谱在琴凳里`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4742,103 +4748,104 @@ scenes["side_score_details"] = {
 };
 
 scenes["side_search_elenor"] = {
-    desc: `该剧情节点（side_search_elenor）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `条件：已触发管家支线或管家仍在大厅 你找到管家，向他展示小提琴上的刻字。他的表情瞬间凝固，沉默了很久，才缓缓开口：“埃莉诺·布莱克伍德……这个名字我已经二十多年没有听到了。” “她是谁？” “她是一位天才制琴师，也是作曲家。更重要的是……” 管家停顿了一下，“她是我哥哥爱过的女人。在伊莲娜之前。” 你愣住了。画室支线中你已经知道伊莲娜的故事，没想到在伊莲娜之前还有一位埃莉诺。 “哥哥年轻时在维也纳学习音乐，遇到了埃莉诺。她比他大几岁，已经是小有名气的制琴师。两人相爱，但埃莉诺患有不治之症——肺痨。医生说她活不过三十岁。哥哥带她回到谜语馆，希望庄园的空气能让她好转。她在这里度过了生命中`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "询问更多关于交响曲的事", target: "side_symphony_details" },
+        { text: "询问埃莉诺的安息之处", target: "side_elenor_grave" }
     ]
 };
 
 scenes["side_servant_room"] = {
-    desc: `该剧情节点（side_servant_room）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你打开三角钢琴的琴凳，里面果然有一叠泛黄的乐谱，用丝带捆扎。丝带上系着一枚银质胸针，形状是一只夜莺。乐谱封面写着：“埃莉诺·布莱克伍德，第六交响曲‘谜语’（后更名为第七交响曲），献给A.C.” 前六个乐章完整，第七乐章只有第一页，写着主题旋律和一行小字：“如果我未能完成，请让音乐室自己演奏它。” 你翻阅乐谱，发现前六个乐章的标题分别是：I. 诞生、II. 爱情、III. 漂泊、IV. 归乡、V. 告别、VI. 等待。第七乐章没有标题，只有那个主题旋律。乐谱的空白处有铅笔写的注释，似乎是阿斯特的笔迹：“她走的那天，窗外的夜莺在唱歌。她说那是她的灵魂。” 获得：埃莉诺的完整乐谱（前六乐章）`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "尝试理解“让音乐室自己演奏”的意思", target: "side_music_room_play" },
+        { text: "将胸针带到某个地方", target: "side_brooch_clue" }
     ]
 };
 
 scenes["side_study_murals"] = {
-    desc: `该剧情节点（side_study_murals）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `“能告诉我更多吗？” 管家缓缓道来：“哥哥年轻时是著名的谜语大师，他的谜题享誉欧洲。但他逐渐沉迷于创造更复杂的谜题，最终将自己困在谜语馆里。他开始害怕外面的世界，害怕与人接触，只与谜题为伴。有一天，他在日记中写道：‘我创造了无数谜题，却解不开自己的心。’ 然后，他走进这间地窖，再也没有出来。” “我找到他时，他已经在石棺里了。他留了一封信，说这是他最后的谜题——让继承人来选择自己的命运。” “所以，这个支线的意义是让你明白，谜语馆既是智慧的殿堂，也可能是心灵的牢笼。” 选项： - 选择成为主人 [前往 side_ending_master] - 选择成为传播者 [前往 side`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "选择成为主人", target: "side_ending_master" },
+        { text: "选择成为传播者", target: "side_ending_spreader" }
     ]
 };
 
 scenes["side_tell_butler"] = {
-    desc: `该剧情节点（side_tell_butler）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `地窖的入口在地下室入口旁，是一扇低矮的木门。你用生锈的钥匙打开锁，门后是一段向下延伸的石阶。空气潮湿阴冷，墙壁上挂着一盏油灯，你点燃后继续下行。 地窖比地下室更深，是一个天然岩洞改造的空间。洞壁上刻着古老的符文，与地下室祭坛上的符文相似。房间中央有一座石棺，石棺盖半开。石棺上刻着“克劳利家族之墓”。你走近，发现石棺里是空的，但内壁上有一行血字：“我在这里等了你七年。” 你后背发凉，突然听见身后有脚步声。你猛地转身，管家奥尔德斯站在阴影中，手中提着一盏灯，面无表情。 “你找到了这里。”他的声音平静如水，“我本以为你会更早发现。” 选项： - 质问他的身份 [前往 side_rev`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "质问他的身份", target: "side_reveal_1" },
+        { text: "询问血字的意思", target: "side_reveal_2" },
+        { text: "保持警惕，准备战斗", target: "side_reveal_3" }
     ]
 };
 
 scenes["studio_cabinet_open"] = {
-    desc: `该剧情节点（studio_cabinet_open）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `颜料柜是一排深色木柜，有数十个小抽屉，每个抽屉上贴着标签：朱砂、雌黄、石绿、石青、铅白、藤黄……但许多抽屉是空的。你逐一拉开，发现几个抽屉里有残留的粉末，但量很少。 在柜子最底层，你发现一个上了锁的抽屉，锁是密码式的，需要输入四个数字。抽屉面板上刻着一行字：“七色之花，生于七石。” 你想起之前在温室获得的七色花琥珀，也许相关。如果你已经解开了温室谜题，可能知道七种颜色对应的矿石。 另一个抽屉里有一本《颜料配方手册》，记载了古代画家如何从矿物、植物中提取颜料。手册中提到：“朱砂得自辰砂，雌黄得自雄黄，石绿得自孔雀石，石青得自蓝铜矿，铅白得自白铅矿，藤黄得自植物树脂，紫胶得自昆虫。” 每种颜料`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "尝试打开密码抽屉", target: "studio_password_drawer" },
+        { text: "检查雕塑台上的石头", target: "studio_sculpture" }
     ]
 };
 
 scenes["studio_find_solvent"] = {
-    desc: `该剧情节点（studio_find_solvent）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `条件：拥有七色矿石 你将七色矿石分别放入研磨机，摇动曲柄，将它们磨成细粉。然后通过管道输送到调色板，再加水调和，就能得到新鲜颜料。这样就不需要依赖彩色玻璃窗的光线激活了。 获得：新鲜颜料（与光线激活效果相同） 选项： - 用颜料在镜子上作画 [前往 studio_paint_mirror]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "用颜料在镜子上作画", target: "studio_paint_mirror" }
     ]
 };
 
 scenes["studio_mix"] = {
-    desc: `该剧情节点（studio_mix）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `如果你没有通过光线激活镜子，而是尝试用颜料直接作画，就需要定色剂。你在颜料柜中翻找，发现一瓶标签模糊的液体，写着“阿拉伯树胶”。这是古代画家常用的定色剂。你将树胶与颜料混合，然后在画布上作画，颜色终于固定。但你不知道应该画什么，需要从别处获得线索。 你想起肖像画中的镜子，也许应该在镜子上作画。你用混合了定色剂的颜料在镜子表面画出色轮，同样触发了徽章的出现。 选项： - 在镜子上作画 [前往 studio_paint_mirror_fix]`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "在镜子上作画", target: "studio_paint_mirror_fix" }
     ]
 };
 
 scenes["studio_paint_mirror_fix"] = {
-    desc: `该剧情节点（studio_paint_mirror_fix）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你拿起画笔，蘸取调色板上的颜料，在镜子中央的空白圆形区域作画。你需要画出什么？也许是色轮，也许是七色花，或者就是简单的七色圆点。根据线索，你画了一个色轮，七种颜色均匀分布。画完后，颜料渗入镜子，镜子表面泛起彩虹色光芒，然后分裂成七块碎片，每块碎片飞向一幅空白画框，瞬间填充了那幅画——空白画布上出现了栩栩如生的景物：赤色画中是一轮红日，橙色是秋叶，黄色是麦田，绿色是森林，青色是湖水，蓝色是海洋，紫色是晚霞。 七幅画完成后，房间中央的调色板缓缓下沉，取而代之升起一座石台，台上放着橙色徽章和神秘颜料。 获得：橙色徽章（4/7） 获得：神秘颜料 选项： - 返回大厅 [前`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "返回大厅", target: "hall" }
     ]
 };
 
 scenes["studio_paint_portrait"] = {
-    desc: `该剧情节点（studio_paint_portrait）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `大幅肖像画中的男子目光深邃，手中的镜子似乎有魔力。你走近观察，发现镜子其实是一块嵌入画布的真正的镜面玻璃，表面有细微的划痕。当你靠近时，镜中倒映出你自己的脸，但镜像中的你脸上戴着一副面具，面具上只有眼睛部位留空。你试着改变表情，镜像却保持不变——它似乎不是实时反射，而是某种预设的画面。 镜框上的七颗宝石，每颗都对应一种颜色。你试着触摸宝石，它们可以按动。当你按下一颗宝石，镜中相应的颜色就会闪烁。你想起图书馆空白书的宝石凹槽，也许需要按正确的顺序按下宝石。 选项： - 按颜色顺序（红橙黄绿青蓝紫）依次按下宝石 [前往 studio_press_gems] - 按光谱顺序（红橙黄绿蓝靛`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "按颜色顺序（红橙黄绿青蓝紫）依次按下宝石", target: "studio_press_gems" },
+        { text: "按光谱顺序（红橙黄绿蓝靛紫）但这里有七色，靛色由青色和蓝色替代？实际上，我们的七色是赤橙黄绿青蓝紫，所以顺序就是赤橙黄绿青蓝紫", target: "studio_gem_correct" },
+        { text: "尝试其他顺序", target: "studio_gem_wrong" }
     ]
 };
 
 scenes["studio_press_gems"] = {
-    desc: `该剧情节点（studio_press_gems）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `巨大的调色板由整块大理石雕成，边缘装饰着藤蔓花纹。七个颜料槽呈扇形排列，每个槽底部都有一个微小的孔洞，连接着看不见的管道。颜料槽内壁残留着干涸的色块，你用手指轻轻刮擦，得到一些粉末： - 赤色槽：铁锈红的粉末 - 橙色槽：偏黄的橙粉 - 黄色槽：明亮的黄粉 - 绿色槽：草绿色的粉末 - 青色槽：蓝绿色粉末 - 蓝色槽：深蓝色粉末 - 紫色槽：紫罗兰色粉末 这些粉末闻起来有矿物质的气味，似乎是某种矿石颜料。调色板中央有一个凹陷的圆盘，上面刻着：“色之本源，七石所出。调和以水，可绘真形。” 画笔搁在调色板边缘，笔杆是乌木制成，笔尖的毫毛已经干硬。你将笔尖蘸水，在调色板上试着画了一下，留下淡淡`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "赤色槽：铁锈红的粉末 - 橙色槽：偏黄的橙粉 - 黄色槽：明亮的黄粉 - 绿色槽：草绿色的粉末 - 青色槽：蓝绿色粉末 - 蓝色槽：深蓝色粉末 - 紫色槽：紫罗兰色粉末 这些粉末闻起来有矿物质的气味，似乎是某种矿石颜料。调色板中央有一个凹陷的圆盘，上面刻着：“色之本源，七石所出。调和以水，可绘真形。” 画笔搁在调色板边缘，笔杆是乌木制成，笔尖的毫毛已经干硬。你将笔尖蘸水，在调色板上试着画了一下，留下淡淡的水痕，但没有颜色。显然，需要先让颜料槽恢复活性。 **选项：** - 尝试向颜料槽中加水", target: "studio_add_water" },
+        { text: "检查调色板底部的管道", target: "studio_palette_pipes" },
+        { text: "寻找能够溶解干涸颜料的东西", target: "studio_find_solvent" }
     ]
 };
 
 scenes["studio_rotate_scale"] = {
-    desc: `该剧情节点（studio_rotate_scale）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你将矿石按照颜色顺序排列在台面上：辰砂（红）→？橙色矿石？实际上，你并没有橙色的矿石。雄黄是金黄色，接近橙色但偏黄；藤黄是黄色；孔雀石是绿色；蓝铜矿是青色/蓝色；紫胶是紫色。缺少纯橙色和纯蓝色之间的过渡。但也许可以用雄黄（橙黄）和蓝铜矿（深蓝）替代。光谱顺序应是：红、橙、黄、绿、青、蓝、紫。你只有六种矿石？再检查：辰砂（红）、雄黄（橙黄）、藤黄（黄）、孔雀石（绿）、蓝铜矿（蓝/青）、紫胶（紫）。实际上蓝铜矿可以同时代表青和蓝？但你需要七种。也许还有一块石青（蓝）？你仔细找，在台面角落发现一块小的蓝铜矿（深蓝），和之前那块（浅蓝）不同。这样就有七种了。 你按红、橙、黄、绿、青、蓝、紫排列好。台`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "检查调色板", target: "studio_palette_active" },
+        { text: "检查颜料柜", target: "studio_cabinet_open" }
     ]
 };
 
 scenes["studio_sketches"] = {
-    desc: `该剧情节点（studio_sketches）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `巨大的调色板由整块大理石雕成，边缘装饰着藤蔓花纹。七个颜料槽呈扇形排列，每个槽底部都有一个微小的孔洞，连接着看不见的管道。颜料槽内壁残留着干涸的色块，你用手指轻轻刮擦，得到一些粉末： - 赤色槽：铁锈红的粉末 - 橙色槽：偏黄的橙粉 - 黄色槽：明亮的黄粉 - 绿色槽：草绿色的粉末 - 青色槽：蓝绿色粉末 - 蓝色槽：深蓝色粉末 - 紫色槽：紫罗兰色粉末 这些粉末闻起来有矿物质的气味，似乎是某种矿石颜料。调色板中央有一个凹陷的圆盘，上面刻着：“色之本源，七石所出。调和以水，可绘真形。” 画笔搁在调色板边缘，笔杆是乌木制成，笔尖的毫毛已经干硬。你将笔尖蘸水，在调色板上试着画了一下，留下淡淡`,
     options: [
-        { text: "返回大厅", target: "hall_main" },
-        { text: "返回主界面", target: "title" }
+        { text: "赤色槽：铁锈红的粉末 - 橙色槽：偏黄的橙粉 - 黄色槽：明亮的黄粉 - 绿色槽：草绿色的粉末 - 青色槽：蓝绿色粉末 - 蓝色槽：深蓝色粉末 - 紫色槽：紫罗兰色粉末 这些粉末闻起来有矿物质的气味，似乎是某种矿石颜料。调色板中央有一个凹陷的圆盘，上面刻着：“色之本源，七石所出。调和以水，可绘真形。” 画笔搁在调色板边缘，笔杆是乌木制成，笔尖的毫毛已经干硬。你将笔尖蘸水，在调色板上试着画了一下，留下淡淡的水痕，但没有颜色。显然，需要先让颜料槽恢复活性。 **选项：** - 尝试向颜料槽中加水", target: "studio_add_water" },
+        { text: "检查调色板底部的管道", target: "studio_palette_pipes" },
+        { text: "寻找能够溶解干涸颜料的东西", target: "studio_find_solvent" }
     ]
 };
 
 scenes["studio_water_tank"] = {
-    desc: `该剧情节点（studio_water_tank）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你从旁边的水桶里舀水倒入每个颜料槽。水渗入干涸的颜料，但很快就被吸收，颜料并没有变得可用，反而变成一滩稀泥，毫无色泽。看来需要特殊的溶剂，或者需要先研磨颜料。 状态：颜料槽被稀释（需要重新干燥或清理） 选项： - 继续寻找其他方法 [返回 studio_palette]`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
@@ -4846,7 +4853,7 @@ scenes["studio_water_tank"] = {
 };
 
 scenes["system_load_auto"] = {
-    desc: `该剧情节点（system_load_auto）尚在整理中，你可以先返回继续其他探索。`,
+    desc: `你从旁边的水桶里舀水倒入每个颜料槽。水渗入干涸的颜料，但很快就被吸收，颜料并没有变得可用，反而变成一滩稀泥，毫无色泽。看来需要特殊的溶剂，或者需要先研磨颜料。 状态：颜料槽被稀释（需要重新干燥或清理） 选项： - 继续寻找其他方法 [返回 studio_palette]`,
     options: [
         { text: "返回大厅", target: "hall_main" },
         { text: "返回主界面", target: "title" }
