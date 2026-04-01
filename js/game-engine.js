@@ -125,6 +125,49 @@ const optionsContainer = document.getElementById("options-container");
 let typeWriterInterval = null;
 let isTyping = false;
 
+function isPlaceholderScene(sceneObj) {
+    if (!sceneObj || typeof sceneObj.desc !== "string") return false;
+    return sceneObj.desc.includes("尚在整理中") || sceneObj.desc.includes("剧情节点");
+}
+
+function inferSceneTarget(target) {
+    const allSceneIds = Object.keys(scenes || {});
+    if (!target || allSceneIds.length === 0) return null;
+
+    const prefix = target.split("_")[0];
+    const preferred = allSceneIds.filter((id) => {
+        const s = scenes[id];
+        return id.startsWith(prefix + "_") && !isPlaceholderScene(s);
+    });
+    const candidates = preferred.length > 0
+        ? preferred
+        : allSceneIds.filter((id) => !isPlaceholderScene(scenes[id]));
+
+    const tTokens = new Set(target.split("_"));
+    let bestId = null;
+    let bestScore = -9999;
+
+    for (let i = 0; i < candidates.length; i++) {
+        const id = candidates[i];
+        const cTokens = new Set(id.split("_"));
+        let overlap = 0;
+        tTokens.forEach((tk) => { if (cTokens.has(tk)) overlap++; });
+
+        let commonPrefix = 0;
+        const minLen = Math.min(target.length, id.length);
+        while (commonPrefix < minLen && target[commonPrefix] === id[commonPrefix]) {
+            commonPrefix++;
+        }
+
+        const score = overlap * 20 + commonPrefix - Math.abs(id.length - target.length);
+        if (score > bestScore) {
+            bestScore = score;
+            bestId = id;
+        }
+    }
+    return bestScore >= 6 ? bestId : null;
+}
+
 function typeWriterHTML(element, htmlString, speed, onComplete) {
     clearInterval(typeWriterInterval);
     element.innerHTML = "";
@@ -255,9 +298,17 @@ function renderScene(sceneId) {
         }
 
         options.forEach(opt => {
-            let isAvailable = (!opt.condition || opt.condition());
+            let isAvailable = true;
+            if (opt.condition) {
+                try {
+                    isAvailable = !!opt.condition();
+                } catch (e) {
+                    isAvailable = true;
+                }
+            }
             const rawText = (opt.text || "").trim();
-            const optionText = (rawText && rawText !== "--")
+            const isPlaceholderText = /^[-—－\s]+$/.test(rawText);
+            const optionText = (rawText && !isPlaceholderText)
                 ? rawText
                 : (opt.target === "title"
                     ? "返回主界面"
@@ -277,7 +328,16 @@ function renderScene(sceneId) {
                         storyElement.scrollTop = storyElement.scrollHeight;
                     }
                     const nextTarget = opt.target || sceneId;
-                    const normalizedTarget = nextTarget === "hall" ? "hall_main" : nextTarget;
+                    let normalizedTarget = nextTarget === "hall" ? "hall_main" : nextTarget;
+
+                    const currentTargetScene = scenes[normalizedTarget];
+                    if (!currentTargetScene || isPlaceholderScene(currentTargetScene)) {
+                        const inferred = inferSceneTarget(normalizedTarget);
+                        if (inferred) {
+                            normalizedTarget = inferred;
+                        }
+                    }
+
                     if(normalizedTarget !== sceneId) {
                         if (normalizedTarget === "system_load_auto" || scenes[normalizedTarget]) {
                             renderScene(normalizedTarget);

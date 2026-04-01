@@ -4241,5 +4241,617 @@ scenes["game_over"] = {
     ]
 };
 
+
+
+// --- auto-filled missing scenes ---
+
+scenes["basement_activate_planets"] = {
+    desc: `该剧情节点（basement_activate_planets）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["basement_extract_essence"] = {
+    desc: `该剧情节点（basement_extract_essence）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["basement_furnace_with_key"] = {
+    desc: `该剧情节点（basement_furnace_with_key）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["basement_periodic_table"] = {
+    desc: `该剧情节点（basement_periodic_table）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["basement_prepare_materials"] = {
+    desc: `该剧情节点（basement_prepare_materials）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["basement_put_metals"] = {
+    desc: `该剧情节点（basement_put_metals）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["basement_runes"] = {
+    desc: `该剧情节点（basement_runes）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["basement_search_metals"] = {
+    desc: `该剧情节点（basement_search_metals）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["basement_weigh_metals"] = {
+    desc: `该剧情节点（basement_weigh_metals）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["bedroom_candle_midnight"] = {
+    desc: `该剧情节点（bedroom_candle_midnight）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["bedroom_midnight_mirror"] = {
+    desc: `该剧情节点（bedroom_midnight_mirror）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["bedroom_order_clue"] = {
+    desc: `该剧情节点（bedroom_order_clue）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["bedroom_painting_details"] = {
+    desc: `该剧情节点（bedroom_painting_details）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["bedroom_telescope"] = {
+    desc: `该剧情节点（bedroom_telescope）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["clocktower_behind_clock"] = {
+    desc: `该剧情节点（clocktower_behind_clock）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["clocktower_door"] = {
+    desc: `该剧情节点（clocktower_door）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["clocktower_gear_clues"] = {
+    desc: `该剧情节点（clocktower_gear_clues）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["clocktower_gears"] = {
+    desc: `该剧情节点（clocktower_gears）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["final_test_3_wrong"] = {
+    desc: `该剧情节点（final_test_3_wrong）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["greenhouse_basin"] = {
+    desc: `该剧情节点（greenhouse_basin）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["greenhouse_check_seeds"] = {
+    desc: `该剧情节点（greenhouse_check_seeds）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["greenhouse_clean_pipes"] = {
+    desc: `该剧情节点（greenhouse_clean_pipes）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["greenhouse_fix_pump"] = {
+    desc: `该剧情节点（greenhouse_fix_pump）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["greenhouse_mix_dead"] = {
+    desc: `该剧情节点（greenhouse_mix_dead）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["greenhouse_mix_nutrient"] = {
+    desc: `该剧情节点（greenhouse_mix_nutrient）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["greenhouse_nursery"] = {
+    desc: `该剧情节点（greenhouse_nursery）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["greenhouse_pipes"] = {
+    desc: `该剧情节点（greenhouse_pipes）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["greenhouse_use_fertilizer"] = {
+    desc: `该剧情节点（greenhouse_use_fertilizer）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["hall_injured"] = {
+    desc: `该剧情节点（hall_injured）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["library_astrolabe_success"] = {
+    desc: `该剧情节点（library_astrolabe_success）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["library_gaps"] = {
+    desc: `该剧情节点（library_gaps）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["library_labels"] = {
+    desc: `该剧情节点（library_labels）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["library_sort_attempt"] = {
+    desc: `该剧情节点（library_sort_attempt）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["library_window_move"] = {
+    desc: `该剧情节点（library_window_move）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["musicroom_autoplayer"] = {
+    desc: `该剧情节点（musicroom_autoplayer）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["musicroom_copy_score"] = {
+    desc: `该剧情节点（musicroom_copy_score）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["musicroom_find_score_parts"] = {
+    desc: `该剧情节点（musicroom_find_score_parts）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["musicroom_inside"] = {
+    desc: `该剧情节点（musicroom_inside）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["musicroom_inspect"] = {
+    desc: `该剧情节点（musicroom_inspect）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["musicroom_instrument_order"] = {
+    desc: `该剧情节点（musicroom_instrument_order）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["musicroom_order_by_score"] = {
+    desc: `该剧情节点（musicroom_order_by_score）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["musicroom_place_keycaps_unlocked"] = {
+    desc: `该剧情节点（musicroom_place_keycaps_unlocked）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["musicroom_play_instruments_order"] = {
+    desc: `该剧情节点（musicroom_play_instruments_order）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["musicroom_play_organ"] = {
+    desc: `该剧情节点（musicroom_play_organ）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["musicroom_reflector_ropes"] = {
+    desc: `该剧情节点（musicroom_reflector_ropes）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["musicroom_search_crystal"] = {
+    desc: `该剧情节点（musicroom_search_crystal）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["musicroom_tune_by_ear"] = {
+    desc: `该剧情节点（musicroom_tune_by_ear）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_alternate_path"] = {
+    desc: `该剧情节点（side_alternate_path）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_ask_butler"] = {
+    desc: `该剧情节点（side_ask_butler）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_attic"] = {
+    desc: `该剧情节点（side_attic）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_cave_deeper"] = {
+    desc: `该剧情节点（side_cave_deeper）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_cellar_key"] = {
+    desc: `该剧情节点（side_cellar_key）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_dig_with_hammer"] = {
+    desc: `该剧情节点（side_dig_with_hammer）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_elenor_grave"] = {
+    desc: `该剧情节点（side_elenor_grave）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_hidden_drawer"] = {
+    desc: `该剧情节点（side_hidden_drawer）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_leave_cave"] = {
+    desc: `该剧情节点（side_leave_cave）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_mirror_again"] = {
+    desc: `该剧情节点（side_mirror_again）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_music_hidden"] = {
+    desc: `该剧情节点（side_music_hidden）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_music_room_play"] = {
+    desc: `该剧情节点（side_music_room_play）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_palette_clue"] = {
+    desc: `该剧情节点（side_palette_clue）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_play_violin"] = {
+    desc: `该剧情节点（side_play_violin）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_score_details"] = {
+    desc: `该剧情节点（side_score_details）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_search_elenor"] = {
+    desc: `该剧情节点（side_search_elenor）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_servant_room"] = {
+    desc: `该剧情节点（side_servant_room）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_study_murals"] = {
+    desc: `该剧情节点（side_study_murals）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["side_tell_butler"] = {
+    desc: `该剧情节点（side_tell_butler）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["studio_cabinet_open"] = {
+    desc: `该剧情节点（studio_cabinet_open）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["studio_find_solvent"] = {
+    desc: `该剧情节点（studio_find_solvent）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["studio_mix"] = {
+    desc: `该剧情节点（studio_mix）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["studio_paint_mirror_fix"] = {
+    desc: `该剧情节点（studio_paint_mirror_fix）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["studio_paint_portrait"] = {
+    desc: `该剧情节点（studio_paint_portrait）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["studio_press_gems"] = {
+    desc: `该剧情节点（studio_press_gems）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["studio_rotate_scale"] = {
+    desc: `该剧情节点（studio_rotate_scale）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["studio_sketches"] = {
+    desc: `该剧情节点（studio_sketches）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["studio_water_tank"] = {
+    desc: `该剧情节点（studio_water_tank）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
+scenes["system_load_auto"] = {
+    desc: `该剧情节点（system_load_auto）尚在整理中，你可以先返回继续其他探索。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" },
+        { text: "返回主界面", target: "title" }
+    ]
+};
+
 })();
 
