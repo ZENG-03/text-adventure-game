@@ -1,0 +1,391 @@
+{
+    "title": {
+        "desc": "《谜语遗产：七重谜域》\n\n黑幕中，七条弧线交织的徽记在黑暗中旋转，逐渐化作七道光芒...\n远处，一座维多利亚风格的庄园若隐若现。",
+        "on_enter": [ { "specialMsg": "TITLE_INFO" } ],
+        "options": [
+            { "text": "开始新游戏", "target": "opening_studio" },
+            { "text": "继续游戏 (读取自动存档)", "target": "system_load_auto", "cond": ["hasAutoSave"] },
+            { "text": "带着记忆苏醒 (开启多周目)", "target": "opening_studio_ng_plus", "cond": ["hasEndings:1"] }
+        ]
+    },
+    "opening_studio_ng_plus": {
+        "desc": "你坐在自己的工作室里。壁炉的火光跳动，将房间染成暖橙色。\n桌上摊开着侦探笔记，旁边放着一封午夜来信。\n\n信上写着：“致敏锐的探索者：当月光照亮七面镜，谜语的血脉将再度流淌... ——阿斯特·克劳利”\n信纸背面是一张手绘地图，指向城郊迷雾山谷中的一座古老庄园。",
+        "on_enter": [ {
+            "effs": ["gainItem:怀表", "gainClue:前世记忆"],
+            "msg": "<div class=\"system-message\">【多周目奖励】：这是你一次新的轮回。<br>你醒来时，手中紧紧握着一块没有指针的[怀表]。同时脑海里闪过了许多[前世记忆]的碎片。</div>"
+        } ],
+        "options": [
+            { "text": "立刻动身", "target": "opening_gate" },
+            { "text": "研究地图", "target": "opening_studio_map" }
+        ]
+    },
+    "opening_studio": {
+        "desc": "你坐在自己的工作室里。壁炉的火光跳动，将房间染成暖橙色。\n桌上摊开着侦探笔记，旁边放着一封午夜来信。\n\n信上写着：“致敏锐的探索者：当月光照亮七面镜，谜语的血脉将再度流淌... ——阿斯特·克劳利”\n信纸背面是一张手绘地图，指向城郊迷雾山谷中的一座古老庄园。",
+        "options": [
+            { "text": "立刻动身", "target": "opening_gate" },
+            { "text": "研究地图", "target": "opening_studio_map" }
+        ]
+    },
+    "opening_studio_map": {
+        "desc": "地图上标注着七颗星，角落写着：“迷雾山谷只在满月之夜显现入口。若错过时机，请等下一次月圆。”\n今晚正是满月。",
+        "options": [ { "text": "立刻动身", "target": "opening_gate" } ]
+    },
+    "opening_gate": {
+        "desc": "马车停在迷雾山谷中。一座巨大的铁艺大门矗立在雾中。\n大门虚掩着，你推开铁门，踏入一条鹅卵石小径。\n尽头是一扇橡木门，门上镶嵌着七色玻璃。你推门而入...",
+        "options": [ { "text": "进入大厅", "target": "hall_initial_enter" } ]
+    },
+    "hall_initial_enter": {
+        "desc": "门厅宏伟，水晶吊灯蒙着薄灰。壁炉台上的油灯还在冒着青烟。\n管家奥尔德斯如同幽灵般出现。\n\n“欢迎，探索者。庄园内设有七道谜题，分别位于七个房间。\n每解开一道，你将获得一枚宝石徽章。集齐七枚徽章，便可开启密室。”\n他冷冷地看着你：“你确定要开始吗？”",
+        "options": [
+            { "text": "我准备好了", "target": "hall_main" },
+            { "text": "打听庄园历史", "target": "hall_history" }
+        ]
+    },
+    "hall_history": {
+        "desc": "管家冷冷地回答：“主人多尔法尔·索尔维是密码学家，这里的一切都是他的杰作。其余的，你自己去发现。”",
+        "options": [ { "text": "我准备好了，开始探索", "target": "hall_main" } ]
+    },
+    "hall_main": {
+        "desc": "你站在大厅中央。大厅两侧各立着四座大理石雕像。通往各处的门紧闭着。\n壁炉里有烧焦的纸片。通往其他房间的走廊隐约可见。",
+        "options": [
+            { "text": "仔细观察大厅壁炉的纸片", "target": "hall_fireplace" },
+            { "text": "检查大厅的雕像 (谜题一)", "target": "puzzle_statues" },
+            { "text": "前往书房/图书馆 (谜题二)", "target": "library_entry" },
+            { "text": "前往音乐室 (谜题三)", "target": "musicroom_entry" },
+            { "text": "前往温室花房 (谜题四)", "target": "greenhouse_entry" },
+            { "text": "前往二楼画室 (谜题五)", "target": "studio_entry" },
+            { "text": "前往地下室 (谜题六)", "target": "basement_entry" },
+            { "text": "前往东侧钟楼 (谜题七)", "target": "clocktower_entry" },
+            { "text": "开启中央密室大门 (大结局)", "target": "final_chamber_entry", "cond": ["medalCount:7"] }
+        ]
+    },
+    "hall_fireplace": {
+        "desc": "你用壁炉钳拨开灰烬，找到几片未完全烧毁的纸。\n写着：“第五个房间的钥匙藏在音乐里... 小心音不准...”\n还有一串数字：11-15-21-18-20-5-19-25。好像是凯撒密码。",
+        "on_enter": [ {
+            "cond": ["notClue:烧焦的纸片 (凯撒密码提示)"],
+            "effs": ["gainClue:烧焦的纸片 (凯撒密码提示)"],
+            "msg": "<div class=\"system-message\">【获得线索】：烧焦的纸片</div>"
+        } ],
+        "options": [ { "text": "返回大厅", "target": "hall_main" } ]
+    },
+    "puzzle_statues": {
+        "desc": "大厅两侧各立着四座大理石雕像：雅典娜、阿波罗、赫尔墨斯、阿尔忒弥斯。\n每座底部都有诗句，并可以旋转。\n你需要按一定顺序排列它们。",
+        "options": [
+            { "text": "按神话对应星座顺序排列 (雅典娜=1，阿波罗=5...)", "target": "statues_solved" },
+            { "text": "按诗句首字母解密", "target": "hall_main", "effectMsg": "线索不足，完全没有头绪，你放弃了。" },
+            { "text": "返回大厅", "target": "hall_main" }
+        ]
+    },
+    "statues_solved": {
+        "desc": "你按照正确的星象逻辑旋转雕像，大厅中央的地板缓缓开启。\n从中升起一个精致的木盒。你打开木盒，里面有一枚【起始徽章】和一个【机械齿轮】。",
+        "on_enter": [ {
+            "cond": ["notItem:起始徽章"],
+            "effs": ["gainItem:起始徽章", "gainItem:机械齿轮", "addMedal:1"],
+            "msg": "<div class=\"system-message\">【获得奖励】：起始徽章、机械齿轮</div>"
+        } ],
+        "options": [ { "text": "收起物品，返回大厅", "target": "hall_main" } ]
+    },
+    "library_entry": {
+        "desc": "图书馆高耸的书架直达穹顶。中央有一张巨大的书桌，桌面上摊开着一本空白的书。\n书桌腿是狮鹫爪，踩着石球。",
+        "options": [
+            { "text": "仔细检查书桌上的空白书", "target": "library_blank_book" },
+            { "text": "探索书架寻找可疑的书籍", "target": "library_bookshelves" },
+            { "text": "返回大厅", "target": "hall_main" }
+        ]
+    },
+    "library_blank_book": {
+        "desc": "书封面刻着“知识即钥匙”，封底画着七颗星，第四颗被圈住。\n书脊处有一个金属搭扣。",
+        "options": [
+            { "text": "按压封面上的第四颗星图案", "target": "library_press_star" },
+            { "text": "强行解开金属搭扣", "target": "library_unlock_clasp" },
+            { "text": "返回", "target": "library_entry" }
+        ]
+    },
+    "library_press_star": {
+        "desc": "咔哒。搭扣弹开。里面有一张纸条：\n“寻找无字天书，它的秘密藏在七位学者的记忆里。按出生年份排序。”\n名单上能看清：亚里士多德、达·芬奇、哥白尼。",
+        "on_enter": [ {
+            "cond": ["notClue:七学者名单 (部分)"],
+            "effs": ["gainClue:七学者名单 (部分)"],
+            "msg": "<div class=\"system-message\">【获得线索】：七学者名单</div>"
+        } ],
+        "options": [ { "text": "去书架寻找完整名单", "target": "library_bookshelves" } ]
+    },
+    "library_unlock_clasp": {
+        "desc": "<span class=\"danger-message\">你触发了陷阱！短箭飞出，擦破了你的手臂，好在没有大碍。</span>",
+        "options": [ { "text": "退后", "target": "library_entry" } ]
+    },
+    "library_bookshelves": {
+        "desc": "你在书架间穿梭，找到了多本传记：《亚里士多德全集》《达·芬奇笔记》《天体运行论》《自然哲学的数学原理》《几何原本》《梦的解析》《时间简史》。",
+        "options": [
+            { "text": "仔细翻阅每本书，寻找年份并排序", "target": "library_scholar_order", "cond": ["hasClue:七学者名单 (部分)"] },
+            { "text": "检查《梦的解析》等书的异常", "target": "library_check_books" },
+            { "text": "返回", "target": "library_entry" }
+        ]
+    },
+    "library_scholar_order": {
+        "desc": "你按生卒年成功将书籍排序！\n书架缓缓移开，露出一个暗格，里面放着一枚闪闪发亮的【智慧徽章】。",
+        "on_enter": [ {
+            "cond": ["notItem:智慧徽章"],
+            "effs": ["gainItem:智慧徽章", "addMedal:1"],
+            "msg": "<div class=\"system-message\">【获得奖励】：智慧徽章</div>"
+        } ],
+        "options": [ { "text": "拿走徽章，返回大厅", "target": "hall_main" } ]
+    },
+    "library_check_books": {
+        "desc": "《梦的解析》被撕掉了半页。\n《几何原本》书脊处有一个隐藏开关。",
+        "options": [ { "text": "按下隐藏开关", "target": "library_scholar_order", "effectMsg": "开关咔哒一声脆响..." } ]
+    },
+    "musicroom_entry": {
+        "desc": "音乐室位于庄园一层西侧，宛如微型歌剧院。\n中央矗立着巨大的管风琴，左侧有失调的三角钢琴。角落排列着音叉。",
+        "options": [
+            { "text": "检查管风琴", "target": "musicroom_organ" },
+            { "text": "查看三角钢琴和乐谱", "target": "musicroom_piano" },
+            { "text": "返回大厅", "target": "hall_main" }
+        ]
+    },
+    "musicroom_organ": {
+        "desc": "管风琴有七个音栓，但拉不动（被锁死）。侧面有一个齿轮状的凹槽。",
+        "options": [
+            { "text": "嵌入机械齿轮解锁", "target": "musicroom_organ_unlock", "cond": ["hasItem:机械齿轮"] },
+            { "text": "硬拔音栓", "target": "musicroom_organ", "effectMsg": "死死的卡着，纹丝不动。" },
+            { "text": "返回", "target": "musicroom_entry" }
+        ]
+    },
+    "musicroom_organ_unlock": {
+        "desc": "机械齿轮完美嵌入。音栓锁扣完全松开！\n你需要在此弹奏出完美的共鸣。",
+        "options": [ { "text": "放置键帽演奏", "target": "musicroom_solved" } ]
+    },
+    "musicroom_solved": {
+        "desc": "管风琴发出雄浑的轰鸣声，产生了完美的共鸣！\n暗格滑开，露出了【旋律徽章】和一把【调音扳手】。",
+        "on_enter": [ {
+            "cond": ["notItem:旋律徽章"],
+            "effs": ["gainItem:旋律徽章", "gainItem:调音扳手", "addMedal:1"],
+            "msg": "<div class=\"system-message\">【获得奖励】：旋律徽章、调音扳手</div>"
+        } ],
+        "options": [ { "text": "收起物品，离开", "target": "musicroom_entry" } ]
+    },
+    "musicroom_piano": {
+        "desc": "三角钢琴失调，弹出来的声音极其刺耳。也许需要某样工具才能校准。",
+        "options": [
+            { "text": "用调音扳手进行校准", "target": "musicroom_piano_tuned", "cond": ["hasItem:调音扳手"] },
+            { "text": "返回", "target": "musicroom_entry" }
+        ]
+    },
+    "musicroom_piano_tuned": {
+        "desc": "钢琴响起了纯洁清澈的回音！在琴底暗格，你发现了一些【七色花苞】。",
+        "on_enter": [ {
+            "cond": ["notItem:七色花苞"],
+            "effs": ["gainItem:七色花苞"],
+            "msg": "<div class=\"system-message\">【获得关键道具】：七色花苞</div>"
+        } ],
+        "options": [ { "text": "返回", "target": "musicroom_entry" } ]
+    },
+    "greenhouse_entry": {
+        "desc": "温室充满潮湿腐朽气味。中央有一棵枯死古树被七个花坛包围。\n树旁写着：“生命之水，需以七色之血唤醒。”",
+        "options": [
+            { "text": "检查中央古树与浑浊石盆", "target": "greenhouse_tree" },
+            { "text": "去工具房寻找线索和工具", "target": "greenhouse_tool_shed" },
+            { "text": "尝试唤醒古树（融合道具）", "target": "greenhouse_solved", "cond": ["hasItem:七色花琥珀", "hasItem:七色花苞", "hasItem:古树血提取剂"] },
+            { "text": "返回大厅", "target": "hall_main" }
+        ]
+    },
+    "greenhouse_tree": {
+        "desc": "石盆底部埋着东西，水泛着毒光，直接手摸可能会中毒。",
+        "options": [
+            { "text": "用手强捞", "target": "greenhouse_tree", "effectMsg": "啊！手麻痹了，这水有毒！" },
+            { "text": "用长柄夹夹出", "target": "greenhouse_tree_safe", "cond": ["hasItem:长柄夹"] },
+            { "text": "返回", "target": "greenhouse_entry" }
+        ]
+    },
+    "greenhouse_tree_safe": {
+        "desc": "你用夹子捞出一个铜盒，内部有一块【七色花琥珀】！",
+        "on_enter": [ {
+            "cond": ["notItem:七色花琥珀"],
+            "effs": ["gainItem:七色花琥珀"],
+            "msg": "<div class=\"system-message\">【获得关键道具】：七色花琥珀</div>"
+        } ],
+        "options": [ { "text": "收好返回", "target": "greenhouse_entry" } ]
+    },
+    "greenhouse_tool_shed": {
+        "desc": "工具房有个密码为建成年份的木箱。同时旁边挂着一把长柄夹。",
+        "options": [
+            { "text": "破译木箱(密码188)并拿走架子上的夹子", "target": "greenhouse_box_open" },
+            { "text": "返回", "target": "greenhouse_entry" }
+        ]
+    },
+    "greenhouse_box_open": {
+        "desc": "箱子开了！你拿到了夹子和用于植物的【古树血提取剂】。",
+        "on_enter": [ {
+            "cond": ["notItem:长柄夹"],
+            "effs": ["gainItem:长柄夹", "gainItem:古树血提取剂"],
+            "msg": "<div class=\"system-message\">【获得道具】：长柄夹、古树血提取剂</div>"
+        } ],
+        "options": [ { "text": "返回", "target": "greenhouse_entry" } ]
+    },
+    "greenhouse_solved": {
+        "desc": "你将七色琥珀种下，并混合花苞与提取剂浇灌在古树盆中。\n奇迹发生，枯萎古树瞬间爆发出绿意，树冠顶端结出了【生命徽章】！",
+        "on_enter": [ {
+            "cond": ["notItem:生命徽章"],
+            "effs": ["gainItem:生命徽章", "addMedal:1"],
+            "msg": "<div class=\"system-message\">【获得奖励】：生命徽章</div>"
+        } ],
+        "options": [ { "text": "取下徽章返回", "target": "greenhouse_entry" } ]
+    },
+    "studio_entry": {
+        "desc": "画室在二层。满墙空白画布，只有画框上标注了相应的七色。\n中央是一个巨大的调色板，最主要墙壁上是一幅庞大的肖像画。",
+        "options": [
+            { "text": "接取支线：调查落灰的日记本", "target": "side_quest_painting", "cond": ["notFlag:sq_paint"] },
+            { "text": "研究雕塑台上的矿石", "target": "studio_sculpture" },
+            { "text": "研究巨大肖像画上的镜面", "target": "studio_portrait" },
+            { "text": "返回大厅", "target": "hall_main" }
+        ]
+    },
+    "side_quest_painting": {
+        "desc": "【支线：伊莲娜的哀叹】\n这是女主人伊莲娜的日记。日记记载：“阿斯特沉迷于谜语，我感觉他在变成另一个人...”\n你深刻理解了这是由于男主人的某种痴迷造成的悲剧。",
+        "on_enter": [ {
+            "effs": ["setFlag:sq_paint", "gainClue:伊莲娜的日记"],
+            "msg": "<div class=\"system-message\">【支线进度】：达成，获得线索“伊莲娜的日记”</div>"
+        } ],
+        "options": [ { "text": "合上日记，继续调查画室", "target": "studio_entry" } ]
+    },
+    "studio_sculpture": {
+        "desc": "雕塑台上有七块原矿石。台底写道：将七石归位于光谱（红橙黄绿青蓝紫），可启颜料之源。",
+        "options": [
+            { "text": "按照光谱顺序排列归位", "target": "studio_palette_active" },
+            { "text": "放弃", "target": "studio_entry" }
+        ]
+    },
+    "studio_palette_active": {
+        "desc": "光闪过后，调色板涌出了鲜活的【七色神秘颜料】！",
+        "on_enter": [ {
+            "cond": ["notItem:七色神秘颜料"],
+            "effs": ["gainItem:七色神秘颜料"],
+            "msg": "<div class=\"system-message\">【获得关键道具】：七色神秘颜料</div>"
+        } ],
+        "options": [ { "text": "取走颜料", "target": "studio_entry" } ]
+    },
+    "studio_portrait": {
+        "desc": "画像中的男子拿着一面椭圆形真镜面。\n你需要用神秘颜料在镜面作画才能解开秘密。",
+        "options": [
+            { "text": "用七色颜料在镜面作画", "target": "studio_solved", "cond": ["hasItem:七色神秘颜料"] },
+            { "text": "返回", "target": "studio_entry" }
+        ]
+    },
+    "studio_solved": {
+        "desc": "你将颜料涂抹后，画框背后暗门开启，里面躺着一枚【色彩徽章】！",
+        "on_enter": [ {
+            "cond": ["notItem:色彩徽章"],
+            "effs": ["gainItem:色彩徽章", "addMedal:1"],
+            "msg": "<div class=\"system-message\">【获得奖励】：色彩徽章</div>"
+        } ],
+        "options": [ { "text": "返回画室门口", "target": "studio_entry" } ]
+    },
+    "basement_entry": {
+        "desc": "地下室阴森恐怖。入口充满了晦涩的学术符文。这里是炼金阵与地质学禁区。",
+        "options": [
+            { "text": "接取支线：查阅散落的笔记", "target": "side_quest_basement", "cond": ["notFlag:sq_base"] },
+            { "text": "探查中央祭坛", "target": "basement_alchemy" },
+            { "text": "返回大厅", "target": "hall_main" }
+        ]
+    },
+    "side_quest_basement": {
+        "desc": "【支线：地底的回响】\n你找到了托马斯的笔记，得知这片土地下有毁灭性的古老力量。\n阿斯特设计谜语其实是为了筛选有资格镇压这股力量的守护者！",
+        "on_enter": [ {
+            "effs": ["setFlag:sq_base", "gainClue:托马斯的地质笔记"],
+            "msg": "<div class=\"system-message\">【支线进度】：达成，获得线索“托马斯的地质笔记”</div>"
+        } ],
+        "options": [ { "text": "合上笔记", "target": "basement_entry" } ]
+    },
+    "basement_alchemy": {
+        "desc": "祭坛要求献祭强大的生命气息（如从温室获得的生命极品）。",
+        "options": [
+            { "text": "投入七色花生命的共鸣力量", "target": "basement_solved", "cond": ["hasItem:生命徽章"] },
+            { "text": "条件不足，离开", "target": "basement_entry" }
+        ]
+    },
+    "basement_solved": {
+        "desc": "祭坛缓缓下沉。浮现出一块古老的【符文石】及一枚【深渊徽章】！",
+        "on_enter": [ {
+            "cond": ["notItem:深渊徽章"],
+            "effs": ["gainItem:深渊徽章", "gainItem:符文石", "addMedal:1"],
+            "msg": "<div class=\"system-message\">【获得奖励】：深渊徽章、符文石</div>"
+        } ],
+        "options": [ { "text": "拿走物品，原路返回", "target": "hall_main" } ]
+    },
+    "clocktower_entry": {
+        "desc": "钟楼内满是齿轮，底部是工坊，顶层是巨大的钟盘。",
+        "options": [
+            { "text": "接取支线：查阅观测台日志", "target": "side_quest_clock", "cond": ["notFlag:sq_clock"] },
+            { "text": "翻找底层工坊工具", "target": "clocktower_workshop" },
+            { "text": "前往顶层调校钟盘", "target": "clocktower_top" },
+            { "text": "返回大厅", "target": "hall_main" }
+        ]
+    },
+    "side_quest_clock": {
+        "desc": "【支线：星月的低语】\n记录显示了阿斯特对时间精确度的变态痴迷。",
+        "on_enter": [ {
+            "effs": ["setFlag:sq_clock", "gainClue:观测记录"],
+            "msg": "<div class=\"system-message\">【支线进度】：达成，获得“星月观测记录”</div>"
+        } ],
+        "options": [ { "text": "返回", "target": "clocktower_entry" } ]
+    },
+    "clocktower_workshop": {
+        "desc": "你在铁皮柜里找到了一把形状奇特的【齿轮钥匙】，可以安全调节钟楼。",
+        "on_enter": [ {
+            "cond": ["notItem:齿轮钥匙"],
+            "effs": ["gainItem:齿轮钥匙"],
+            "msg": "<div class=\"system-message\">【获得道具】：齿轮钥匙</div>"
+        } ],
+        "options": [ { "text": "返回", "target": "clocktower_entry" } ]
+    },
+    "clocktower_top": {
+        "desc": "顶层钟盘停在11:55。铭文写着需要连续平稳的七声钟鸣。",
+        "options": [
+            { "text": "插入齿轮钥匙调校节拍", "target": "clocktower_solved", "cond": ["hasItem:齿轮钥匙"] },
+            { "text": "徒手强行拨动长针", "target": "clocktower_entry", "effectMsg": "遭到高压电击防御机制！你被弹飞了。" },
+            { "text": "返回", "target": "clocktower_entry" }
+        ]
+    },
+    "clocktower_solved": {
+        "desc": "你用齿轮钥匙完美调校！“铛——”钟声平稳响了七下。\n钟盘开启，露出最后一枚【时空徽章】。",
+        "on_enter": [ {
+            "cond": ["notItem:时空徽章"],
+            "effs": ["gainItem:时空徽章", "addMedal:1"],
+            "msg": "<div class=\"system-message\">【获得奖励】：时空徽章</div>"
+        } ],
+        "options": [ { "text": "取走并返回", "target": "hall_main" } ]
+    },
+    "final_chamber_entry": {
+        "desc": "当七枚徽章齐聚，庄园都在震动。你来到了庄园的最深处的中央密室。\n石台上放着一个含有七道凹槽的古老匣子。你必须将收集到的物品和你的觉悟一同献上。",
+        "options": [ { "text": "将所有极品（徽章、齿轮、符文石等）放入凹槽", "target": "final_chamber_test" } ]
+    },
+    "final_chamber_test": {
+        "desc": "所有的物品严丝合缝地归位！匣子弹开，露出了阿斯特的最后亲笔信。\n他给了你决定庄园和自己命运的选择（部分选项需对应支线解锁）：",
+        "options": [
+            { "text": "抉择1：成为谜语馆主人，获得无尽财富困死在此", "target": "ending_1" },
+            { "text": "抉择2：成为自由传播者，放弃财富带走笔记", "target": "ending_2" },
+            { "text": "抉择3 (真结)：成为永恒守护者，镇压地底能量", "target": "ending_3", "cond": ["getFlag:sq_base"] },
+            { "text": "抉择4 (真结)：将此地改为博物馆，传承凄美的故事", "target": "ending_4", "cond": ["getFlag:sq_paint"] }
+        ]
+    },
+    "ending_1": {
+        "desc": "【结局一：永恒的回廊】\n你成为了主人，大门紧闭，你永远被囚禁，等待下一个挑战者...",
+        "on_enter": [ { "effs": ["markEnding:永恒的回廊"] } ],
+        "options": [ { "text": "重新步入轮回", "target": "title", "effectMsg": "时间沙漏倒转，一切归零..." } ]
+    },
+    "ending_2": {
+        "desc": "【结局二：自由的智者】\n你失去财富出版了笔记，成了名士，重获自由！",
+        "on_enter": [ { "effs": ["markEnding:自由的智者"] } ],
+        "options": [ { "text": "重新步入轮回", "target": "title", "effectMsg": "时间沙漏倒转，一切归零..." } ]
+    },
+    "ending_3": {
+        "desc": "【结局三：永恒的守护者 (大结局)】\n因为你读过地质日记，你明白了他的苦心，你选择永恒封印了毁灭的力量，拯救了世人。",
+        "on_enter": [ { "effs": ["markEnding:永恒的守护者"] } ],
+        "options": [ { "text": "重新步入轮回", "target": "title", "effectMsg": "时间沙漏倒转，一切归零..." } ]
+    },
+    "ending_4": {
+        "desc": "【结局四：谜语馆的回响 (大结局)】\n因为你读懂了女主人的悲剧，你公开了这绝美的爱情故事，使其名留青史...",
+        "on_enter": [ { "effs": ["markEnding:谜语馆的回响"] } ],
+        "options": [ { "text": "重新步入轮回", "target": "title", "effectMsg": "时间沙漏倒转，一切归零..." } ]
+    }
+}

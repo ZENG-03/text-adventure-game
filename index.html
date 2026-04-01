@@ -1,0 +1,542 @@
+<!--
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《谜语遗产：七重谜域》</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --accent-color: #d4af37;
+            --hover-color: #f1c40f;
+            --border-color: #333;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Courier New', Courier, monospace, 'Microsoft YaHei';
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #game-container {
+            width: 85%;
+            max-width: 800px;
+            margin-top: 2rem;
+            background-color: #222;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+        }
+
+        #header {
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #header h1 {
+            color: var(--accent-color);
+            margin: 0 0 0.5rem 0;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        #status-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        #story-text {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            font-size: 1.1rem;
+            padding-right: 10px;
+        }
+
+        /* 隐藏滚动条但保留功能 */
+        #story-text::-webkit-scrollbar { width: 8px; }
+        #story-text::-webkit-scrollbar-track { background: #111; }
+        #story-text::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+        
+        #options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 12px 15px;
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            border-radius: 4px;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover {
+            background-color: rgba(212, 175, 55, 0.1);
+            color: var(--hover-color);
+            border-color: var(--hover-color);
+            transform: translateX(5px);
+        }
+
+        .option-btn.disabled, .option-btn:disabled {
+            color: #666;
+            border-color: #444;
+            cursor: not-allowed;
+            transform: none;
+            background-color: transparent;
+        }
+
+        .option-btn.disabled:hover {
+            transform: none;
+            color: #666;
+            border-color: #444;
+            background-color: transparent;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1.2em;
+            background-color: var(--accent-color);
+            vertical-align: sub;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        #inventory-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #2a2a2a;
+            border: 2px solid var(--accent-color);
+            padding: 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+        }
+
+        .sys-btn {
+            background: #333;
+            border: 1px solid #555;
+            color: #ddd;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        
+        .sys-btn:hover { background: #444; }
+
+        .system-message {
+            color: #88cc88;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        .danger-message {
+            color: #cc6666;
+            font-style: italic;
+            margin-top: 10px;
+        }
+    
+        @media screen and (max-width: 600px) {
+            #game-container {
+                width: 100%;
+                margin-top: 0;
+                border-radius: 0;
+                height: 100vh;
+                padding: 10px;
+                border: none;
+            }
+            #inventory-panel {
+                width: 100%;
+                height: 100vh;
+                top: 0;
+                left: 100%;
+                transform: none;
+                transition: left 0.3s ease-in-out;
+                border-radius: 0;
+            }
+            #inventory-panel.open {
+                left: 0;
+            }
+        }
+        .nav-buttons { display: flex; gap: 10px; }
+        .nav-btn { background: transparent; color: var(--accent-color); border: 1px solid var(--accent-color); padding: 5px 10px; cursor: pointer; border-radius: 3px; }
+        .nav-btn:hover { background: rgba(212, 175, 55, 0.1); }
+        .inv-section { margin-bottom: 15px; }
+        .empty-text { color: #777; font-style: italic; }
+        .inv-item { display: inline-block; background: #333; padding: 4px 8px; margin: 3px; border-radius: 3px; color: #d4d4d4; }
+        .badge { display: inline-block; background: var(--accent-color); color: #111; padding: 2px 6px; border-radius: 10px; font-size: 0.8em; margin-left:5px; }
+        .achievement { color: #ead67d; font-weight: bold; }
+        .medal { color: #cdae3a; font-weight: 100; }
+    
+</style>
+</head>
+<body>
+
+    <div id="game-container">
+        <div id="header" style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+        <h1 style="margin:0;">幽暗庄园的秘密</h1>
+        <p style="margin:5px 0 0 0;font-size:0.9em;color:#aaa;">探索每个房间，寻找线索，解开谜题</p>
+    </div>
+    <div class="nav-buttons">
+        <button class="nav-btn" onclick="returnToHall()">返回大厅</button>
+        <button id="inventory-btn" class="nav-btn" onclick="toggleInventory()">背包</button>
+    </div>
+</div>
+        <div id="status-bar">
+            <span id="location-name">位置：主界面</span>
+        </div>
+            </div>
+        </div>
+
+        <div id="story-text">正在加载游戏世界...</div>
+
+        <div id="options-container">
+            <!-- 选项会通过JS动态生成这里 -->
+        </div>
+    </div>
+
+    <!-- 背包遮罩层 -->
+    <div class="overlay" id="overlay" onclick="toggleInventory()"></div>
+
+<div id="inventory-panel" class="inventory-panel">
+    <div class="inv-header">
+        <h2><span class="icon">🎒</span> 背包</h2>
+        <button id="closeInv" class="close-btn" onclick="toggleInventory()">&times;</button>
+    </div>
+
+    <div class="inv-content">
+        <div class="inv-section">
+            <div class="section-header"><span class="icon">🗡️</span> 道具</div>
+            <div id="inv-items" class="inv-list"><span class="empty-text">无</span></div>
+        </div>
+        
+        <div class="inv-section">
+            <div class="section-header"><span class="icon">🔍</span> 线索</div>
+            <div id="inv-clues" class="inv-list"><span class="empty-text">无</span></div>
+        </div>
+        
+        <div class="inv-section">
+            <div class="section-header"><span class="icon">🏅</span> 徽章(<span id="medal-count">0</span>)</div>
+            <div id="inv-medals" class="inv-list"><span class="empty-text">无</span></div>
+        </div>
+
+        <div class="inv-section">
+            <div class="section-header"><span class="icon">🏆</span> 成就
+                <span class="badge">轮回(<span id="ng-count">0</span>)</span>
+                <span class="badge">结局(<span id="ending-count">0</span>)</span>
+            </div>
+            <div id="inv-achievements" class="inv-list"><span class="empty-text">无</span></div>
+        </div>
+    </div>
+</div>
+
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《谜语遗产：七重谜域》</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --accent-color: #d4af37;
+            --hover-color: #f1c40f;
+            --border-color: #333;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Courier New', Courier, monospace, 'Microsoft YaHei';
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #game-container {
+            width: 85%;
+            max-width: 800px;
+            margin-top: 2rem;
+            background-color: #222;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+        }
+
+        #header {
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #header h1 {
+            color: var(--accent-color);
+            margin: 0 0 0.5rem 0;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        #status-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        #story-text {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            font-size: 1.1rem;
+            padding-right: 10px;
+        }
+
+        /* 隐藏滚动条但保留功能 */
+        #story-text::-webkit-scrollbar { width: 8px; }
+        #story-text::-webkit-scrollbar-track { background: #111; }
+        #story-text::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+        
+        #options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 12px 15px;
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            border-radius: 4px;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover {
+            background-color: rgba(212, 175, 55, 0.1);
+            color: var(--hover-color);
+            border-color: var(--hover-color);
+            transform: translateX(5px);
+        }
+
+        .option-btn.disabled, .option-btn:disabled {
+            color: #666;
+            border-color: #444;
+            cursor: not-allowed;
+            transform: none;
+            background-color: transparent;
+        }
+
+        .option-btn.disabled:hover {
+            transform: none;
+            color: #666;
+            border-color: #444;
+            background-color: transparent;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1.2em;
+            background-color: var(--accent-color);
+            vertical-align: sub;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        #inventory-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #2a2a2a;
+            border: 2px solid var(--accent-color);
+            padding: 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+        }
+
+        .sys-btn {
+            background: #333;
+            border: 1px solid #555;
+            color: #ddd;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        
+        .sys-btn:hover { background: #444; }
+
+        .system-message {
+            color: #88cc88;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        .danger-message {
+            color: #cc6666;
+            font-style: italic;
+            margin-top: 10px;
+        }
+    
+        @media screen and (max-width: 600px) {
+            #game-container {
+                width: 100%;
+                margin-top: 0;
+                border-radius: 0;
+                height: 100vh;
+                padding: 10px;
+                border: none;
+            }
+            #inventory-panel {
+                width: 100%;
+                height: 100vh;
+                top: 0;
+                left: 100%;
+                transform: none;
+                transition: left 0.3s ease-in-out;
+                border-radius: 0;
+            }
+            #inventory-panel.open {
+                left: 0;
+            }
+        }
+        .nav-buttons { display: flex; gap: 10px; }
+        .nav-btn { background: transparent; color: var(--accent-color); border: 1px solid var(--accent-color); padding: 5px 10px; cursor: pointer; border-radius: 3px; }
+        .nav-btn:hover { background: rgba(212, 175, 55, 0.1); }
+        .inv-section { margin-bottom: 15px; }
+        .empty-text { color: #777; font-style: italic; }
+        .inv-item { display: inline-block; background: #333; padding: 4px 8px; margin: 3px; border-radius: 3px; color: #d4d4d4; }
+        .badge { display: inline-block; background: var(--accent-color); color: #111; padding: 2px 6px; border-radius: 10px; font-size: 0.8em; margin-left:5px; }
+        .achievement { color: #ead67d; font-weight: bold; }
+        .medal { color: #cdae3a; font-weight: 100; }
+    
+</style>
+</head>
+<body>
+
+    <div id="game-container">
+        <div id="header" style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+        <h1 style="margin:0;">幽暗庄园的秘密</h1>
+        <p style="margin:5px 0 0 0;font-size:0.9em;color:#aaa;">探索每个房间，寻找线索，解开谜题</p>
+    </div>
+    <div class="nav-buttons">
+        <button class="nav-btn" onclick="returnToHall()">返回大厅</button>
+        <button id="inventory-btn" class="nav-btn" onclick="toggleInventory()">背包</button>
+    </div>
+</div>
+        <div id="status-bar">
+            <span id="location-name">位置：主界面</span>
+        </div>
+            </div>
+        </div>
+
+        <div id="story-text">正在加载游戏世界...</div>
+
+        <div id="options-container">
+            <!-- 选项会通过JS动态生成这里 -->
+        </div>
+    </div>
+
+    <!-- 背包遮罩层 -->
+    <div class="overlay" id="overlay" onclick="toggleInventory()"></div>
+    <div id="inventory-panel">
+        <h2 style="color: var(--accent-color); margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 10px;">侦探笔记</h2>
+        <div>
+            <h3 style="color: #aaa; margin-bottom: 5px;">【已获徽章】 (<span id="medal-count">0</span>/7)</h3>
+            <p id="inv-medals" style="margin-top: 0;">无</p>
+            
+            <h3 style="color: #aaa; margin-bottom: 5px;">【收集道具】</h3>
+            <p id="inv-items" style="margin-top: 0;">无</p>
+            
+            <h3 style="color: #aaa; margin-bottom: 5px;">【掌握线索】</h3>
+            <p id="inv-clues" style="margin-top: 0;">无</p>
+        </div>
+        <button class="sys-btn" style="width: 100%; margin-top: 15px; padding: 10px;" onclick="toggleInventory()">关闭笔记</button>
+    </div>
+
+    <!-- 已迁移：场景 DSL JSON -> data/scenes.dsl.json -->
+
+    <!-- 游戏引擎核心逻辑 (DSL解析器) -->
+    
+    <script src="./js/game-engine.js"></script>
+    <script src="./js/game-scenes.js"></script>
+    <script>
+        renderScene("title");
+    </script>
+
+</body>
+</html>
