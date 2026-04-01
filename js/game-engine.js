@@ -256,12 +256,18 @@ function renderScene(sceneId) {
 
         options.forEach(opt => {
             let isAvailable = (!opt.condition || opt.condition());
+            const rawText = (opt.text || "").trim();
+            const optionText = (rawText && rawText !== "--")
+                ? rawText
+                : (opt.target === "title"
+                    ? "返回主界面"
+                    : ((opt.target === "hall_main" || opt.target === "hall") ? "返回大厅" : "继续探索"));
             
             let btn = document.createElement("button");
             btn.className = "option-btn";
             
             if (isAvailable) {
-                btn.innerHTML = "➤ " + opt.text;
+                btn.innerHTML = "➤ " + optionText;
                 btn.onclick = () => {
                     if(opt.effectMsg) {
                         let hint = document.createElement("div");
@@ -270,12 +276,31 @@ function renderScene(sceneId) {
                         storyElement.appendChild(hint);
                         storyElement.scrollTop = storyElement.scrollHeight;
                     }
-                    if(opt.target !== sceneId) {
-                        renderScene(opt.target);
+                    const nextTarget = opt.target || sceneId;
+                    const normalizedTarget = nextTarget === "hall" ? "hall_main" : nextTarget;
+                    if(normalizedTarget !== sceneId) {
+                        if (normalizedTarget === "system_load_auto" || scenes[normalizedTarget]) {
+                            renderScene(normalizedTarget);
+                        } else {
+                            const fallbackTarget = scenes["hall_main"] ? "hall_main" : "title";
+                            const fallbackLabel = fallbackTarget === "hall_main" ? "大厅" : "主界面";
+                            let hint = document.createElement("div");
+                            hint.className = "danger-message";
+                            hint.innerText = "该选项对应场景尚未完成，已为你返回" + fallbackLabel + "。";
+                            storyElement.appendChild(hint);
+                            storyElement.scrollTop = storyElement.scrollHeight;
+                            renderScene(fallbackTarget);
+                        }
+                    } else if (!opt.effectMsg) {
+                        let hint = document.createElement("div");
+                        hint.className = "system-message";
+                        hint.innerText = "这里暂时没有新的变化。";
+                        storyElement.appendChild(hint);
+                        storyElement.scrollTop = storyElement.scrollHeight;
                     }
                 };
             } else {
-                btn.innerHTML = "➤ <del>" + opt.text + "</del> <span style='font-size:0.85em;color:#777;margin-left:8px;'>(线索或道具不足，无法解锁)</span>";
+                btn.innerHTML = "➤ <del>" + optionText + "</del> <span style='font-size:0.85em;color:#777;margin-left:8px;'>(线索或道具不足，无法解锁)</span>";
                 btn.classList.add("disabled");
                 btn.disabled = true;
             }
@@ -467,3 +492,4 @@ window.loadGame = function() {
 }
 
 // 初始渲染
+renderScene("title");
