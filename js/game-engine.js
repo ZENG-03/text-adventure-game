@@ -247,6 +247,11 @@ function renderScene(sceneId) {
         const isEndingScene = sceneId === "game_over" || sceneId.startsWith("ending_");
         if (isEndingScene) {
             options.push({ text: "返回主界面", target: "title" });
+            options.push({ text: "返回大厅", target: "hall_main" });
+        }
+
+        if (options.length === 0) {
+            options.push({ text: "返回主界面", target: "title" });
         }
 
         options.forEach(opt => {
