@@ -131,7 +131,8 @@
             50% { opacity: 0; }
         }
 
-        #inventory-panel {
+        #inventory-panel,
+        #achievement-panel {
             display: none;
             position: fixed;
             top: 50%;
@@ -187,7 +188,8 @@
                 padding: 10px;
                 border: none;
             }
-            #inventory-panel {
+            #inventory-panel,
+            #achievement-panel {
                 width: 100%;
                 height: 100vh;
                 top: 0;
@@ -196,7 +198,8 @@
                 transition: left 0.3s ease-in-out;
                 border-radius: 0;
             }
-            #inventory-panel.open {
+            #inventory-panel.open,
+            #achievement-panel.open {
                 left: 0;
             }
         }
@@ -222,6 +225,7 @@
     </div>
     <div class="nav-buttons">
         <button class="nav-btn" onclick="returnToHall()">返回大厅</button>
+        <button id="achievement-btn" class="nav-btn" onclick="toggleAchievements()">成就</button>
         <button id="inventory-btn" class="nav-btn" onclick="toggleInventory()">背包</button>
     </div>
 </div>
@@ -510,7 +514,7 @@
     </div>
 
     <!-- 背包遮罩层 -->
-    <div class="overlay" id="overlay" onclick="toggleInventory()"></div>
+    <div class="overlay" id="overlay" onclick="closePanels()"></div>
     <div id="inventory-panel">
         <h2 style="color: var(--accent-color); margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 10px;">侦探笔记</h2>
         <div>
@@ -524,6 +528,17 @@
             <p id="inv-clues" style="margin-top: 0;">无</p>
         </div>
         <button class="sys-btn" style="width: 100%; margin-top: 15px; padding: 10px;" onclick="toggleInventory()">关闭笔记</button>
+    </div>
+
+    <div id="achievement-panel">
+        <h2 style="color: var(--accent-color); margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 10px;">成就墙</h2>
+        <div style="margin-bottom: 10px; color: #bbb;">
+            已解锁成就：<span id="ach-total">0</span>
+            <span style="margin-left: 12px;">结局：<span id="ach-ending-count">0</span></span>
+            <span style="margin-left: 12px;">轮回：<span id="ach-ng-count">0</span></span>
+        </div>
+        <div id="ach-list"><span class="empty-text">暂无成就</span></div>
+        <button class="sys-btn" style="width: 100%; margin-top: 15px; padding: 10px;" onclick="toggleAchievements()">关闭成就墙</button>
     </div>
 
     <!-- 已迁移：场景 DSL JSON -> data/scenes.dsl.json -->

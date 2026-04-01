@@ -4236,8 +4236,8 @@ scenes["game_over"] = {
 >
 >`,
     options: [
-        { text: "--", target: "hall_main" },
-        { text: "--", target: "hall_main" }
+        { text: "返回主界面", target: "title" },
+        { text: "返回大厅", target: "hall_main" }
     ]
 };
 

@@ -73,6 +73,22 @@ function checkAchievements() {
     if (msgs.some(Boolean)) localStorage.setItem("riddle_global", JSON.stringify(globalState));
     return msgs.filter(Boolean).join("<br>");
 }
+
+function getAchievementNameById(id) {
+    const names = {
+        ach_first_medal: "初入谜域",
+        ach_half_medals: "半程智者",
+        ach_all_medals: "七曜归位",
+        ach_clue_hunter: "线索猎人",
+        ach_final_room: "密室访客",
+        ach_ending_free: "自由的智者",
+        ach_ending_guardian: "永恒的守护者",
+        ach_ending_echo: "回响",
+        ach_multi_ending: "命运见证者",
+        ach_master: "谜语大师"
+    };
+    return names[id] || id;
+}
 try {
     const gs = safeParseJSON(localStorage.getItem("riddle_global"), null);
     if (isValidGlobalState(gs)) {
@@ -226,8 +242,14 @@ function renderScene(sceneId) {
 
     typeWriterHTML(storyElement, fullDescHTML, 25, () => {
         optionsContainer.style.display = "flex";
-        
-        scene.options.forEach(opt => {
+
+        const options = Array.isArray(scene.options) ? [...scene.options] : [];
+        const isEndingScene = sceneId === "game_over" || sceneId.startsWith("ending_");
+        if (isEndingScene) {
+            options.push({ text: "返回主界面", target: "title" });
+        }
+
+        options.forEach(opt => {
             let isAvailable = (!opt.condition || opt.condition());
             
             let btn = document.createElement("button");
@@ -324,16 +346,81 @@ function updateInventoryDisplay() {
     }
 }
 
+function updateAchievementDisplay() {
+    const achTotal = document.getElementById("ach-total");
+    const achEndingCount = document.getElementById("ach-ending-count");
+    const achNgCount = document.getElementById("ach-ng-count");
+    const achList = document.getElementById("ach-list");
+    if (!achList) return;
+
+    const allAchievements = Array.isArray(globalState.achievements) ? globalState.achievements : [];
+    const uniqueEndings = new Set(globalState.endingsReached || []).size;
+
+    if (achTotal) achTotal.innerText = String(allAchievements.length);
+    if (achEndingCount) achEndingCount.innerText = String(uniqueEndings);
+    if (achNgCount) achNgCount.innerText = String(globalState.playCount || 0);
+
+    if (allAchievements.length === 0) {
+        achList.innerHTML = "<span class='empty-text'>暂无成就</span>";
+        return;
+    }
+
+    let html = "";
+    for (let i = 0; i < allAchievements.length; i++) {
+        const id = allAchievements[i];
+        html += "<div class='inv-item achievement' style='display:block;margin-bottom:5px;'><span class='icon'>🏆</span> " + getAchievementNameById(id) + "</div>";
+    }
+    achList.innerHTML = html;
+}
+
+window.closePanels = function() {
+    const overlay = document.getElementById("overlay");
+    const inventoryPanel = document.getElementById("inventory-panel");
+    const achievementPanel = document.getElementById("achievement-panel");
+
+    if (inventoryPanel) {
+        inventoryPanel.classList.remove("open");
+        inventoryPanel.style.display = "none";
+    }
+    if (achievementPanel) {
+        achievementPanel.classList.remove("open");
+        achievementPanel.style.display = "none";
+    }
+    if (overlay) overlay.style.display = "none";
+};
+
 window.toggleInventory = function() {
     let panel = document.getElementById("inventory-panel");
+    let achievementPanel = document.getElementById("achievement-panel");
     let overlay = document.getElementById("overlay");
     if (!panel || !overlay) return;
     if(panel.classList.contains("open")){
-        panel.classList.remove("open");
-        panel.style.display = "none";
-        overlay.style.display = "none";
+        closePanels();
     } else {
+        if (achievementPanel) {
+            achievementPanel.classList.remove("open");
+            achievementPanel.style.display = "none";
+        }
         updateInventoryDisplay();
+        panel.style.display = "block";
+        panel.classList.add("open");
+        overlay.style.display = "block";
+    }
+}
+
+window.toggleAchievements = function() {
+    let panel = document.getElementById("achievement-panel");
+    let inventoryPanel = document.getElementById("inventory-panel");
+    let overlay = document.getElementById("overlay");
+    if (!panel || !overlay) return;
+    if(panel.classList.contains("open")){
+        closePanels();
+    } else {
+        if (inventoryPanel) {
+            inventoryPanel.classList.remove("open");
+            inventoryPanel.style.display = "none";
+        }
+        updateAchievementDisplay();
         panel.style.display = "block";
         panel.classList.add("open");
         overlay.style.display = "block";
