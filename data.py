@@ -13,17 +13,24 @@ def build_scenes():
             return {"type": "redirect", "target": "side_story_1_start"}
             
         desc = """你站在大厅中央。大厅两侧各立着四座大理石雕像。通往各处的门紧闭着。
-壁炉里有烧焦的纸片。通往其他房间的走廊隐约可见。
-[ 庄园简图 ]
-     二楼：画室 | 最深处的卧室
-     一楼：音乐室 | 大厅 | 温室花房 | 书房/图书馆
-  东侧附属：钟楼
-   地下：地下室"""
+壁炉里有烧焦的纸片。通往其他房间的走廊隐约可见。"""
         if count >= 5:
             desc += "\n\n[大厅发生了剧变：空气中弥漫着压抑的气息，中央密室的大门开始渗出微光。]"
         elif count >= 3:
             desc += "\n\n[大厅发生了变化：一些雕像的眼睛似乎在盯着你。]"
             
+        def r_fmt(name, item):
+            light = "[93m(★已探索)[0m" if state.has_item(item) else "[90m(未探索)[0m"
+            return f"{name}{light}"
+
+        map_str = f"\n\n[ 🗺️ 庄园状态简图 ]\n"
+        map_str += f"     二楼：{r_fmt('画室', '色彩徽章')} | {r_fmt('最深处的卧室', '彩虹徽章')}\n"
+        map_str += f"     一楼：{r_fmt('音乐室', '旋律徽章')} | {r_fmt('大厅', '起始徽章')} | {r_fmt('温室花房', '生命徽章')} | {r_fmt('书房/图书馆', '智慧徽章')}\n"
+        map_str += f"  东侧附属：{r_fmt('钟楼', '时空徽章')}\n"
+        map_str += f"   地下：{r_fmt('地下室', '深渊徽章')}"
+
+        desc += map_str
+
         if "hall_main" in scenes:
             scenes["hall_main"].desc = desc
         return None
@@ -832,12 +839,7 @@ def build_scenes():
     scenes["hall_main"] = Scene(
         "hall_main",
         """你站在大厅中央。大厅两侧各立着四座大理石雕像。通往各处的门紧闭着。
-壁炉里有烧焦的纸片。通往其他房间的走廊隐约可见。
-[ 庄园简图 ]
-     二楼：画室 | 最深处的卧室
-     一楼：音乐室 | 大厅 | 温室花房 | 书房/图书馆
-  东侧附属：钟楼
-   地下：地下室""",
+壁炉里有烧焦的纸片。通往其他房间的走廊隐约可见。""",
         [
             Option("仔细观察大厅壁炉的纸片", "hall_fireplace"),
             Option("检查大厅的雕像", "puzzle_statues"),

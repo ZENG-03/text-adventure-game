@@ -350,7 +350,7 @@ function typeWriterHTML(element, htmlString, speed, onComplete) {
             i++;
         }
         element.innerHTML = currentText + '<span class="cursor"></span>';
-        element.scrollTop = element.scrollHeight;
+        document.getElementById("game-container").scrollTop = document.getElementById("game-container").scrollHeight;
     }, speed);
 }
 
@@ -613,7 +613,7 @@ function renderScene(sceneId) {
                         hint.className = "system-message";
                         hint.innerText = opt.effectMsg;
                         storyElement.appendChild(hint);
-                        storyElement.scrollTop = storyElement.scrollHeight;
+                        document.getElementById("game-container").scrollTop = document.getElementById("game-container").scrollHeight;
                     }
                     const nextTarget = opt.target || sceneId;
                     let normalizedTarget = nextTarget === "hall_main" ? "hall_main" : nextTarget;
@@ -636,7 +636,7 @@ function renderScene(sceneId) {
                             hint.className = "danger-message";
                             hint.innerText = "该选项对应场景尚未完成，已为你返回" + fallbackLabel + "。";
                             storyElement.appendChild(hint);
-                            storyElement.scrollTop = storyElement.scrollHeight;
+                            document.getElementById("game-container").scrollTop = document.getElementById("game-container").scrollHeight;
                             renderScene(fallbackTarget);
                         }
                     } else if (!opt.effectMsg) {
@@ -644,7 +644,7 @@ function renderScene(sceneId) {
                         hint.className = "system-message";
                         hint.innerText = "这里暂时没有新的变化。";
                         storyElement.appendChild(hint);
-                        storyElement.scrollTop = storyElement.scrollHeight;
+                        document.getElementById("game-container").scrollTop = document.getElementById("game-container").scrollHeight;
                     }
                 };
             } else {
@@ -654,7 +654,7 @@ function renderScene(sceneId) {
             }
             optionsContainer.appendChild(btn);
         });
-        storyElement.scrollTop = storyElement.scrollHeight;
+        document.getElementById("game-container").scrollTop = document.getElementById("game-container").scrollHeight;
     });
 }
 
