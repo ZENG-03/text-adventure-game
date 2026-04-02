@@ -1,0 +1,329 @@
+# 《谜语遗产：七重谜域》代码设计建议
+
+以下为将游戏文本转化为可运行交互式文字冒险游戏的技术方案。假设你希望使用 Python（命令行）或 Web（HTML/JS）实现，这里提供通用架构，可根据偏好调整。
+
+---
+
+## 一、整体架构设计
+
+采用经典的 **场景图 + 状态机** 模型：
+
+- **游戏核心**：管理场景切换、用户输入、状态变量、存档/读档。
+- **场景**：每个节点包含场景 ID、描述文本、选项列表（每个选项包含目标场景 ID、条件函数、触发效果）。
+- **状态管理器**：存储全局变量（如徽章收集情况、支线进度、道具列表）。
+- **事件系统**：处理变量变更时自动触发的后续动作（如集齐徽章后解锁密室）。
+
+建议使用 **面向对象** 或 **数据驱动** 方式：将场景数据与代码逻辑分离，方便修改文本。
+
+---
+
+## 二、数据结构设计
+
+### 1. 场景（Scene）结构
+```python
+class Scene:
+    def __init__(self, scene_id, description, options=None, on_enter=None):
+        self.id = scene_id           # 唯一标识
+        self.desc = description      # 显示文本
+        self.options = options or [] # 选项列表
+        self.on_enter = on_enter     # 进入时触发的函数（可选）
+```
+
+### 2. 选项（Option）结构
+```python
+class Option:
+    def __init__(self, text, target_id, condition=None, effect=None):
+        self.text = text             # 选项文本
+        self.target = target_id      # 目标场景ID
+        self.condition = condition   # 函数，返回布尔值，决定是否显示
+        self.effect = effect         # 选择时执行的函数（修改变量）
+```
+
+### 3. 游戏状态（GameState）
+使用字典或对象存储所有可变状态：
+```python
+state = {
+    "medals": [],               # 已获得的徽章列表
+    "rooms_completed": [],      # 已完成房间ID
+    "items": [],                # 道具列表
+    "clues": [],                # 线索（日记等）
+    "side_quests": {            # 支线进度
+        "butler": "not_started", # not_started / triggered / completed
+        "painter": False,
+        ...
+    },
+    "hall_medal_count": 0,      # 大厅显示所需
+    "final_choice": None,
+    ...
+}
+```
+
+---
+
+## 三、核心功能实现
+
+### 1. 场景加载与切换
+游戏主循环：
+```python
+current_scene = scenes["hall_initial"]
+while True:
+    os.system('cls' if os.name == 'nt' else 'clear')  # 清屏
+    print(current_scene.desc)
+    
+    # 收集有效选项（满足条件的）
+    available = [opt for opt in current_scene.options if not opt.condition or opt.condition(state)]
+    
+    if not available:
+        print("没有可行的选项，游戏结束。")
+        break
+    
+    for i, opt in enumerate(available, 1):
+        print(f"{i}. {opt.text}")
+    
+    choice = input("请选择（输入数字）: ")
+    try:
+        idx = int(choice) - 1
+        if 0 <= idx < len(available):
+            selected = available[idx]
+            if selected.effect:
+                selected.effect(state)      # 执行效果
+            current_scene = scenes[selected.target]
+        else:
+            print("无效选择，请重新输入。")
+            input("按回车继续...")
+    except ValueError:
+        print("请输入数字。")
+        input("按回车继续...")
+```
+
+### 2. 变量条件函数
+支持简单的条件表达式，或预定义函数：
+```python
+def has_item(item_name):
+    return lambda state: item_name in state["items"]
+
+def room_completed(room_id):
+    return lambda state: room_id in state["rooms_completed"]
+
+def medal_count_at_least(n):
+    return lambda state: len(state["medals"]) >= n
+```
+
+选项示例：
+```python
+Option("前往图书馆", "library_entry", condition=room_not_completed("library")),
+Option("查看成就", "achievement_menu", condition=has_item("侦探笔记")),
+```
+
+### 3. 效果函数
+用于修改变量、添加道具等：
+```python
+def gain_medal(color):
+    def effect(state):
+        state["medals"].append(color)
+        state["hall_medal_count"] += 1
+        print(f"获得{color}徽章！")
+    return effect
+
+def gain_item(item_name):
+    def effect(state):
+        state["items"].append(item_name)
+        print(f"获得：{item_name}")
+    return effect
+```
+
+---
+
+## 四、存档/读档机制
+
+最简单的方案：将 `state` 对象序列化为 JSON 文件。
+
+```python
+import json
+
+def save_game(slot=1):
+    with open(f"save_{slot}.json", "w") as f:
+        json.dump(state, f)
+    print("游戏已保存。")
+
+def load_game(slot=1):
+    global state, current_scene
+    try:
+        with open(f"save_{slot}.json", "r") as f:
+            state = json.load(f)
+        # 需要额外恢复场景ID？通常存档需同时记录当前场景ID
+        current_scene = scenes[state["current_scene_id"]]
+        print("读取存档成功。")
+    except FileNotFoundError:
+        print("没有找到存档文件。")
+```
+
+存档时需保存：
+- 所有状态变量
+- 当前场景ID
+
+---
+
+## 五、文本与代码分离
+
+为了便于修改，可将所有场景数据存放在外部文件（JSON / YAML），游戏启动时加载。
+
+**场景数据示例（JSON）**：
+```json
+{
+  "library_entry": {
+    "desc": "推开沉重的橡木门...",
+    "options": [
+      {
+        "text": "仔细检查书桌上的空白书",
+        "target": "library_blank_book",
+        "condition": "always"
+      },
+      {
+        "text": "去书架寻找完整名单",
+        "target": "library_bookshelves",
+        "condition": "has_clue('七学者名单')"
+      }
+    ],
+    "on_enter": "clear_temp_vars"
+  }
+}
+```
+
+加载时解析 JSON，动态构建 `Scene` 对象。条件/效果函数可通过注册表映射字符串到实际函数。
+
+---
+
+## 六、关键功能点建议
+
+### 1. 侦探笔记
+用一个特殊命令（如输入“笔记”）查看当前已收集的线索和道具。在游戏循环中截获特殊输入：
+```python
+if choice.lower() in ["笔记", "note", "道具"]:
+    show_inventory(state)
+    input("按回车继续...")
+    continue
+```
+
+### 2. 大厅动态描述
+将大厅的描述文本拆分为多个版本，根据 `hall_medal_count` 自动选择。可在 `Scene` 的 `desc` 中设置动态生成函数。
+
+### 3. 支线触发
+在每次场景切换后，检查是否满足支线触发条件，若满足则自动跳转到触发场景或显示提示。例如在 `hall` 场景的 `on_enter` 中判断：
+```python
+def check_side_quests(state):
+    if state["rooms_completed_count"] >= 3 and state["side_quests"]["butler"] == "not_started":
+        print("\n管家不在大厅，只留下一张纸条...")
+        state["side_quests"]["butler"] = "triggered"
+        return "butler_trigger"   # 返回触发场景ID
+    return None
+```
+
+### 4. 死亡与重试
+死亡结局调用统一函数 `die(message)`，清屏显示死亡信息，然后提供选项：重新尝试当前房间 / 返回大厅 / 读档。
+
+### 5. 成就系统
+成就条件可在每次状态变更时检查，存储已解锁成就列表。结局时展示。
+
+---
+
+## 七、技术选型建议
+
+| 方案 | 优点 | 缺点 |
+|------|------|------|
+| **Python 命令行** | 快速原型，逻辑易写 | 无图形界面，依赖终端，存档需手动管理 |
+| **Web (HTML/JS)** | 交互好，易分发，可做成浏览器游戏 | 需要前端基础，状态管理需注意 |
+| **Twine** | 专为文字冒险设计，可视化编辑，支持变量 | 复杂逻辑和条件分支可能受限，扩展性一般 |
+| **Ren'Py** | 视觉小说引擎，支持复杂分支 | 重图形轻文字，但也可用 |
+
+根据你的需求（纯文字、自编码），Python 命令行是最简单的选择。若希望发布到网页，推荐使用 **Vue/React + 本地存储** 实现。
+
+---
+
+## 八、示例代码片段（Python）
+
+```python
+import json
+import os
+
+class Game:
+    def __init__(self):
+        self.state = {
+            "medals": [],
+            "rooms_completed": [],
+            "items": [],
+            "clues": [],
+            "side_quests": {"butler": "not_started", "painter": False, "music": False, "geology": False},
+            "hall_medal_count": 0,
+            "current_scene": "hall_initial"
+        }
+        self.scenes = self.load_scenes()
+
+    def load_scenes(self):
+        with open("scenes.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+        scenes = {}
+        for sid, sdata in data.items():
+            options = []
+            for opt in sdata.get("options", []):
+                options.append(Option(
+                    text=opt["text"],
+                    target=opt["target"],
+                    condition=self.parse_condition(opt.get("condition")),
+                    effect=self.parse_effect(opt.get("effect"))
+                ))
+            scenes[sid] = Scene(sid, sdata["desc"], options)
+        return scenes
+
+    def parse_condition(self, cond_str):
+        # 将条件字符串转为lambda函数
+        if not cond_str or cond_str == "always":
+            return None
+        # 示例: "has_item('机械齿轮')"
+        # 实际可用 eval 或自定义解析，安全起见用注册表
+        ...
+
+    def parse_effect(self, effect_str):
+        ...
+
+    def run(self):
+        while True:
+            scene = self.scenes[self.state["current_scene"]]
+            os.system("cls")
+            print(scene.desc)
+
+            # 筛选选项
+            available = [opt for opt in scene.options if not opt.condition or opt.condition(self.state)]
+            for i, opt in enumerate(available, 1):
+                print(f"{i}. {opt.text}")
+
+            # 特殊命令处理
+            cmd = input("> ").strip()
+            if cmd.lower() in ["笔记", "note"]:
+                self.show_notebook()
+                continue
+            # ... 数字选择
+
+    def show_notebook(self):
+        print("\n=== 侦探笔记 ===")
+        print("已获得徽章:", ", ".join(self.state["medals"]) or "无")
+        print("持有道具:", ", ".join(self.state["items"]) or "无")
+        print("已阅读线索:", ", ".join(self.state["clues"]) or "无")
+        input("\n按回车继续...")
+
+if __name__ == "__main__":
+    game = Game()
+    game.run()
+```
+
+---
+
+## 九、注意事项
+
+1. **文本量大**：确保场景数据文件结构清晰，便于编辑。
+2. **分支复杂度**：使用条件系统时，注意避免无限循环，每个场景应有明确出口。
+3. **测试**：由于分支极多，建议编写自动化测试或至少手动走通主要路线。
+4. **用户体验**：提供“保存/读取”命令、随时查看状态的功能。
+5. **性能**：Python 中大量 if-else 没问题，但要确保循环不卡死。
+
+以上设计可让你快速搭建游戏框架，后续将已写好的文本填入场景数据即可。

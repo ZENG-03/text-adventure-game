@@ -1,7 +1,7 @@
 
 // 全局与多周目状态管理
 let globalState = {
-    saveVersion: 2,
+    saveVersion: 3,
     playCount: 0,
     endingsReached: [],
     achievements: []
@@ -30,7 +30,7 @@ function migrateSave(data, type) {
     if (!data || typeof data !== "object") return null;
     if (type === "global") {
         return {
-            saveVersion: 2,
+            saveVersion: 3,
             playCount: typeof data.playCount === "number" ? data.playCount : 0,
             endingsReached: Array.isArray(data.endingsReached) ? data.endingsReached : [],
             achievements: Array.isArray(data.achievements) ? data.achievements : []
@@ -43,7 +43,8 @@ function migrateSave(data, type) {
             clues: Array.isArray(data.clues) ? data.clues : [],
             flags: (data.flags && typeof data.flags === "object") ? data.flags : {},
             currentSceneId: typeof data.currentSceneId === "string" ? data.currentSceneId : "title",
-            hall_medal_count: typeof data.hall_medal_count === "number" ? data.hall_medal_count : 0
+            hall_medal_count: typeof data.hall_medal_count === "number" ? data.hall_medal_count : 0,
+            runStartedAt: typeof data.runStartedAt === "number" ? data.runStartedAt : null
         };
     }
     return data;
@@ -55,21 +56,122 @@ function unlockAchievement(id, name) {
     }
     return "";
 }
+/** 计入「谜语大师」的 19 项常规成就（不含第 20 项大师本身） */
+const ACHIEVEMENTS_FOR_MASTER = [
+    "ach_first_medal",
+    "ach_half_medals",
+    "ach_all_medals",
+    "ach_all_seeing",
+    "ach_manor_child",
+    "ach_lightning",
+    "ach_cautious",
+    "ach_brutal",
+    "ach_clue_hunter",
+    "ach_uncrowned",
+    "ach_brother",
+    "ach_painting_meet",
+    "ach_symphony_done",
+    "ach_underground_echo",
+    "ach_all_stories",
+    "ach_nightingale_gift",
+    "ach_ending_free",
+    "ach_eternal_echo",
+    "ach_true_end"
+];
+
 function checkAchievements() {
     const msgs = [];
     const medalCount = gameState.hall_medal_count || gameState.medals.length;
     const clueCount = gameState.clues.length;
-    const uniqueEndings = new Set(globalState.endingsReached || []).size;
+    const ends = globalState.endingsReached || [];
+    const hasEnd = (name) => ends.includes(name);
+
     if (medalCount >= 1) msgs.push(unlockAchievement("ach_first_medal", "初入谜域"));
     if (medalCount >= 4) msgs.push(unlockAchievement("ach_half_medals", "半程智者"));
     if (medalCount >= 7) msgs.push(unlockAchievement("ach_all_medals", "七曜归位"));
-    if (clueCount >= 10) msgs.push(unlockAchievement("ach_clue_hunter", "线索猎人"));
-    if (gameState.currentSceneId && gameState.currentSceneId.startsWith("final_")) msgs.push(unlockAchievement("ach_final_room", "密室访客"));
-    if ((globalState.endingsReached || []).includes("自由的智者")) msgs.push(unlockAchievement("ach_ending_free", "自由的智者"));
-    if ((globalState.endingsReached || []).includes("永恒的守护者")) msgs.push(unlockAchievement("ach_ending_guardian", "永恒的守护者"));
-    if ((globalState.endingsReached || []).includes("谜语馆的回响")) msgs.push(unlockAchievement("ach_ending_echo", "回响"));
-    if (uniqueEndings >= 3) msgs.push(unlockAchievement("ach_multi_ending", "命运见证者"));
-    if (globalState.achievements.length >= 9) msgs.push(unlockAchievement("ach_master", "谜语大师"));
+
+    if (medalCount >= 7 && !getFlag("sq_paint") && !getFlag("sq_base") && !getFlag("sq_clock") && !getFlag("sq_butler_done")) {
+        msgs.push(unlockAchievement("ach_all_seeing", "全知之眼"));
+    }
+
+    if (
+        getFlag("sq_butler_done") && getFlag("sq_paint_full") && getFlag("sq_underground_full")
+        && getFlag("sq_music_full") && medalCount >= 7
+    ) {
+        msgs.push(unlockAchievement("ach_manor_child", "庄园之子"));
+    }
+
+    const runMs = gameState.runStartedAt ? Date.now() - gameState.runStartedAt : 0;
+    if (medalCount >= 7 && runMs > 0 && runMs < 50 * 60 * 1000) {
+        msgs.push(unlockAchievement("ach_lightning", "闪电破解"));
+    }
+
+    if (medalCount >= 7 && !getFlag("player_hit_trap")) {
+        msgs.push(unlockAchievement("ach_cautious", "谨慎行者"));
+    }
+
+    const brutal = typeof gameState.flags.brutal_count === "number" ? gameState.flags.brutal_count : 0;
+    if (brutal >= 3) msgs.push(unlockAchievement("ach_brutal", "暴力解谜者"));
+
+    if (clueCount >= 20) msgs.push(unlockAchievement("ach_clue_hunter", "线索猎人"));
+
+    if (
+        medalCount >= 7
+        && !hasItem("埃莉诺的琴弓")
+        && !hasItem("阿斯特的怀表（可在后续谜题中作为提示道具使用）")
+        && !hasItem("伊莲娜纪念徽章")
+        && !hasItem("守护者符文（可封印古老能量）")
+    ) {
+        msgs.push(unlockAchievement("ach_uncrowned", "无冕之王"));
+    }
+
+    if (getFlag("sq_butler_done") && (hasEnd("自由的智者") || hasEnd("谜语馆的回响") || hasEnd("七重谜语的真相"))) {
+        msgs.push(unlockAchievement("ach_brother", "兄弟之约"));
+    }
+    if (getFlag("sq_paint_full")) msgs.push(unlockAchievement("ach_painting_meet", "画中重逢"));
+    if (getFlag("sq_music_full")) msgs.push(unlockAchievement("ach_symphony_done", "未完成的完成"));
+    if (getFlag("sq_underground_full")) msgs.push(unlockAchievement("ach_underground_echo", "地下的回响"));
+    if (
+        getFlag("sq_butler_done") && getFlag("sq_paint_full") && getFlag("sq_underground_full") && getFlag("sq_music_full")
+    ) {
+        msgs.push(unlockAchievement("ach_all_stories", "所有故事"));
+    }
+    if (hasItem("夜莺徽章（纪念品）") && hasItem("埃莉诺的琴弓")) {
+        msgs.push(unlockAchievement("ach_nightingale_gift", "夜莺的馈赠"));
+    }
+
+    if (hasEnd("自由的智者")) msgs.push(unlockAchievement("ach_ending_free", "自由的智者"));
+    if (hasEnd("永恒的守护者")) msgs.push(unlockAchievement("ach_ending_guardian", "永恒的守护者"));
+    if (hasEnd("谜语馆的回响") || hasEnd("七重谜语的真相")) {
+        const sideN = [getFlag("sq_paint_full"), getFlag("sq_underground_full"), getFlag("sq_music_full"), getFlag("sq_butler_done")].filter(Boolean).length;
+        if (sideN >= 2) msgs.push(unlockAchievement("ach_eternal_echo", "永恒的回响"));
+    }
+    if (hasEnd("七重谜语的真相")) msgs.push(unlockAchievement("ach_true_end", "七重谜语的真相"));
+
+    if (hasEnd("被遗忘的探索者")) msgs.push(unlockAchievement("ach_ending_forgotten", "被遗忘的探索者"));
+
+    if (getFlag("sq_paint_full") && getFlag("sq_music_full") && hasEnd("七重谜语的真相")) {
+        msgs.push(unlockAchievement("ach_egg_nightingale_wisteria", "夜莺与紫藤"));
+    }
+    if (hasItem("阿斯特的怀表（可在后续谜题中作为提示道具使用）") && hasEnd("永恒的守护者")) {
+        msgs.push(unlockAchievement("ach_egg_brother_reconcile", "兄弟和解"));
+    }
+    if (getFlag("sq_underground_full") && hasClue("托马斯地质学会正名")) {
+        msgs.push(unlockAchievement("ach_egg_geologist", "地质学家的复仇"));
+    }
+    if (
+        medalCount >= 7
+        && hasItem("伊莲娜纪念徽章")
+        && hasItem("阿斯特的怀表（可在后续谜题中作为提示道具使用）")
+        && hasItem("夜莺徽章（纪念品）")
+        && hasItem("守护者符文（可封印古老能量）")
+    ) {
+        msgs.push(unlockAchievement("ach_egg_all_collector", "全徽章收集者"));
+    }
+
+    const gotAllRegular = ACHIEVEMENTS_FOR_MASTER.every((id) => globalState.achievements.includes(id));
+    if (gotAllRegular) msgs.push(unlockAchievement("ach_master", "谜语大师"));
+
     if (msgs.some(Boolean)) localStorage.setItem("riddle_global", JSON.stringify(globalState));
     return msgs.filter(Boolean).join("<br>");
 }
@@ -103,7 +205,8 @@ let gameState = {
     clues: [],
     flags: {}, // 用于存储支线等状态
     currentSceneId: "title",
-    hall_medal_count: 0
+    hall_medal_count: 0,
+    runStartedAt: null
 };
 
 // 辅助方法
@@ -234,7 +337,8 @@ function renderScene(sceneId) {
             clues: [],
             flags: {},
             currentSceneId: "title",
-            hall_medal_count: 0
+            hall_medal_count: 0,
+            runStartedAt: null
         };
     }
 
@@ -246,6 +350,20 @@ function renderScene(sceneId) {
     }
     
     gameState.currentSceneId = sceneId;
+
+    const trapScenes = new Set(["library_unlock_clasp", "side_ending_disappear", "side_ending_seeker"]);
+    const brutalScenes = new Set(["library_unlock_clasp", "basement_force_furnace", "clocktower_lever_early"]);
+    if (trapScenes.has(sceneId)) setFlag("player_hit_trap", true);
+    if (brutalScenes.has(sceneId)) {
+        const n = typeof gameState.flags.brutal_count === "number" ? gameState.flags.brutal_count : 0;
+        gameState.flags.brutal_count = n + 1;
+    }
+    if (
+        (sceneId === "opening_studio" || sceneId === "opening_studio_ng_plus" || sceneId === "opening_gate")
+        && !gameState.runStartedAt
+    ) {
+        gameState.runStartedAt = Date.now();
+    }
     
     // 执行自动存档（只有不是在标题和结局界面才存档）
     if (sceneId !== "title" && !sceneId.startsWith("ending_")) {
