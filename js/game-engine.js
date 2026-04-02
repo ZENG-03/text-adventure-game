@@ -496,6 +496,22 @@ function renderScene(sceneId) {
         } else if (gameState.hall_medal_count >= 3) {
             dynamicDesc += "\\n[大厅发生了变化：一些雕像的眼睛似乎在盯着你。]";
         }
+        
+        const rFmt = (name, item) => {
+            if (gameState.items.some(i => i.includes(item))) {
+                return `<span style="color:#d4af37;text-shadow:0 0 5px #d4af37;font-weight:bold;">${name}(★已探索)</span>`;
+            }
+            return `<span style="color:#777;">${name}(未探索)</span>`;
+        };
+
+        dynamicDesc += `
+<div style="background:rgba(0,0,0,0.5); border:1px solid #444; padding:10px; border-radius:5px; margin-top:20px; font-family:monospace; line-height:1.6;">
+    <div style="color:#aaa; border-bottom:1px solid #444; padding-bottom:5px; margin-bottom:5px; font-weight:bold;">🗺️ 庄园状态简图</div>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二楼：${rFmt("画室", "色彩徽章")} | ${rFmt("最深处的卧室", "彩虹徽章")}<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一楼：${rFmt("音乐室", "旋律徽章")} | ${rFmt("大厅", "起始徽章")} | ${rFmt("温室花房", "生命徽章")} | ${rFmt("书房/图书馆", "智慧徽章")}<br>
+    &nbsp;&nbsp;东侧附属：${rFmt("钟楼", "时空徽章")}<br>
+    &nbsp;&nbsp;&nbsp;地下：${rFmt("地下室", "深渊徽章")}
+</div>`;
     }
 
     const achMsg = checkAchievements();
