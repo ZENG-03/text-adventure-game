@@ -136,7 +136,7 @@ class SceneRegressionTests(unittest.TestCase):
             ending3_cond(state),
             msg="ending_3 should be locked before basement side quest completion",
         )
-        state.set("sq_underground_full", True)
+        state.set("side_underground_completed", True)
         self.assertTrue(
             ending3_cond(state),
             msg="ending_3 should unlock after basement side quest completion",
@@ -147,8 +147,8 @@ class SceneRegressionTests(unittest.TestCase):
             ending4_cond(state),
             msg="ending_4 should be locked before painting side quest completion",
         )
-        state.set("sq_paint_full", True)
-        state.set("side_quest_clock_done", True)
+        state.set("side_painting_completed", True)
+        state.set("side_clock_completed", True)
         self.assertTrue(
             ending4_cond(state),
             msg="ending_4 should unlock after painting side quest completion",
@@ -161,11 +161,11 @@ class SceneRegressionTests(unittest.TestCase):
             truth_cond(state),
             msg="ending_5_truth should be locked before side quest completion",
         )
-        state.set("side_quest_butler_done", True)
-        state.set("sq_underground_full", True)
-        state.set("sq_paint_full", True)
-        state.set("side_quest_clock_done", True)
-        state.set("side_quest_music_done", True)
+        state.set("side_butler_completed", True)
+        state.set("side_underground_completed", True)
+        state.set("side_painting_completed", True)
+        state.set("side_clock_completed", True)
+        state.set("side_music_completed", True)
         self.assertTrue(
             truth_cond(state),
             msg="ending_5_truth should unlock after the tracked side quests are completed",
@@ -178,8 +178,8 @@ class SceneRegressionTests(unittest.TestCase):
             museum_cond(state),
             msg="ending_7_museum should be locked before butler and paint full flags",
         )
-        state.set("side_quest_butler_done", True)
-        state.set("sq_paint_full", True)
+        state.set("side_butler_completed", True)
+        state.set("side_painting_completed", True)
         self.assertTrue(
             museum_cond(state),
             msg="ending_7_museum should unlock after butler and paint full flags",

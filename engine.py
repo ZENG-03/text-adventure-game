@@ -80,8 +80,14 @@ class GameEngine:
         while True:
             self.clear_screen()
             if self.current_scene.on_enter:
-                self.current_scene.on_enter(self.state)
-                
+                res = self.current_scene.on_enter(self.state)
+                if isinstance(res, dict) and res.get("type") == "redirect":
+                    target_id = res.get("target")
+                    if target_id and target_id in self.scenes:
+                        self.current_scene = self.scenes[target_id]
+                        self.state.set("current_scene_id", target_id)
+                        continue
+
             print(self.current_scene.desc)
             print("-" * 40)
             

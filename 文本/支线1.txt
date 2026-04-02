@@ -171,7 +171,7 @@
 ### 结局一：囚徒
 场景ID: side_ending_master
 
-**获得状态：sq_butler_done**
+**获得状态：side_butler_completed**
 
 你沉思片刻，最终说：“我愿意成为谜语馆的主人。这里的一切都太迷人了，我无法放弃。”
 
@@ -231,7 +231,7 @@
 ### 纪念品结局
 场景ID: side_ending_memento
 
-**获得状态：sq_butler_done**
+**获得状态：side_butler_completed**
 
 管家将一只银怀表递给你：“这是哥哥的遗物。他曾说过，时间会证明一切。现在，它属于你了。”
 

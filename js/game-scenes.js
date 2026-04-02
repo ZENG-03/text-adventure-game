@@ -399,7 +399,7 @@ scenes["basement_solved"] = {
 scenes["clocktower_entry"] = {
     desc: `钟楼内满是齿轮，底部是工坊，顶层是巨大的钟盘。`,
     options: [
-        { text: "接取支线：查阅观测台日志", target: "side_quest_clock", condition: () => !getFlag("sq_clock") },
+        { text: "接取支线：查阅观测台日志", target: "side_quest_clock", condition: () => !getFlag("side_clock_completed") },
         { text: "翻找底层工坊工具", target: "clocktower_workshop" },
         { text: "前往顶层调校钟盘", target: "clocktower_top" },
         { text: "返回大厅", target: "hall_main" }
@@ -407,7 +407,7 @@ scenes["clocktower_entry"] = {
 };
 scenes["side_quest_clock"] = {
     on_enter: () => {
-        setFlag("sq_clock", true);
+        setFlag("side_clock_completed", true);
         gameState.clues.push("观测记录");
         return `<div class="system-message">【支线进度】：达成，获得“星月观测记录”</div>`;
     },
@@ -3770,9 +3770,9 @@ scenes["side_ask_more"] = {
 scenes["side_ending_master"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasItem("sq_butler_done")) {
-            gameState.items.push("sq_butler_done");
-            msg += `<div class="system-message">【获得物品】：sq_butler_done</div>`;
+        if(!hasItem("side_butler_completed")) {
+            gameState.items.push("side_butler_completed");
+            msg += `<div class="system-message">【获得物品】：side_butler_completed</div>`;
         }
         return msg;
     },
@@ -3834,9 +3834,9 @@ scenes["side_cellar_diary"] = {
 scenes["side_ending_memento"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasItem("sq_butler_done")) {
-            gameState.items.push("sq_butler_done");
-            msg += `<div class="system-message">【获得物品】：sq_butler_done</div>`;
+        if(!hasItem("side_butler_completed")) {
+            gameState.items.push("side_butler_completed");
+            msg += `<div class="system-message">【获得物品】：side_butler_completed</div>`;
         }
         if(!hasItem("阿斯特的怀表（可在后续谜题中作为提示道具使用）")) {
             gameState.items.push("阿斯特的怀表（可在后续谜题中作为提示道具使用）");
@@ -4054,9 +4054,9 @@ scenes["side_elenor_fate"] = {
 scenes["side_ending_reconciliation"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasItem("sq_paint_full")) {
-            gameState.items.push("sq_paint_full");
-            msg += `<div class="system-message">【获得物品】：sq_paint_full</div>`;
+        if(!hasItem("side_painting_completed")) {
+            gameState.items.push("side_painting_completed");
+            msg += `<div class="system-message">【获得物品】：side_painting_completed</div>`;
         }
         return msg;
     },
@@ -4071,9 +4071,9 @@ scenes["side_ending_reconciliation"] = {
 scenes["side_ending_legacy"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasItem("sq_paint_full")) {
-            gameState.items.push("sq_paint_full");
-            msg += `<div class="system-message">【获得物品】：sq_paint_full</div>`;
+        if(!hasItem("side_painting_completed")) {
+            gameState.items.push("side_painting_completed");
+            msg += `<div class="system-message">【获得物品】：side_painting_completed</div>`;
         }
         return msg;
     },
@@ -4382,9 +4382,9 @@ scenes["side_ending_seeker"] = {
 scenes["side_ending_guardian"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasItem("sq_underground_full")) {
-            gameState.items.push("sq_underground_full");
-            msg += `<div class="system-message">【获得物品】：sq_underground_full</div>`;
+        if(!hasItem("side_underground_completed")) {
+            gameState.items.push("side_underground_completed");
+            msg += `<div class="system-message">【获得物品】：side_underground_completed</div>`;
         }
         return msg;
     },
@@ -4400,9 +4400,9 @@ scenes["side_ending_guardian"] = {
 scenes["side_ending_truth"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasItem("sq_underground_full")) {
-            gameState.items.push("sq_underground_full");
-            msg += `<div class="system-message">【获得物品】：sq_underground_full</div>`;
+        if(!hasItem("side_underground_completed")) {
+            gameState.items.push("side_underground_completed");
+            msg += `<div class="system-message">【获得物品】：side_underground_completed</div>`;
         }
         if(!hasClue("托马斯地质学会正名")) {
             gameState.clues.push("托马斯地质学会正名");
@@ -4640,9 +4640,9 @@ scenes["side_symphony_complete"] = {
 scenes["side_ending_music_public"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasItem("sq_music_full")) {
-            gameState.items.push("sq_music_full");
-            msg += `<div class="system-message">【获得物品】：sq_music_full</div>`;
+        if(!hasItem("side_music_completed")) {
+            gameState.items.push("side_music_completed");
+            msg += `<div class="system-message">【获得物品】：side_music_completed</div>`;
         }
         return msg;
     },
@@ -4658,9 +4658,9 @@ scenes["side_ending_music_public"] = {
 scenes["side_ending_music_keep"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasItem("sq_music_full")) {
-            gameState.items.push("sq_music_full");
-            msg += `<div class="system-message">【获得物品】：sq_music_full</div>`;
+        if(!hasItem("side_music_completed")) {
+            gameState.items.push("side_music_completed");
+            msg += `<div class="system-message">【获得物品】：side_music_completed</div>`;
         }
         return msg;
     },
@@ -4836,8 +4836,8 @@ scenes["final_test_4"] = {
         { text: "第一条路：成为谜语馆的主人", target: "ending_1" },
         { text: "第二条路：成为谜语的传播者", target: "ending_2" },
         { text: "第三条路：成为守护者，封印地下的力量", target: "ending_3", condition: () => getFlag("sq_base") },
-        { text: "第四条路：成为故事的讲述者（博物馆与传记）", target: "ending_4", condition: () => getFlag("sq_paint") && getFlag("sq_clock") },
-        { text: "第五条路：传承谜语精神，并同时纪念伊莲娜与埃莉诺", target: "ending_5_truth", condition: () => getFlag("sq_butler_done") && getFlag("sq_paint_full") && getFlag("sq_underground_full") && getFlag("sq_music_full") },
+        { text: "第四条路：成为故事的讲述者（博物馆与传记）", target: "ending_4", condition: () => getFlag("sq_paint") && getFlag("side_clock_completed") },
+        { text: "第五条路：传承谜语精神，并同时纪念伊莲娜与埃莉诺", target: "ending_5_truth", condition: () => getFlag("side_butler_completed") && getFlag("side_painting_completed") && getFlag("side_underground_completed") && getFlag("side_music_completed") },
         { text: "迟疑、误解或逃避", target: "ending_6_forgotten" },
         { text: "返回大厅", target: "hall_main" }
     ]

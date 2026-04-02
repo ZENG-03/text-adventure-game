@@ -90,13 +90,13 @@ function checkAchievements() {
     if (medalCount >= 4) msgs.push(unlockAchievement("ach_half_medals", "半程智者"));
     if (medalCount >= 7) msgs.push(unlockAchievement("ach_all_medals", "七曜归位"));
 
-    if (medalCount >= 7 && !getFlag("sq_paint") && !getFlag("sq_base") && !getFlag("sq_clock") && !getFlag("sq_butler_done")) {
+    if (medalCount >= 7 && !getFlag("sq_paint") && !getFlag("sq_base") && !getFlag("side_clock_completed") && !getFlag("side_butler_completed")) {
         msgs.push(unlockAchievement("ach_all_seeing", "全知之眼"));
     }
 
     if (
-        getFlag("sq_butler_done") && getFlag("sq_paint_full") && getFlag("sq_underground_full")
-        && getFlag("sq_music_full") && medalCount >= 7
+        getFlag("side_butler_completed") && getFlag("side_painting_completed") && getFlag("side_underground_completed")
+        && getFlag("side_music_completed") && medalCount >= 7
     ) {
         msgs.push(unlockAchievement("ach_manor_child", "庄园之子"));
     }
@@ -125,14 +125,14 @@ function checkAchievements() {
         msgs.push(unlockAchievement("ach_uncrowned", "无冕之王"));
     }
 
-    if (getFlag("sq_butler_done") && (hasEnd("自由的智者") || hasEnd("谜语馆的回响") || hasEnd("七重谜语的真相"))) {
+    if (getFlag("side_butler_completed") && (hasEnd("自由的智者") || hasEnd("谜语馆的回响") || hasEnd("七重谜语的真相"))) {
         msgs.push(unlockAchievement("ach_brother", "兄弟之约"));
     }
-    if (getFlag("sq_paint_full")) msgs.push(unlockAchievement("ach_painting_meet", "画中重逢"));
-    if (getFlag("sq_music_full")) msgs.push(unlockAchievement("ach_symphony_done", "未完成的完成"));
-    if (getFlag("sq_underground_full")) msgs.push(unlockAchievement("ach_underground_echo", "地下的回响"));
+    if (getFlag("side_painting_completed")) msgs.push(unlockAchievement("ach_painting_meet", "画中重逢"));
+    if (getFlag("side_music_completed")) msgs.push(unlockAchievement("ach_symphony_done", "未完成的完成"));
+    if (getFlag("side_underground_completed")) msgs.push(unlockAchievement("ach_underground_echo", "地下的回响"));
     if (
-        getFlag("sq_butler_done") && getFlag("sq_paint_full") && getFlag("sq_underground_full") && getFlag("sq_music_full")
+        getFlag("side_butler_completed") && getFlag("side_painting_completed") && getFlag("side_underground_completed") && getFlag("side_music_completed")
     ) {
         msgs.push(unlockAchievement("ach_all_stories", "所有故事"));
     }
@@ -143,20 +143,20 @@ function checkAchievements() {
     if (hasEnd("自由的智者")) msgs.push(unlockAchievement("ach_ending_free", "自由的智者"));
     if (hasEnd("永恒的守护者")) msgs.push(unlockAchievement("ach_ending_guardian", "永恒的守护者"));
     if (hasEnd("谜语馆的回响") || hasEnd("七重谜语的真相")) {
-        const sideN = [getFlag("sq_paint_full"), getFlag("sq_underground_full"), getFlag("sq_music_full"), getFlag("sq_butler_done")].filter(Boolean).length;
+        const sideN = [getFlag("side_painting_completed"), getFlag("side_underground_completed"), getFlag("side_music_completed"), getFlag("side_butler_completed")].filter(Boolean).length;
         if (sideN >= 2) msgs.push(unlockAchievement("ach_eternal_echo", "永恒的回响"));
     }
     if (hasEnd("七重谜语的真相")) msgs.push(unlockAchievement("ach_true_end", "七重谜语的真相"));
 
     if (hasEnd("被遗忘的探索者")) msgs.push(unlockAchievement("ach_ending_forgotten", "被遗忘的探索者"));
 
-    if (getFlag("sq_paint_full") && getFlag("sq_music_full") && hasEnd("七重谜语的真相")) {
+    if (getFlag("side_painting_completed") && getFlag("side_music_completed") && hasEnd("七重谜语的真相")) {
         msgs.push(unlockAchievement("ach_egg_nightingale_wisteria", "夜莺与紫藤"));
     }
     if (hasItem("阿斯特的怀表（可在后续谜题中作为提示道具使用）") && hasEnd("永恒的守护者")) {
         msgs.push(unlockAchievement("ach_egg_brother_reconcile", "兄弟和解"));
     }
-    if (getFlag("sq_underground_full") && hasClue("托马斯地质学会正名")) {
+    if (getFlag("side_underground_completed") && hasClue("托马斯地质学会正名")) {
         msgs.push(unlockAchievement("ach_egg_geologist", "地质学家的复仇"));
     }
     if (
@@ -342,6 +342,21 @@ function renderScene(sceneId) {
         };
     }
 
+    // --- 拦截逻辑：支线和动态事件探测 ---
+    if (sceneId === "hall_main" && gameState.hall_medal_count >= 3 && !getFlag("flag_butler_triggered")) {
+        setFlag("flag_butler_triggered", true);
+        sceneId = "side_story_1_start";
+    } else if (sceneId === "studio_entry" && hasItem("色彩徽章") && !getFlag("flag_side_painting_triggered")) {
+        setFlag("flag_side_painting_triggered", true);
+        sceneId = "side_story_2_start";
+    } else if (sceneId === "basement_entry" && hasItem("深渊徽章") && !getFlag("flag_side_underground_triggered")) {
+        setFlag("flag_side_underground_triggered", true);
+        sceneId = "side_story_3_start";
+    } else if (sceneId === "musicroom_entry" && hasItem("旋律徽章") && !getFlag("flag_side_music_triggered")) {
+        setFlag("flag_side_music_triggered", true);
+        sceneId = "side_story_4_start";
+    }
+
     const scene = scenes[sceneId];
     if(!scene) {
         if (sceneId !== "title") {
@@ -372,7 +387,7 @@ function renderScene(sceneId) {
 
     let locationStr = sceneId;
     if(sceneId === "title") locationStr = "主界面";
-    else if(sceneId.startsWith("hall")) locationStr = "大厅";
+    else if(sceneId.startsWith("hall_main")) locationStr = "大厅";
     else if(sceneId.startsWith("library")) locationStr = "图书馆";
     else if(sceneId.startsWith("musicroom")) locationStr = "音乐室";
     else if(sceneId.startsWith("greenhouse")) locationStr = "温室";
@@ -388,14 +403,30 @@ function renderScene(sceneId) {
 
     let extraMsg = "";
     if (scene.on_enter) {
-        extraMsg = scene.on_enter();
+        const res = scene.on_enter();
+        if (typeof res === 'object' && res !== null && res.type === 'redirect' && res.target) {
+            renderScene(res.target);
+            return;
+        } else if (typeof res === 'string') {
+            extraMsg = res;
+        }
     }
+
+    let dynamicDesc = scene.desc;
+    if (sceneId === "hall_main") {
+        if (gameState.hall_medal_count >= 5) {
+            dynamicDesc += "\\n[大厅发生了剧变：空气中弥漫着压抑的气息，中央密室的大门开始渗出微光。]";
+        } else if (gameState.hall_medal_count >= 3) {
+            dynamicDesc += "\\n[大厅发生了变化：一些雕像的眼睛似乎在盯着你。]";
+        }
+    }
+
     const achMsg = checkAchievements();
     if (achMsg) {
         extraMsg += (extraMsg ? "<br><br>" : "") + achMsg;
     }
 
-    let fullDescHTML = scene.desc.replace(/\\n/g, "<br>") + (extraMsg ? "<br><br>" + extraMsg : "");
+    let fullDescHTML = dynamicDesc.replace(/\\n/g, "<br>") + (extraMsg ? "<br><br>" + extraMsg : "");
     
     // 清空并隐藏选项，等待打字机效果结束
     optionsContainer.innerHTML = "";
@@ -430,7 +461,7 @@ function renderScene(sceneId) {
                 ? rawText
                 : (opt.target === "title"
                     ? "返回主界面"
-                    : ((opt.target === "hall_main" || opt.target === "hall") ? "返回大厅" : "继续探索"));
+                    : ((opt.target === "hall_main" || opt.target === "hall_main") ? "返回大厅" : "继续探索"));
             
             let btn = document.createElement("button");
             btn.className = "option-btn";
@@ -446,7 +477,7 @@ function renderScene(sceneId) {
                         storyElement.scrollTop = storyElement.scrollHeight;
                     }
                     const nextTarget = opt.target || sceneId;
-                    let normalizedTarget = nextTarget === "hall" ? "hall_main" : nextTarget;
+                    let normalizedTarget = nextTarget === "hall_main" ? "hall_main" : nextTarget;
 
                     const currentTargetScene = scenes[normalizedTarget];
                     if (!currentTargetScene || isPlaceholderScene(currentTargetScene)) {

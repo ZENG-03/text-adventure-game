@@ -264,7 +264,7 @@
 ### 结局二：守护者的责任
 场景ID: side_ending_guardian
 
-**获得状态：sq_underground_full**
+**获得状态：side_underground_completed**
 
 你接受了守护者的身份。管家教你如何用符文封印洞穴中的能量，如何定期检查封印是否完好。你成为谜语馆的新守护者，不是主人，而是看门人。
 
@@ -279,7 +279,7 @@
 ### 结局三：真相的传播者
 场景ID: side_ending_truth
 
-**获得状态：sq_underground_full**
+**获得状态：side_underground_completed**
 
 **获得线索：托马斯地质学会正名**
 
