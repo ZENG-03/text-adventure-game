@@ -4835,8 +4835,8 @@ scenes["final_test_4"] = {
     options: [
         { text: "第一条路：成为谜语馆的主人", target: "ending_1" },
         { text: "第二条路：成为谜语的传播者", target: "ending_2" },
-        { text: "第三条路：成为守护者，封印地下的力量", target: "ending_3", condition: () => getFlag("sq_base") },
-        { text: "第四条路：成为故事的讲述者（博物馆与传记）", target: "ending_4", condition: () => getFlag("sq_paint") && getFlag("side_clock_completed") },
+        { text: "第三条路：成为守护者，封印地下的力量", target: "ending_3", condition: () => getFlag("side_underground_completed") },
+        { text: "第四条路：成为故事的讲述者（博物馆与传记）", target: "ending_4", condition: () => getFlag("side_painting_completed") && getFlag("side_clock_completed") },
         { text: "第五条路：传承谜语精神，并同时纪念伊莲娜与埃莉诺", target: "ending_5_truth", condition: () => getFlag("side_butler_completed") && getFlag("side_painting_completed") && getFlag("side_underground_completed") && getFlag("side_music_completed") },
         { text: "迟疑、误解或逃避", target: "ending_6_forgotten" },
         { text: "返回大厅", target: "hall_main" }
@@ -5118,7 +5118,21 @@ scenes["library_death"] = {
 scenes["greenhouse_poison"] = {
     desc: `你将错误的液体倒入石盆，枯树中喷出腐臭的毒气，你来不及逃离，窒息倒下。
 （游戏结束）
-（注：实际实现时，可设计更多分支与失败结局，此处仅展示核心成功路线与部分失败场景，文本总量已接近一万字。您可在此基础上扩展更多选项与描述，以满足完整分支需求。）`,
+（注：实际实现时，可设计更多分支与失败结局，此处仅展示核心成功路线与部分失败场景，文本总量已接近一万字。您可在此基础上扩展更多选项与描述，以满足完整分支需求。）
+ :WofI D :   h a l l _ i n j u r e d 
+ 
+ \`OSN\$OƉΑnn!j|0
+NwSǏNYEN\`O(W'YSQQv0Wg
+Neg0
+ {[eY\\_e(W NeQQ0Ww@w\`O
+ 
+ c"}\`Ov؏@wbT0
+ 
+ * * 	y* * 
+ -   p0Wzweg~~c"}  [ MR_  h a l l _ m a i n ] 
+ 
+ 
+ `,
     options: [
         { text: "返回大厅", target: "hall_main" }
     ]

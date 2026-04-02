@@ -3,6 +3,9 @@ from engine import Scene, Option
 def build_scenes():
     scenes = {}
 
+    def clocktower_enter(s):
+        if s.has_item('红宝石徽章'): s.set('side_clock_completed', True)
+
     def hall_main_enter(state):
         count = state.get("hall_medal_count", 0)
         if count >= 3 and not state.get("flag_butler_triggered"):

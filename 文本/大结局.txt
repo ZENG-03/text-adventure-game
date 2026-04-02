@@ -174,8 +174,8 @@
 **选项：**
 - 第一条路：成为谜语馆的主人 [前往 ending_1]
 - 第二条路：成为谜语的传播者 [前往 ending_2]
-- 第三条路：成为守护者，封印地下的力量 [前往 ending_3] [条件：flag:sq_base]
-- 第四条路：成为故事的讲述者（博物馆与传记） [前往 ending_4] [条件：allflags:sq_paint|side_clock_completed]
+- 第三条路：成为守护者，封印地下的力量 [前往 ending_3] [条件：flag:side_underground_completed]
+- 第四条路：成为故事的讲述者（博物馆与传记） [前往 ending_4] [条件：allflags:side_painting_completed|side_clock_completed]
 - 第五条路：传承谜语精神，并同时纪念伊莲娜与埃莉诺 [前往 ending_5_truth] [条件：allflags:side_butler_completed|side_painting_completed|side_underground_completed|side_music_completed]
 - 迟疑、误解或逃避 [前往 ending_6_forgotten]
 

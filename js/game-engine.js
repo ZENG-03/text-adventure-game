@@ -211,6 +211,14 @@ let gameState = {
 
 // 辅助方法
 function hasItem(item) { return gameState.items.includes(item); }
+function removeItem(item) { 
+    const idx = gameState.items.indexOf(item);
+    if (idx !== -1) {
+        gameState.items.splice(idx, 1);
+        return true;
+    }
+    return false;
+}
 function hasClue(clue) { return gameState.clues.includes(clue); }
 function getFlag(key) { return gameState.flags[key] || false; }
 function setFlag(key, val) { gameState.flags[key] = val; }
@@ -356,6 +364,11 @@ function renderScene(sceneId) {
         setFlag("flag_side_music_triggered", true);
         sceneId = "side_story_4_start";
     }
+    
+    // Auto-set clock flag if Ruby Medal is obtained, to sync with endgame condition
+    if (hasItem("红宝石徽章") && !getFlag("side_clock_completed")) {
+        setFlag("side_clock_completed", true);
+    }
 
     const scene = scenes[sceneId];
     if(!scene) {
@@ -437,7 +450,24 @@ function renderScene(sceneId) {
 
         const options = Array.isArray(scene.options) ? [...scene.options] : [];
         const isEndingScene = sceneId === "game_over" || sceneId.startsWith("ending_");
-        if (isEndingScene) {
+
+        const isTrapScene = sceneId.includes("trap") || sceneId.includes("death") || sceneId.includes("explosion") || sceneId.includes("failure") || sceneId.includes("dead");
+
+        if (isTrapScene && options.length <= 1) {
+            options.length = 0; // Clear auto-generated "return to hall"
+            let roomEntry = "hall_main";
+            if (sceneId.startsWith("library")) roomEntry = "library_entry";
+            else if (sceneId.startsWith("basement")) roomEntry = "basement_entry";
+            else if (sceneId.startsWith("greenhouse")) roomEntry = "greenhouse_entry";
+            else if (sceneId.startsWith("musicroom")) roomEntry = "musicroom_entry";
+            else if (sceneId.startsWith("studio")) roomEntry = "studio_entry";
+            else if (sceneId.startsWith("clocktower")) roomEntry = "clocktower_entry";
+            else if (sceneId.startsWith("bedroom")) roomEntry = "bedroom_entry";
+            
+            options.push({ text: "重新挑战 (回到当前房间入口)", target: roomEntry });
+            options.push({ text: "返回大厅休息", target: "hall_main" });
+            options.push({ text: "读取上一存档", target: "system_load_auto" });
+        } else if (isEndingScene) {
             options.push({ text: "返回主界面", target: "title" });
             options.push({ text: "返回大厅", target: "hall_main" });
         }
