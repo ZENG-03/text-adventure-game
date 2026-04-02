@@ -173,7 +173,7 @@
 
 在每个结局后添加统一的重玩界面：
 
-**场景ID: game_over**
+**场景ID: game_over_txt**
 
 > **—— 游戏结束 ——**
 > 
@@ -227,3 +227,646 @@
 ---
 
 以上补充涵盖了用户要求的所有缺失文本模块，并保持了与之前生成内容的一致性。现在游戏文本已经完整，可直接用于开发。
+
+---
+# 自动生成的缺失场景占位
+
+场景ID: basement_activate_planets
+描述: 【系统提示】该区域（basement_activate_planets）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: basement_extract_essence
+描述: 【系统提示】该区域（basement_extract_essence）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: basement_furnace_with_key
+描述: 【系统提示】该区域（basement_furnace_with_key）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: basement_periodic_table
+描述: 【系统提示】该区域（basement_periodic_table）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: basement_prepare_materials
+描述: 【系统提示】该区域（basement_prepare_materials）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: basement_put_metals
+描述: 【系统提示】该区域（basement_put_metals）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: basement_runes
+描述: 【系统提示】该区域（basement_runes）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: basement_search_metals
+描述: 【系统提示】该区域（basement_search_metals）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: basement_weigh_metals
+描述: 【系统提示】该区域（basement_weigh_metals）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: bedroom_candle_midnight
+描述: 【系统提示】该区域（bedroom_candle_midnight）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: bedroom_final_secret
+描述: 【系统提示】该区域（bedroom_final_secret）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: bedroom_painting_details
+描述: 【系统提示】该区域（bedroom_painting_details）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: bedroom_telescope
+描述: 【系统提示】该区域（bedroom_telescope）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: clocktower_behind_clock
+描述: 【系统提示】该区域（clocktower_behind_clock）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: clocktower_door
+描述: 【系统提示】该区域（clocktower_door）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: clocktower_gear_clues
+描述: 【系统提示】该区域（clocktower_gear_clues）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: clocktower_gears
+描述: 【系统提示】该区域（clocktower_gears）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: ending_1
+描述: 【系统提示】该区域（ending_1）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: ending_2
+描述: 【系统提示】该区域（ending_2）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: ending_3
+描述: 【系统提示】该区域（ending_3）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: ending_4
+描述: 【系统提示】该区域（ending_4）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: greenhouse_basin
+描述: 【系统提示】该区域（greenhouse_basin）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: greenhouse_check_seeds
+描述: 【系统提示】该区域（greenhouse_check_seeds）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: greenhouse_clean_pipes
+描述: 【系统提示】该区域（greenhouse_clean_pipes）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: greenhouse_fix_pump
+描述: 【系统提示】该区域（greenhouse_fix_pump）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: greenhouse_mix_dead
+描述: 【系统提示】该区域（greenhouse_mix_dead）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: greenhouse_mix_nutrient
+描述: 【系统提示】该区域（greenhouse_mix_nutrient）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: greenhouse_nursery
+描述: 【系统提示】该区域（greenhouse_nursery）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: greenhouse_pipes
+描述: 【系统提示】该区域（greenhouse_pipes）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: greenhouse_use_fertilizer
+描述: 【系统提示】该区域（greenhouse_use_fertilizer）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: hall_injured
+描述: 你受伤了，剧烈的疼痛让你无法继续当前的探索。你只能跌跌撞撞地回到大厅休息，处理伤口。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: library_astrolabe_success
+描述: 【系统提示】该区域（library_astrolabe_success）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: library_fail
+描述: 你拉动了书籍，但似乎缺少了什么核心条件，装置发出刺耳的摩擦声后彻底卡死了。目前无法继续操作。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: library_gaps
+描述: 【系统提示】该区域（library_gaps）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: library_labels
+描述: 【系统提示】该区域（library_labels）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: library_scholar_order
+描述: 【系统提示】该区域（library_scholar_order）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: library_sort_attempt
+描述: 【系统提示】该区域（library_sort_attempt）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: library_window_move
+描述: 【系统提示】该区域（library_window_move）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: musicroom_autoplayer
+描述: 【系统提示】该区域（musicroom_autoplayer）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: musicroom_copy_score
+描述: 【系统提示】该区域（musicroom_copy_score）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: musicroom_find_score_parts
+描述: 【系统提示】该区域（musicroom_find_score_parts）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: musicroom_inside
+描述: 【系统提示】该区域（musicroom_inside）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: musicroom_inspect
+描述: 【系统提示】该区域（musicroom_inspect）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: musicroom_instrument_order
+描述: 【系统提示】该区域（musicroom_instrument_order）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: musicroom_order_by_score
+描述: 【系统提示】该区域（musicroom_order_by_score）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: musicroom_play_instruments_order
+描述: 【系统提示】该区域（musicroom_play_instruments_order）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: musicroom_play_organ
+描述: 【系统提示】该区域（musicroom_play_organ）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: musicroom_reflector_ropes
+描述: 【系统提示】该区域（musicroom_reflector_ropes）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: musicroom_search_crystal
+描述: 【系统提示】该区域（musicroom_search_crystal）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: musicroom_tune_by_ear
+描述: 【系统提示】该区域（musicroom_tune_by_ear）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_alternate_path
+描述: 【系统提示】该区域（side_alternate_path）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_ask_butler
+描述: 【系统提示】该区域（side_ask_butler）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_attic
+描述: 【系统提示】该区域（side_attic）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_butler_knows
+描述: 【系统提示】该区域（side_butler_knows）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_butler_last_days
+描述: 【系统提示】该区域（side_butler_last_days）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_cave_deeper
+描述: 【系统提示】该区域（side_cave_deeper）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_cellar_key
+描述: 【系统提示】该区域（side_cellar_key）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_dig_with_hammer
+描述: 【系统提示】该区域（side_dig_with_hammer）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_elenor_grave
+描述: 【系统提示】该区域（side_elenor_grave）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_hidden_drawer
+描述: 【系统提示】该区域（side_hidden_drawer）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_leave_cave
+描述: 【系统提示】该区域（side_leave_cave）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_mirror_again
+描述: 【系统提示】该区域（side_mirror_again）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_music_hidden
+描述: 【系统提示】该区域（side_music_hidden）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_music_room_play
+描述: 【系统提示】该区域（side_music_room_play）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_palette_clue
+描述: 【系统提示】该区域（side_palette_clue）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_play_violin
+描述: 【系统提示】该区域（side_play_violin）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_score_details
+描述: 【系统提示】该区域（side_score_details）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_search_elenor
+描述: 【系统提示】该区域（side_search_elenor）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_servant_room
+描述: 【系统提示】该区域（side_servant_room）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_study_murals
+描述: 【系统提示】该区域（side_study_murals）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: side_tell_butler
+描述: 【系统提示】该区域（side_tell_butler）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: studio_cabinet_open
+描述: 【系统提示】该区域（studio_cabinet_open）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: studio_find_solvent
+描述: 【系统提示】该区域（studio_find_solvent）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: studio_mix
+描述: 【系统提示】该区域（studio_mix）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: studio_paint_mirror_fix
+描述: 【系统提示】该区域（studio_paint_mirror_fix）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: studio_paint_portrait
+描述: 【系统提示】该区域（studio_paint_portrait）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: studio_press_gems
+描述: 【系统提示】该区域（studio_press_gems）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: studio_rotate_scale
+描述: 【系统提示】该区域（studio_rotate_scale）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: studio_sketches
+描述: 【系统提示】该区域（studio_sketches）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---
+
+场景ID: studio_water_tank
+描述: 【系统提示】该区域（studio_water_tank）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。
+
+**选项：**
+- 返回大厅 [前往 hall_main]
+
+---

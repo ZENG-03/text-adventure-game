@@ -1,3 +1,9 @@
+var gameSettings = {
+    fontSize: 16,
+    typeSpeed: 25,
+    noAnim: false
+};
+
 
 // 全局与多周目状态管理
 let globalState = {
@@ -79,6 +85,19 @@ const ACHIEVEMENTS_FOR_MASTER = [
     "ach_true_end"
 ];
 
+
+function showAchievementToast(msg) {
+    const toast = document.getElementById("achievement-toast");
+    if (!toast) return;
+    const ttext = document.getElementById("toast-text");
+    if(ttext) ttext.innerHTML = msg;
+    toast.style.display = "block";
+    toast.style.animation = "slideInX 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards";
+    setTimeout(() => {
+        toast.style.animation = "slideOutX 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards";
+    }, 4000);
+}
+
 function checkAchievements() {
     const msgs = [];
     const medalCount = gameState.hall_medal_count || gameState.medals.length;
@@ -90,7 +109,7 @@ function checkAchievements() {
     if (medalCount >= 4) msgs.push(unlockAchievement("ach_half_medals", "半程智者"));
     if (medalCount >= 7) msgs.push(unlockAchievement("ach_all_medals", "七曜归位"));
 
-    if (medalCount >= 7 && !getFlag("sq_paint") && !getFlag("sq_base") && !getFlag("side_clock_completed") && !getFlag("side_butler_completed")) {
+    if (medalCount >= 7 && !getFlag("side_painting_triggered") && !getFlag("side_underground_triggered") && !getFlag("side_clock_completed") && !getFlag("side_butler_completed")) {
         msgs.push(unlockAchievement("ach_all_seeing", "全知之眼"));
     }
 
@@ -280,6 +299,16 @@ function inferSceneTarget(target) {
 }
 
 function typeWriterHTML(element, htmlString, speed, onComplete) {
+    if (typeof gameSettings !== "undefined" && gameSettings.noAnim) {
+        clearInterval(typeWriterInterval);
+        element.innerHTML = htmlString;
+        isTyping = false;
+        element.onclick = null;
+        if (onComplete) onComplete();
+        return;
+    }
+    speed = typeof gameSettings !== "undefined" ? gameSettings.typeSpeed : speed;
+
     clearInterval(typeWriterInterval);
     element.innerHTML = "";
     isTyping = true;
@@ -351,18 +380,18 @@ function renderScene(sceneId) {
     }
 
     // --- 拦截逻辑：支线和动态事件探测 ---
-    if (sceneId === "hall_main" && gameState.hall_medal_count >= 3 && !getFlag("flag_butler_triggered")) {
-        setFlag("flag_butler_triggered", true);
-        sceneId = "side_story_1_start";
-    } else if (sceneId === "studio_entry" && hasItem("色彩徽章") && !getFlag("flag_side_painting_triggered")) {
-        setFlag("flag_side_painting_triggered", true);
-        sceneId = "side_story_2_start";
-    } else if (sceneId === "basement_entry" && hasItem("深渊徽章") && !getFlag("flag_side_underground_triggered")) {
-        setFlag("flag_side_underground_triggered", true);
-        sceneId = "side_story_3_start";
-    } else if (sceneId === "musicroom_entry" && hasItem("旋律徽章") && !getFlag("flag_side_music_triggered")) {
-        setFlag("flag_side_music_triggered", true);
-        sceneId = "side_story_4_start";
+    if (sceneId === "hall_main" && gameState.hall_medal_count >= 3 && !getFlag("side_butler_triggered")) {
+        setFlag("side_butler_triggered", true);
+        sceneId = "sys_side_story_1_trigger";
+    } else if (sceneId === "studio_entry" && hasItem("色彩徽章") && !getFlag("side_painting_triggered")) {
+        setFlag("side_painting_triggered", true);
+        sceneId = "sys_side_story_2_trigger";
+    } else if (sceneId === "basement_entry" && hasItem("深渊徽章") && !getFlag("side_underground_triggered")) {
+        setFlag("side_underground_triggered", true);
+        sceneId = "sys_side_story_3_trigger";
+    } else if (sceneId === "musicroom_entry" && hasItem("旋律徽章") && !getFlag("side_music_triggered")) {
+        setFlag("side_music_triggered", true);
+        sceneId = "sys_side_story_4_trigger";
     }
     
     // Auto-set clock flag if Ruby Medal is obtained, to sync with endgame condition
@@ -370,9 +399,26 @@ function renderScene(sceneId) {
         setFlag("side_clock_completed", true);
     }
 
-    const scene = scenes[sceneId];
+    if (sceneId.startsWith("side_ending_")) {
+        const p1 = ["side_ending_master", "side_ending_spreader", "side_ending_memento"];
+        const p2 = ["side_ending_reconciliation", "side_ending_legacy"];
+        const p3 = ["side_ending_seeker", "side_ending_guardian", "side_ending_truth", "side_ending_disappear"];
+        const p4 = ["side_ending_music_public", "side_ending_music_keep"];
+        if (p1.includes(sceneId)) setFlag("side_butler_completed", true);
+        if (p2.includes(sceneId)) setFlag("side_painting_completed", true);
+        if (p3.includes(sceneId)) setFlag("side_underground_completed", true);
+        if (p4.includes(sceneId)) setFlag("side_music_completed", true);
+    }
+
+    const scene = scenes[sceneId] || window.scenes[sceneId];
     if(!scene) {
-        if (sceneId !== "title") {
+        if (sceneId !== "title" && sceneId !== "system_load_auto") {
+            console.warn("Target scene missing:", sceneId);
+            window.scenes[sceneId] = {
+                desc: "【系统提示】该区域（" + sceneId + "）尚未实装，前路被浓雾封锁，你被迫退回大厅。",
+                options: [{ text: "返回大厅", target: "hall_main" }]
+            };
+            setTimeout(() => renderScene(sceneId), 0);
         }
         return;
     }
@@ -396,6 +442,8 @@ function renderScene(sceneId) {
     // 执行自动存档（只有不是在标题和结局界面才存档）
     if (sceneId !== "title" && !sceneId.startsWith("ending_")) {
         localStorage.setItem("riddle_auto_save", JSON.stringify(gameState));
+        showToast("自动存档成功 💾");
+        showToast("自动存档成功 💾");
     }
 
     let locationStr = sceneId;
@@ -407,7 +455,23 @@ function renderScene(sceneId) {
     else if(sceneId.startsWith("studio")) locationStr = "画室";
     else if(sceneId.startsWith("basement")) locationStr = "地下室";
     else if(sceneId.startsWith("clocktower")) locationStr = "钟楼";
-    else if(sceneId.startsWith("final")) locationStr = "中央密室";
+        else if(sceneId.startsWith("final")) locationStr = "中央密室";
+
+    // 动态添加房间离开过渡如果刚刚获得了新徽章
+    if (sceneId === "hall_main") {
+        let prevMedalCount = gameState.last_hall_medal_count || 0;
+        if (gameState.hall_medal_count > prevMedalCount) {
+            let transitionId = "sys_room_exit_transition";
+            window.scenes[transitionId] = {
+                desc: "你将刚刚获得的徽章小心翼翼地收好，长舒了一口气。\\n伴随着沉重的锁舌闭合声，这扇门在你身后缓缓关上，你再次回到了冰冷的大厅，但你的心境已经不再相同。",
+                options: [{ text: "继续探索大厅", target: "hall_main" }]
+            };
+            gameState.last_hall_medal_count = gameState.hall_medal_count;
+            renderScene(transitionId);
+            return;
+        }
+        gameState.last_hall_medal_count = gameState.hall_medal_count;
+    }
     
     const locationNameEl = document.getElementById("location-name");
     if (locationNameEl) {
@@ -467,9 +531,12 @@ function renderScene(sceneId) {
             options.push({ text: "重新挑战 (回到当前房间入口)", target: roomEntry });
             options.push({ text: "返回大厅休息", target: "hall_main" });
             options.push({ text: "读取上一存档", target: "system_load_auto" });
-        } else if (isEndingScene) {
+        } else if (isEndingScene && sceneId !== "game_over") {
+            // 所有结局统一跳转到 game_over 进行结算
+            options.push({ text: "查看成就与轮回信息", target: "game_over" });
+        } else if (sceneId === "game_over") {
             options.push({ text: "返回主界面", target: "title" });
-            options.push({ text: "返回大厅", target: "hall_main" });
+            options.push({ text: "带着记忆苏醒 (开启多周目)", target: "opening_studio_ng_plus", condition: () => globalState.endingsReached.length > 0 });
         }
 
         if (options.length === 0) {
@@ -493,12 +560,63 @@ function renderScene(sceneId) {
                     ? "返回主界面"
                     : ((opt.target === "hall_main" || opt.target === "hall_main") ? "返回大厅" : "继续探索"));
             
+            let suffix = "";
+        const roomMedalMap = {
+            "puzzle_statues": "勇气徽章",
+            "library_entry": "知识徽章",
+            "musicroom_entry": "和谐徽章",
+            "greenhouse_entry": "生命徽章",
+            "studio_entry": "洞察徽章",
+            "basement_entry": "转化徽章",
+            "clocktower_entry": "怀表"
+        };
+        var visitedKey = sceneId + "->" + opt.target;
+        if (!globalState.visitedOptions) globalState.visitedOptions = {};
+        if (globalState.visitedOptions[visitedKey]) {
+            suffix += " <span style='color:#777;'>(已勘查)</span>";
+        }
+
+        if (roomMedalMap[opt.target]) {
+            const req = roomMedalMap[opt.target];
+            if (gameState.items.some(i => i.includes(req))) {
+                suffix = ' <span style="color:#d4af37; font-weight:bold; font-size:1.1em;">(✓ 已解开)</span>';
+            }
+        }
+
+            
+            let suffix = "";
+        const roomMedalMap = {
+            "puzzle_statues": "勇气徽章",
+            "library_entry": "知识徽章",
+            "musicroom_entry": "和谐徽章",
+            "greenhouse_entry": "生命徽章",
+            "studio_entry": "洞察徽章",
+            "basement_entry": "转化徽章",
+            "clocktower_entry": "怀表"
+        };
+        var visitedKey = sceneId + "->" + opt.target;
+        if (!globalState.visitedOptions) globalState.visitedOptions = {};
+        if (globalState.visitedOptions[visitedKey]) {
+            suffix += " <span style='color:#777;'>(已勘查)</span>";
+        }
+
+        if (roomMedalMap[opt.target]) {
+            const req = roomMedalMap[opt.target];
+            if (gameState.items.some(i => i.includes(req))) {
+                suffix = ' <span style="color:#d4af37; font-weight:bold; font-size:1.1em;">(✓ 已解开)</span>';
+            }
+        }
+
+
+            
             let btn = document.createElement("button");
             btn.className = "option-btn";
             
             if (isAvailable) {
-                btn.innerHTML = "➤ " + optionText;
+                btn.innerHTML = "➤ " + optionText + suffix;
                 btn.onclick = () => {
+                    if (!globalState.visitedOptions) globalState.visitedOptions = {};
+                    globalState.visitedOptions[visitedKey] = true;
                     if(opt.effectMsg) {
                         let hint = document.createElement("div");
                         hint.className = "system-message";
@@ -550,30 +668,84 @@ function renderScene(sceneId) {
 }
 
 
+const ITEM_DESCRIPTIONS = {
+    "蓝宝石徽章": "第一枚徽章，湛蓝色，表面有细密的星图纹路。",
+    "红宝石徽章": "第二枚徽章，深红色，仿佛有一滴凝固的血。",
+    "翠绿徽章": "第三枚徽章，翠绿色，触摸时能感到微微的振动。",
+    "橙色徽章": "第四枚徽章，橙色，像秋日的落叶。",
+    "金色徽章": "第五枚徽章，金色，散发着淡淡的草木香。",
+    "紫色徽章": "第六枚徽章，紫色，表面刻着复杂的符文。",
+    "彩虹徽章": "第七枚徽章，七色流转，是所有徽章中唯一会发光的。",
+    "色彩徽章": "第四枚徽章，彩色。",
+    "旋律徽章": "音乐室的徽章。",
+    "深渊徽章": "地下室的徽章。",
+    "克劳利的日记": "皮质封面，记录着庄园的部分秘密。",
+    "机械齿轮": "铜质齿轮，边缘有编号，可用于其他机关。",
+    "共鸣水晶": "透明水晶，敲击时会发出纯净的乐音。",
+    "神秘颜料": "七色颜料混合而成，可以唤醒枯萎的植物。",
+    "生命之露": "一小瓶清澈的液体，散发着草木的清香。",
+    "符文石": "黑色石头上刻着古老的符文，微微发热。",
+    "星盘钥匙": "铜质圆盘，可嵌入书桌凹槽。",
+    "阿斯特的怀表": "停止的怀表，指针指向11:55。",
+    "伊莲娜的纪念徽章": "心形彩虹色徽章，背面刻着“永存于画中”。",
+    "夜莺胸针": "银质胸针，夜莺的眼睛是红宝石。",
+    "埃莉诺的琴弓": "乌木琴弓，弓尾库镶着珍珠母贝。",
+    "托马斯的笔记本": "地质学家的考察笔记。",
+    "守护者符文": "手背上的银色符文，获得后可封印古老力量。"
+};
+
+
+window.showItemDetails = function(name, desc) {
+    const modal = document.getElementById("item-modal");
+    if (!modal) return;
+    document.getElementById("item-modal-title").innerText = name;
+    document.getElementById("item-modal-desc").innerText = desc || "这是一个神秘的物品，目前还没有更多的描述。";
+    modal.style.display = "block";
+    setTimeout(() => {
+        modal.style.opacity = "1";
+        modal.style.transform = "translate(-50%, -50%) scale(1)";
+    }, 10);
+};
+
+window.closeItemDetails = function() {
+    const modal = document.getElementById("item-modal");
+    if (!modal) return;
+    modal.style.opacity = "0";
+    modal.style.transform = "translate(-50%, -50%) scale(0.95)";
+    setTimeout(() => {
+        modal.style.display = "none";
+    }, 300);
+};
+
 function updateInventoryDisplay() {
     const invItems = document.getElementById("inv-items");
     const invClues = document.getElementById("inv-clues");
     const medalCountSpan = document.getElementById("medal-count");
     const invMedals = document.getElementById("inv-medals");
-    
+
     let itemsHtml = "";
     let cluesHtml = "";
     let medalsCount = 0;
     let medalsHtml = "";
-    
-    for (let i = 0; i < gameState.items.length; i++) {
-        let item = gameState.items[i];
+
+    // 过滤重复物品
+    let uniqueItems = [...new Set(gameState.items)];
+
+    for (let i = 0; i < uniqueItems.length; i++) {
+        let item = uniqueItems[i];
+        let rawItem = item.replace("[道具]", "").replace("【徽章】", "").trim();
+        let desc = ITEM_DESCRIPTIONS[rawItem] || "";
+          let titleAttr = desc ? ` onclick="showItemDetails('${rawItem}', '${desc}')" style="cursor:pointer; border-bottom: 1px dashed var(--accent-color);"` : "";
+        
         if (item.startsWith("[道具]")) {
-            itemsHtml += "<span class='inv-item'>" + item.replace("[道具]", "").trim() + "</span> ";
-        } else if (item.startsWith("【徽章】")) {
+            itemsHtml += "<span class='inv-item'" + titleAttr + ">" + rawItem + "</span> ";
+        } else if (item.startsWith("【徽章】") || rawItem.endsWith("徽章")) {
             medalsCount++;
-            medalsHtml += "<span class='inv-item medal'>" + item.replace("【徽章】", "").trim() + "</span> ";
+            medalsHtml += "<span class='inv-item medal'" + titleAttr + ">" + rawItem + "</span> ";
         } else {
-            itemsHtml += "<span class='inv-item'>" + item.trim() + "</span> ";
+            itemsHtml += "<span class='inv-item'" + titleAttr + ">" + rawItem + "</span> ";  
         }
-    }
-    
-    for (let i = 0; i < gameState.clues.length; i++) {
+    }for (let i = 0; i < gameState.clues.length; i++) {
         let clue = gameState.clues[i];
         if (clue.startsWith("[线索]")) {
             cluesHtml += "<span class='inv-item'>" + clue.replace("[线索]", "").trim() + "</span> ";
@@ -718,6 +890,15 @@ window.saveGame = function() {
     alert("游戏已保存至浏览器！");
 }
 
+
+window.showToast = function(msg) {
+    let t = document.createElement("div");
+    t.innerHTML = msg;
+    t.style = "position:fixed;top:20px;right:20px;background:rgba(0,0,0,0.8);color:#fff;padding:8px 15px;border-radius:5px;font-size:14px;z-index:9999;transition:opacity 0.5s;pointer-events:none;";
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; setTimeout(()=>t.remove(), 500); }, 1500);
+};
+
 window.loadGame = function() {
     const saved = safeParseJSON(localStorage.getItem("riddle_save"), null);
     const migrated = migrateSave(saved, "game");
@@ -731,4 +912,147 @@ window.loadGame = function() {
 }
 
 // 初始渲染
+if (typeof loadSettings === "function") {
+    loadSettings();
+}
 renderScene("title");
+
+
+// =============== 设置系统 (Settings) ===============
+
+function loadSettings() {
+    const saved = localStorage.getItem("riddle_settings");
+    if (saved) {
+        try {
+            gameSettings = Object.assign(gameSettings, JSON.parse(saved));
+        } catch(e) {}
+    }
+    // Init UI
+    const elFs = document.getElementById("setting-fontsize");
+    const elTs = document.getElementById("setting-typespeed");
+    const elNa = document.getElementById("setting-noanim");
+    if (elFs) elFs.value = gameSettings.fontSize;
+    if (elTs) elTs.value = gameSettings.typeSpeed;
+    if (elNa) elNa.checked = gameSettings.noAnim;
+    applySettings(false);
+}
+
+function applySettings(save = true) {
+    const elFs = document.getElementById("setting-fontsize");
+    const elTs = document.getElementById("setting-typespeed");
+    const elNa = document.getElementById("setting-noanim");
+    
+    if (elFs) {
+        gameSettings.fontSize = parseInt(elFs.value);
+        document.getElementById("fontsize-val").innerText = elFs.value + "px";
+        document.body.style.fontSize = elFs.value + "px";
+        const storyEl = document.getElementById("story-text");
+        if (storyEl) storyEl.style.fontSize = (gameSettings.fontSize + 2) + "px";
+    }
+    if (elTs) {
+        gameSettings.typeSpeed = parseInt(elTs.value);
+        document.getElementById("typespeed-val").innerText = elTs.value + "ms";
+    }
+    if (elNa) {
+        gameSettings.noAnim = elNa.checked;
+    }
+    if (save) {
+        localStorage.setItem("riddle_settings", JSON.stringify(gameSettings));
+    }
+}
+
+function toggleSettings() {
+    const panel = document.getElementById("settings-panel");
+    if(!panel) return;
+    if (panel.style.display === "block") {
+        panel.style.display = "none";
+    } else {
+        // hide others
+        const inv = document.getElementById("inventory-panel");
+        const ach = document.getElementById("achievement-panel");
+        if (inv) inv.style.display = "none";
+        if (ach) ach.style.display = "none";
+        
+        loadSettings();
+        panel.style.display = "block";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", loadSettings);
+
+
+
+var gameHints = {
+    "hall_main": [
+        "观察大厅里哪些房间门可以进入。",
+        "尝试进入不同的房间，寻找徽章。"
+    ],
+    "library_entry": [
+        "你需要找到一种方法打开密室的门，或者在书架上寻找线索。",
+        "注意书籍上的颜色、符号或特殊的排列。"
+    ],
+    "musicroom_entry": [
+        "这里的乐器似乎都藏着秘密，试着弹奏或寻找琴谱。",
+        "是否有物品可以放入管风琴或者用来修复某个乐器？"
+    ],
+    "greenhouse_entry": [
+        "植物的生长需要特定的条件。",
+        "水、土壤和可能需要的特殊生命液体。"
+    ],
+    "studio_entry": [
+        "颜色似乎是这个房间的关键。",
+        "检查画布和周围掉落的物品，可能有线索组合颜料。"
+    ],
+    "basement_entry": [
+        "留意那些刻有符文的石板或祭坛。",
+        "也许需要用到不同元素的组合以及从其他房间获得的特殊道具。"
+    ],
+    "clocktower_entry": [
+        "时间是这里的核心，找找看有没有办法改变时钟的时间。",
+        "怀表上的时间可能会给你指引。"
+    ],
+    "bedroom_entry": [
+        "床铺或镜子周围可能有隐藏的空间。",
+        "仔细检查一切可以反射光线的东西。"
+    ],
+    "final_room_entry": [
+        "这里是最后的考验。",
+        "回忆你之前在其他房间找到的关键线索和道具用法。"
+    ],
+    "default": [
+        "仔细阅读周围的描述，不要漏掉任何细节。",
+        "检查你的物品栏，看看身上有什么可以用的道具或线索。"
+    ]
+};
+window.showHint = function() {
+    displayHintMessage();
+}
+
+
+function displayHintMessage() {
+    if (!gameState || !gameState.currentSceneId) return;
+    
+    let sid = gameState.currentSceneId;
+    let hintList = gameHints[sid];
+    if (!hintList) {
+        let prefix = sid.split('_')[0] + "_entry";
+        hintList = gameHints[prefix];
+    }
+    if (!hintList && sid.startsWith("hall_")) hintList = gameHints["hall_main"];
+    if (!hintList) hintList = gameHints["default"];
+    
+    let hintStr = "";
+    if (Array.isArray(hintList)) {
+        hintStr = hintList[Math.floor(Math.random() * hintList.length)];
+    } else {
+        hintStr = hintList;
+    }
+    
+    // Since toast disappears quickly, let's make it last 4 seconds for hints.
+    let t = document.createElement("div");
+    t.innerHTML = "<strong>💡 神秘指引：</strong><br>" + hintStr;
+    t.style = "position:fixed;top:60px;right:20px;background:rgba(212,175,55,0.9);color:#000;padding:12px 20px;border-radius:8px;font-size:15px;z-index:9999;transition:opacity 0.5s;pointer-events:none;max-width:300px;box-shadow:0 4px 10px rgba(0,0,0,0.5);line-height:1.5;";
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; setTimeout(()=>t.remove(), 500); }, 5000);
+}
+

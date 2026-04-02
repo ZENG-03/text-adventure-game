@@ -8,19 +8,24 @@ def build_scenes():
 
     def hall_main_enter(state):
         count = state.get("hall_medal_count", 0)
-        if count >= 3 and not state.get("flag_butler_triggered"):
-            state.set("flag_butler_triggered", True)
+        if count >= 3 and not state.get("side_butler_triggered"):
+            state.set("side_butler_triggered", True)
             return {"type": "redirect", "target": "side_story_1_start"}
             
         desc = """你站在大厅中央。大厅两侧各立着四座大理石雕像。通往各处的门紧闭着。
-壁炉里有烧焦的纸片。通往其他房间的走廊隐约可见。"""
+壁炉里有烧焦的纸片。通往其他房间的走廊隐约可见。
+[ 庄园简图 ]
+     二楼：画室 | 最深处的卧室
+     一楼：音乐室 | 大厅 | 温室花房 | 书房/图书馆
+  东侧附属：钟楼
+   地下：地下室"""
         if count >= 5:
             desc += "\n\n[大厅发生了剧变：空气中弥漫着压抑的气息，中央密室的大门开始渗出微光。]"
         elif count >= 3:
             desc += "\n\n[大厅发生了变化：一些雕像的眼睛似乎在盯着你。]"
             
-        if state.current_scene:
-            state.current_scene.desc = desc
+        if "hall_main" in scenes:
+            scenes["hall_main"].desc = desc
         return None
 
 
@@ -49,6 +54,27 @@ def build_scenes():
             Option("立刻动身", "opening_gate"),
             Option("研究地图", "opening_studio_map")
         ]
+    )
+
+    def on_enter_ng_plus(state):
+        if "怀表" not in state.items:
+            state.items.append("怀表")
+        if "前世记忆" not in state.clues:
+            state.clues.append("前世记忆")
+        print("【多周目奖励】：这是你一次新的轮回。\n你醒来时，手中紧紧握着一块没有指针的[怀表]。同时脑海里闪过了许多[前世记忆]的碎片。")
+
+    scenes["opening_studio_ng_plus"] = Scene(
+        "opening_studio_ng_plus",
+        """起风了。这是新的一次轮回。你坐在自己的工作室里。壁炉的火光跳动，将房间染成暖橙色。
+桌上摊开着侦探笔记，旁边放着一封午夜来信。
+
+信上写着：“致敏锐的探索者：当月光照亮七面镜，谜语的血脉将再度流淌... ——阿斯特·克劳利”
+信纸背面是一张手绘地图，指向城郊迷雾山谷中的一座古老庄园。""",
+        [
+            Option("立刻动身", "opening_gate"),
+            Option("研究地图", "opening_studio_map")
+        ],
+        on_enter=on_enter_ng_plus
     )
     
     scenes["opening_studio_map"] = Scene(
@@ -85,18 +111,7 @@ def build_scenes():
         [Option("我准备好了，开始探索", "hall_main")]
     )
 
-    # --- 大厅与分支 ---
-    scenes["hall_main"] = Scene(
-        "hall_main",
-        """你站在大厅中央。大厅两侧各立着四座大理石雕像。通往各处的门紧闭着。
-壁炉里有烧焦的纸片。""",
-        [
-            Option("仔细观察大厅壁炉的纸片", "hall_fireplace"),
-            Option("检查大厅的雕像 (谜题一)", "puzzle_statues"),
-            Option("前往图书馆 (谜题二)", "library_entry")
-        ],
-        on_enter=hall_main_enter
-    )
+    # --- 大厅初始逻辑 --- 
 
     def gain_clue_paper(state):
         state.add_clue("烧焦的纸片 (凯撒密码提示)")
@@ -817,18 +832,23 @@ def build_scenes():
     scenes["hall_main"] = Scene(
         "hall_main",
         """你站在大厅中央。大厅两侧各立着四座大理石雕像。通往各处的门紧闭着。
-壁炉里有烧焦的纸片。通往其他房间的走廊隐约可见。""",
+壁炉里有烧焦的纸片。通往其他房间的走廊隐约可见。
+[ 庄园简图 ]
+     二楼：画室 | 最深处的卧室
+     一楼：音乐室 | 大厅 | 温室花房 | 书房/图书馆
+  东侧附属：钟楼
+   地下：地下室""",
         [
             Option("仔细观察大厅壁炉的纸片", "hall_fireplace"),
-            Option("检查大厅的雕像 (谜题一)", "puzzle_statues"),
-            Option("寻找失踪的管家（支线一）", "side_story_1_start"),
-            Option("前往书房/图书馆 (谜题二)", "library_entry"),
-            Option("前往音乐室 (谜题三)", "musicroom_entry"),
-            Option("前往温室花房 (谜题四)", "greenhouse_entry"),
-            Option("前往二楼画室 (谜题五)", "studio_entry"),
+            Option("检查大厅的雕像", "puzzle_statues"),
+            Option("寻找失踪的管家", "side_story_1_start"),
+            Option("前往书房/图书馆", "library_entry"),
+            Option("前往音乐室", "musicroom_entry"),
+            Option("前往温室花房", "greenhouse_entry"),
+            Option("前往二楼画室", "studio_entry"),
             Option("前往卧室", "bedroom_entry"),
-            Option("前往地下室 (谜题六)", "basement_entry"),
-            Option("前往东侧钟楼 (谜题七)", "clocktower_entry"),
+            Option("前往地下室", "basement_entry"),
+            Option("前往东侧钟楼", "clocktower_entry"),
             Option("前往二楼最深处的卧室", "bedroom_entry"),
             Option("开启中央密室大门 (结局)", "final_chamber_entry", 
                    condition=lambda s: s.get("hall_medal_count") >= 7) # 收集满7个即可触发最后
@@ -908,8 +928,8 @@ def build_scenes():
 
     # --- 音乐室谜题 ---
     def musicroom_enter(state):
-        if state.has_item("旋律徽章") and not state.get("flag_side_music_triggered"):
-            state.set("flag_side_music_triggered", True)
+        if state.has_item("旋律徽章") and not state.get("side_music_triggered"):
+            state.set("side_music_triggered", True)
             return {"type": "redirect", "target": "side_story_4_start"}
 
     scenes["musicroom_entry"] = Scene(
@@ -922,7 +942,7 @@ def build_scenes():
             Option("检查管风琴", "musicroom_organ"),
             Option("查看三角钢琴和乐谱", "musicroom_piano"),
             Option("观察音叉与乐器", "musicroom_instruments"),
-            Option("追查未完成交响曲（支线四）", "side_story_4_start", condition=lambda s: s.has_item("旋律徽章") and not s.get("side_music_completed", False)),
+            Option("追查未完成交响曲", "side_story_4_start", condition=lambda s: s.has_item("旋律徽章") and not s.get("side_music_completed", False)),
             Option("返回大厅", "hall_main")
         ],
         on_enter=musicroom_enter
@@ -1066,10 +1086,10 @@ def build_scenes():
         on_enter=gain_greenhouse_medal
     )
 
-    # --- 画室谜题 (包含支线关联) ---
+    # --- 画室谜题 ---
     def studio_enter(state):
-        if state.has_item("色彩徽章") and not state.get("flag_side_painting_triggered"):
-            state.set("flag_side_painting_triggered", True)
+        if state.has_item("色彩徽章") and not state.get("side_painting_triggered"):
+            state.set("side_painting_triggered", True)
             return {"type": "redirect", "target": "side_story_2_start"}
 
     scenes["studio_entry"] = Scene(
@@ -1083,7 +1103,7 @@ def build_scenes():
             Option("研究雕塑台上的矿石和柜子", "studio_sculpture"),
             Option("研究东墙的大幅肖像画", "studio_portrait"),
             Option("接取油画支线调查", "side_quest_painting", condition=lambda s: not s.get("side_quest_painting_done", False)),
-            Option("追查画中女子的真相（支线二）", "side_story_2_start", condition=lambda s: s.has_item("色彩徽章") and not s.get("side_painting_completed", False)),
+            Option("追查画中女子的真相", "side_story_2_start", condition=lambda s: s.has_item("色彩徽章") and not s.get("side_painting_completed", False)),
             Option("返回大厅", "hall_main")
         ],
         on_enter=studio_enter
@@ -1148,10 +1168,10 @@ def build_scenes():
         on_enter=gain_studio_medal
     )
 
-    # --- 地下室谜题 (包含支线关联) ---
+    # --- 地下室谜题 ---
     def basement_enter(state):
-        if state.has_item("深渊徽章") and not state.get("flag_side_underground_triggered"):
-            state.set("flag_side_underground_triggered", True)
+        if state.has_item("深渊徽章") and not state.get("side_underground_triggered"):
+            state.set("side_underground_triggered", True)
             return {"type": "redirect", "target": "side_story_3_start"}
 
     scenes["basement_entry"] = Scene(
@@ -1161,7 +1181,7 @@ def build_scenes():
         [
             Option("探查炼金阵与符文", "basement_alchemy"),
             Option("接取地下室地质支线", "side_quest_basement", condition=lambda s: not s.get("side_underground_completed", False)),
-            Option("追查地下裂缝的回响（支线三）", "side_story_3_start", condition=lambda s: s.has_item("深渊徽章") and not s.get("side_underground_completed", False)),
+            Option("追查地下裂缝的回响", "side_story_3_start", condition=lambda s: s.has_item("深渊徽章") and not s.get("side_underground_completed", False)),
             Option("返回大厅", "hall_main")
         ],
         on_enter=basement_enter
@@ -1201,7 +1221,7 @@ def build_scenes():
         on_enter=gain_basement_medal
     )
 
-    # --- 钟楼谜题 (谜题七) ---
+    # --- 钟楼谜题 ---
     scenes["clocktower_entry"] = Scene(
         "clocktower_entry",
         """钟楼位于庄园东侧，是一座独立的石塔，与主楼通过一条玻璃连廊相连。

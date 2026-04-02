@@ -34,6 +34,7 @@ PROTECTED_IDS = frozenset({
     "ending_2",
     "ending_3",
     "ending_4",
+    "game_over",
 })
 
 # 来自这些文件的场景 ID 允许覆盖「手写区」里同名定义（后生成的块会覆盖先赋值的 scenes）
@@ -105,7 +106,7 @@ def parse_txt(file_path: Path) -> dict:
             if raw.startswith(">"):
                 raw = raw.lstrip(">").strip()
             if re.match(
-                r"^\*\*(?:获得线索|状态|获得状态|获得物品|获得奖励|线索|状态更新|奖励：|物品：|提示：|获得：)",
+                r"^\*\*(?:消耗物品|失去物品|获得线索|状态|获得状态|获得物品|获得奖励|线索|状态更新|奖励：|物品：|提示：|获得：)",
                 raw,
             ):
                 effs.append(raw.replace("**", "").strip())
@@ -174,11 +175,20 @@ def make_js_code(scenes: dict) -> str:
                         f'            msg += `<div class="system-message">【获得线索】：{clue}</div>`;'
                     )
                     js_lines.append("        }")
+                elif "消耗物品" in eff or "失去物品" in eff:
+                    item_part = eff.split("：", 1)[1].strip() if "：" in eff else re.sub(r"^(消耗|失去)(物品|道具)?[：:]?", "", eff).strip()
+                    items = [x.strip() for x in re.split(r"[、，,]", item_part) if x.strip()]
+                    if items:
+                        for item in items:
+                            js_lines.append(f'        if(hasItem("{item}")) {{')
+                            js_lines.append(f'            removeItem("{item}");')
+                            js_lines.append(f'            msg += `<div class="system-message danger-message">【失去物品】：{item}</div>`;')
+                            js_lines.append("        }")
                 elif (
                     "获得奖励" in eff
                     or "获得物品" in eff
                     or "奖励：" in eff
-                    or "物品：" in eff
+                    or ("物品：" in eff and "失去" not in eff and "消耗" not in eff)
                     or (eff.startswith("获得") and "线索" not in eff)
                 ):
                     item_part = (
@@ -277,7 +287,10 @@ def make_js_code(scenes: dict) -> str:
                 opts.append('        { text: "返回大厅", target: "hall_main" }')
 
         if not opts:
-            opts.append('        { text: "返回大厅", target: "hall_main" }')
+            if sid.startswith("ending_") or "death" in sid or sid == "game_over" or "gameover" in sid:
+                opts.append('        { text: "【游戏结束】返回标题", target: "title" }')
+            else:
+                opts.append('        { text: "返回大厅", target: "hall_main" }')
 
         js_lines.append(",\n".join(opts))
         js_lines.append("    ]")

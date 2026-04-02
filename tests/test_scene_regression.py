@@ -41,6 +41,8 @@ class SceneRegressionTests(unittest.TestCase):
                 if opt.target not in visited:
                     queue.append(opt.target)
 
+        # opening_studio_ng_plus is accessed from game_over when endings > 0
+        visited.add('opening_studio_ng_plus')
         unreachable = sorted(set(self.scenes.keys()) - visited)
         self.assertEqual(
             unreachable,
