@@ -354,7 +354,70 @@ function typeWriterHTML(element, htmlString, speed, onComplete) {
     }, speed);
 }
 
+// ========== 图片资源与游戏程序整合开始 ==========
+// 背景图片映射系统
+const backgroundMap = {
+    "hall_main": "images/backgrounds/hall_main.jpg",
+    "library_entry": "images/backgrounds/library_entry.jpg",
+    "musicroom_entry": "images/backgrounds/musicroom_entry.jpg",
+    "greenhouse_entry": "images/backgrounds/greenhouse_entry.jpg",
+    "studio_entry": "images/backgrounds/studio_entry.jpg",
+    "basement_entry": "images/backgrounds/basement_entry.jpg",
+    "clocktower_entry": "images/backgrounds/clocktower_entry.jpg",
+    "bedroom_entry": "images/backgrounds/bedroom_entry.jpg",
+    "final_chamber_entry": "images/backgrounds/final_chamber.jpg",
+    "side_cellar": "images/backgrounds/side_cellar.jpg",
+    "side_ancient_chamber": "images/backgrounds/ancient_chamber.jpg",
+    "ending_1": "images/endings/ending_1.jpg",
+    "ending_2": "images/endings/ending_2.jpg",
+    "ending_3": "images/endings/ending_3.jpg",
+    "ending_4": "images/endings/ending_4.jpg"
+};
+
+function setBackground(sceneId) {
+    const bgDiv = document.getElementById("scene-background");
+    if (!bgDiv) return;
+    let bgUrl = backgroundMap[sceneId];
+    if (bgUrl) {
+        bgDiv.style.backgroundImage = `url(${bgUrl})`;
+        bgDiv.style.opacity = "0.4"; // 可调透明度
+    } else {
+        bgDiv.style.backgroundImage = "none";
+    }
+}
+
+function showItemPopup(itemName) {
+    if (window.itemPopupTimeout) {
+        clearTimeout(window.itemPopupTimeout);
+        window.itemPopupTimeout = null;
+    }
+    let modal = document.getElementById("item-popup-custom");
+    if (!modal) {
+        const div = document.createElement("div");
+        div.id = "item-popup-custom";
+        div.style.cssText = "position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.9); border:2px solid gold; border-radius:16px; padding:20px; z-index:10001; text-align:center; display:none;";
+        div.innerHTML = `<img id="popup-img-custom" style="max-width:80vw; max-height:70vh; border-radius:8px;"><div id="popup-text-custom" style="margin-top:10px; color:gold; font-size:1.5em;"></div>`;
+        document.body.appendChild(div);
+        modal = div;
+    }
+    const img = document.getElementById("popup-img-custom");
+    const textDiv = document.getElementById("popup-text-custom");
+    
+    img.src = `images/item_popup/${encodeURIComponent(itemName)}.jpg`;
+    img.onerror = () => { img.style.display = "none"; };
+    img.onload = () => { img.style.display = "block"; };
+    textDiv.innerText = `获得：${itemName}`;
+    modal.style.display = "block";
+    
+    window.itemPopupTimeout = setTimeout(() => {
+        modal.style.display = "none";
+        window.itemPopupTimeout = null;
+    }, 2500);
+}
+// ========== 图片资源与游戏程序整合结束 ==========
+
 function renderScene(sceneId) {
+    setBackground(sceneId);
     if (sceneId === "system_load_auto") {
         const saved = safeParseJSON(localStorage.getItem("riddle_auto_save"), null);
         const migrated = migrateSave(saved, "game");
@@ -726,15 +789,19 @@ function updateInventoryDisplay() {
         let item = uniqueItems[i];
         let rawItem = item.replace("[道具]", "").replace("【徽章】", "").trim();
         let desc = ITEM_DESCRIPTIONS[rawItem] || "";
-          let titleAttr = desc ? ` onclick="showItemDetails('${rawItem}', '${desc}')" style="cursor:pointer; border-bottom: 1px dashed var(--accent-color);"` : "";
+        let titleAttr = desc ? ` onclick="showItemDetails('${rawItem}', '${desc}')" style="cursor:pointer; border-bottom: 1px dashed var(--accent-color);"` : "";
+        
+        let iconPath = `images/items/${encodeURIComponent(rawItem)}.png`;
+        let imgTag = `<img src="${iconPath}" class="inv-icon" onerror="this.style.display='none'" style="width:24px;height:24px;vertical-align:middle;margin-right:4px;">`;
+        let innerHTML = imgTag + rawItem;
         
         if (item.startsWith("[道具]")) {
-            itemsHtml += "<span class='inv-item'" + titleAttr + ">" + rawItem + "</span> ";
+            itemsHtml += "<span class='inv-item'" + titleAttr + ">" + innerHTML + "</span> ";
         } else if (item.startsWith("【徽章】") || rawItem.endsWith("徽章")) {
             medalsCount++;
-            medalsHtml += "<span class='inv-item medal'" + titleAttr + ">" + rawItem + "</span> ";
+            medalsHtml += "<span class='inv-item medal'" + titleAttr + ">" + innerHTML + "</span> ";
         } else {
-            itemsHtml += "<span class='inv-item'" + titleAttr + ">" + rawItem + "</span> ";  
+            itemsHtml += "<span class='inv-item'" + titleAttr + ">" + innerHTML + "</span> ";
         }
     }for (let i = 0; i < gameState.clues.length; i++) {
         let clue = gameState.clues[i];

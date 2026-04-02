@@ -27,6 +27,7 @@
         }
 
         #game-container {
+            position: relative;
             width: 85%;
             max-width: 800px;
             margin-top: 2rem;
@@ -279,6 +280,10 @@
 <body>
 
     <div id="game-container">
+    <!-- 背景图片层 -->
+    <div id="scene-background" style="position: absolute; top:0; left:0; width:100%; height:100%; z-index:0; background-size: cover; background-position: center; opacity:0; filter: blur(2px); transition: opacity 0.5s; pointer-events: none;"></div>
+    <!-- 原有内容层，加上背景半透明遮罩以保证文字可读 -->
+    <div id="game-content" style="position: relative; z-index:1; display: flex; flex-direction: column; height: 100%; width: 100%; background: rgba(34,34,34,0.3);">
         <div id="header" style="display:flex; justify-content:space-between; align-items:center;">
     <div>
         <h1 style="margin:0;">幽暗庄园的秘密</h1>

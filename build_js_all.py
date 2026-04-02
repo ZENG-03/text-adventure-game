@@ -202,6 +202,7 @@ def make_js_code(scenes: dict) -> str:
                         js_lines.append(f'        if(!hasItem("{cond_item}")) {{')
                         for item in items:
                             js_lines.append(f'            gameState.items.push("{item}");')
+                            js_lines.append(f'            if(typeof showItemPopup === "function") showItemPopup("{item}");')
                             if "徽章" in item:
                                 js_lines.append(f'            gameState.medals.push("{item}");')
                                 js_lines.append("            addMedal();")

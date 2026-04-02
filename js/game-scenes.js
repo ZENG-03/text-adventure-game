@@ -665,6 +665,7 @@ scenes["basement_distillation"] = {
         let msg = "";
         if(!hasItem("熔炉钥匙")) {
             gameState.items.push("熔炉钥匙");
+            if(typeof showItemPopup === "function") showItemPopup("熔炉钥匙");
             msg += `<div class="system-message">【获得物品】：熔炉钥匙</div>`;
         }
         return msg;
@@ -812,6 +813,7 @@ scenes["basement_find_metals"] = {
         let msg = "";
         if(!hasItem("七种金属材料（每种一份）")) {
             gameState.items.push("七种金属材料（每种一份）");
+            if(typeof showItemPopup === "function") showItemPopup("七种金属材料（每种一份）");
             msg += `<div class="system-message">【获得物品】：七种金属材料（每种一份）</div>`;
         }
         return msg;
@@ -835,6 +837,7 @@ scenes["basement_smelt_essence"] = {
         let msg = "";
         if(!hasItem("七金精粹（七瓶）")) {
             gameState.items.push("七金精粹（七瓶）");
+            if(typeof showItemPopup === "function") showItemPopup("七金精粹（七瓶）");
             msg += `<div class="system-message">【获得物品】：七金精粹（七瓶）</div>`;
         }
         return msg;
@@ -856,12 +859,14 @@ scenes["basement_place_essence"] = {
         let msg = "";
         if(!hasItem("紫色徽章")) {
             gameState.items.push("紫色徽章");
+            if(typeof showItemPopup === "function") showItemPopup("紫色徽章");
             gameState.medals.push("紫色徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：紫色徽章</div>`;
         }
         if(!hasItem("符文石")) {
             gameState.items.push("符文石");
+            if(typeof showItemPopup === "function") showItemPopup("符文石");
             msg += `<div class="system-message">【获得物品】：符文石</div>`;
         }
         return msg;
@@ -895,6 +900,7 @@ scenes["basement_elemental_activation"] = {
         let msg = "";
         if(!hasItem("符文石碎片（可在后续与其他碎片组合）")) {
             gameState.items.push("符文石碎片（可在后续与其他碎片组合）");
+            if(typeof showItemPopup === "function") showItemPopup("符文石碎片（可在后续与其他碎片组合）");
             msg += `<div class="system-message">【获得物品】：符文石碎片（可在后续与其他碎片组合）</div>`;
         }
         return msg;
@@ -1065,6 +1071,7 @@ scenes["studio_sculpture"] = {
         let msg = "";
         if(!hasItem("七色矿石")) {
             gameState.items.push("七色矿石");
+            if(typeof showItemPopup === "function") showItemPopup("七色矿石");
             msg += `<div class="system-message">【获得物品】：七色矿石</div>`;
         }
         return msg;
@@ -1166,12 +1173,14 @@ scenes["studio_gem_correct"] = {
         let msg = "";
         if(!hasItem("橙色徽章")) {
             gameState.items.push("橙色徽章");
+            if(typeof showItemPopup === "function") showItemPopup("橙色徽章");
             gameState.medals.push("橙色徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：橙色徽章</div>`;
         }
         if(!hasItem("神秘颜料")) {
             gameState.items.push("神秘颜料");
+            if(typeof showItemPopup === "function") showItemPopup("神秘颜料");
             msg += `<div class="system-message">【获得物品】：神秘颜料</div>`;
         }
         return msg;
@@ -1204,12 +1213,14 @@ scenes["studio_paint_mirror"] = {
         let msg = "";
         if(!hasItem("橙色徽章")) {
             gameState.items.push("橙色徽章");
+            if(typeof showItemPopup === "function") showItemPopup("橙色徽章");
             gameState.medals.push("橙色徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：橙色徽章</div>`;
         }
         if(!hasItem("神秘颜料")) {
             gameState.items.push("神秘颜料");
+            if(typeof showItemPopup === "function") showItemPopup("神秘颜料");
             msg += `<div class="system-message">【获得物品】：神秘颜料</div>`;
         }
         return msg;
@@ -1245,6 +1256,7 @@ scenes["studio_grind_stones"] = {
         let msg = "";
         if(!hasItem("新鲜颜料（与光线激活效果相同）")) {
             gameState.items.push("新鲜颜料（与光线激活效果相同）");
+            if(typeof showItemPopup === "function") showItemPopup("新鲜颜料（与光线激活效果相同）");
             msg += `<div class="system-message">【获得物品】：新鲜颜料（与光线激活效果相同）</div>`;
         }
         return msg;
@@ -1504,6 +1516,7 @@ scenes["library_hidden_niche"] = {
         let msg = "";
         if(!hasItem("星盘钥匙")) {
             gameState.items.push("星盘钥匙");
+            if(typeof showItemPopup === "function") showItemPopup("星盘钥匙");
             msg += `<div class="system-message">【获得物品】：星盘钥匙</div>`;
         }
         return msg;
@@ -1534,12 +1547,14 @@ scenes["library_pull_wisdom"] = {
         let msg = "";
         if(!hasItem("蓝宝石徽章")) {
             gameState.items.push("蓝宝石徽章");
+            if(typeof showItemPopup === "function") showItemPopup("蓝宝石徽章");
             gameState.medals.push("蓝宝石徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：蓝宝石徽章</div>`;
         }
         if(!hasItem("克劳利的日记")) {
             gameState.items.push("克劳利的日记");
+            if(typeof showItemPopup === "function") showItemPopup("克劳利的日记");
             msg += `<div class="system-message">【获得物品】：克劳利的日记</div>`;
         }
         return msg;
@@ -1672,9 +1687,11 @@ scenes["library_astrolabe_calibrate"] = {
         let msg = "";
         if(!hasItem("银质徽章（非七枚之一")) {
             gameState.items.push("银质徽章（非七枚之一");
+            if(typeof showItemPopup === "function") showItemPopup("银质徽章（非七枚之一");
             gameState.medals.push("银质徽章（非七枚之一");
             addMedal();
             gameState.items.push("但可能有用）");
+            if(typeof showItemPopup === "function") showItemPopup("但可能有用）");
             msg += `<div class="system-message">【获得物品】：银质徽章（非七枚之一，但可能有用）</div>`;
         }
         return msg;
@@ -1724,12 +1741,14 @@ scenes["library_blank_book_reveal"] = {
         let msg = "";
         if(!hasItem("蓝宝石徽章")) {
             gameState.items.push("蓝宝石徽章");
+            if(typeof showItemPopup === "function") showItemPopup("蓝宝石徽章");
             gameState.medals.push("蓝宝石徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：蓝宝石徽章</div>`;
         }
         if(!hasItem("克劳利的日记")) {
             gameState.items.push("克劳利的日记");
+            if(typeof showItemPopup === "function") showItemPopup("克劳利的日记");
             msg += `<div class="system-message">【获得物品】：克劳利的日记</div>`;
         }
         return msg;
@@ -1851,6 +1870,7 @@ scenes["greenhouse_pond_tool"] = {
         let msg = "";
         if(!hasItem("七色花琥珀")) {
             gameState.items.push("七色花琥珀");
+            if(typeof showItemPopup === "function") showItemPopup("七色花琥珀");
             msg += `<div class="system-message">【获得物品】：七色花琥珀</div>`;
         }
         if(!hasClue("需要七种植物部位（根、茎、叶、花、果、种、苗）来激活七色花种")) {
@@ -1872,6 +1892,7 @@ scenes["greenhouse_tree_hole"] = {
         let msg = "";
         if(!hasItem("古树血粉（七血之一：木血）")) {
             gameState.items.push("古树血粉（七血之一：木血）");
+            if(typeof showItemPopup === "function") showItemPopup("古树血粉（七血之一：木血）");
             msg += `<div class="system-message">【获得物品】：古树血粉（七血之一：木血）</div>`;
         }
         return msg;
@@ -1957,9 +1978,13 @@ scenes["greenhouse_wooden_box"] = {
         let msg = "";
         if(!hasItem("七色花肥料")) {
             gameState.items.push("七色花肥料");
+            if(typeof showItemPopup === "function") showItemPopup("七色花肥料");
             gameState.items.push("生长激素");
+            if(typeof showItemPopup === "function") showItemPopup("生长激素");
             gameState.items.push("园艺剪");
+            if(typeof showItemPopup === "function") showItemPopup("园艺剪");
             gameState.items.push("管道地图");
+            if(typeof showItemPopup === "function") showItemPopup("管道地图");
             msg += `<div class="system-message">【获得物品】：七色花肥料、生长激素、园艺剪、管道地图</div>`;
         }
         return msg;
@@ -1977,9 +2002,13 @@ scenes["greenhouse_take_tools"] = {
         let msg = "";
         if(!hasItem("长柄夹")) {
             gameState.items.push("长柄夹");
+            if(typeof showItemPopup === "function") showItemPopup("长柄夹");
             gameState.items.push("喷壶");
+            if(typeof showItemPopup === "function") showItemPopup("喷壶");
             gameState.items.push("温度计");
+            if(typeof showItemPopup === "function") showItemPopup("温度计");
             gameState.items.push("湿度计");
+            if(typeof showItemPopup === "function") showItemPopup("湿度计");
             msg += `<div class="system-message">【获得物品】：长柄夹、喷壶、温度计、湿度计</div>`;
         }
         return msg;
@@ -2014,6 +2043,7 @@ scenes["greenhouse_revive_parts"] = {
         let msg = "";
         if(!hasItem("七血（七个小瓶）")) {
             gameState.items.push("七血（七个小瓶）");
+            if(typeof showItemPopup === "function") showItemPopup("七血（七个小瓶）");
             msg += `<div class="system-message">【获得物品】：七血（七个小瓶）</div>`;
         }
         return msg;
@@ -2030,6 +2060,7 @@ scenes["greenhouse_mix_blood"] = {
         let msg = "";
         if(!hasItem("古树复苏（七色花生长条件之一：生命元素充足）")) {
             gameState.items.push("古树复苏（七色花生长条件之一：生命元素充足）");
+            if(typeof showItemPopup === "function") showItemPopup("古树复苏（七色花生长条件之一：生命元素充足）");
             msg += `<div class="system-message">【获得物品】：古树复苏（七色花生长条件之一：生命元素充足）</div>`;
         }
         return msg;
@@ -2142,12 +2173,14 @@ scenes["greenhouse_check_conditions"] = {
         let msg = "";
         if(!hasItem("金色徽章")) {
             gameState.items.push("金色徽章");
+            if(typeof showItemPopup === "function") showItemPopup("金色徽章");
             gameState.medals.push("金色徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：金色徽章</div>`;
         }
         if(!hasItem("生命之露")) {
             gameState.items.push("生命之露");
+            if(typeof showItemPopup === "function") showItemPopup("生命之露");
             msg += `<div class="system-message">【获得物品】：生命之露</div>`;
         }
         return msg;
@@ -2333,10 +2366,12 @@ scenes["bedroom_bed"] = {
         let msg = "";
         if(!hasItem("衣柜钥匙")) {
             gameState.items.push("衣柜钥匙");
+            if(typeof showItemPopup === "function") showItemPopup("衣柜钥匙");
             msg += `<div class="system-message">【获得物品】：衣柜钥匙</div>`;
         }
         if(!hasItem("停止的怀表")) {
             gameState.items.push("停止的怀表");
+            if(typeof showItemPopup === "function") showItemPopup("停止的怀表");
             msg += `<div class="system-message">【获得物品】：停止的怀表</div>`;
         }
         return msg;
@@ -2405,10 +2440,12 @@ scenes["bedroom_lock_success"] = {
         let msg = "";
         if(!hasItem("水晶镜片")) {
             gameState.items.push("水晶镜片");
+            if(typeof showItemPopup === "function") showItemPopup("水晶镜片");
             msg += `<div class="system-message">【获得物品】：水晶镜片</div>`;
         }
         if(!hasItem("主人的怀表")) {
             gameState.items.push("主人的怀表");
+            if(typeof showItemPopup === "function") showItemPopup("主人的怀表");
             msg += `<div class="system-message">【获得物品】：主人的怀表</div>`;
         }
         return msg;
@@ -2534,6 +2571,7 @@ scenes["bedroom_closet_back"] = {
         let msg = "";
         if(!hasItem("彩虹徽章")) {
             gameState.items.push("彩虹徽章");
+            if(typeof showItemPopup === "function") showItemPopup("彩虹徽章");
             gameState.medals.push("彩虹徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：彩虹徽章</div>`;
@@ -2553,6 +2591,7 @@ scenes["bedroom_rune_solution"] = {
         let msg = "";
         if(!hasItem("彩虹徽章")) {
             gameState.items.push("彩虹徽章");
+            if(typeof showItemPopup === "function") showItemPopup("彩虹徽章");
             gameState.medals.push("彩虹徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：彩虹徽章</div>`;
@@ -2571,6 +2610,7 @@ scenes["bedroom_answer_correct"] = {
         let msg = "";
         if(!hasItem("彩虹徽章")) {
             gameState.items.push("彩虹徽章");
+            if(typeof showItemPopup === "function") showItemPopup("彩虹徽章");
             gameState.medals.push("彩虹徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：彩虹徽章</div>`;
@@ -2598,6 +2638,7 @@ scenes["bedroom_pocket_watch"] = {
         let msg = "";
         if(!hasItem("棱镜铜片（可用于彩色光反射）")) {
             gameState.items.push("棱镜铜片（可用于彩色光反射）");
+            if(typeof showItemPopup === "function") showItemPopup("棱镜铜片（可用于彩色光反射）");
             msg += `<div class="system-message">【获得物品】：棱镜铜片（可用于彩色光反射）</div>`;
         }
         return msg;
@@ -2868,6 +2909,7 @@ scenes["musicroom_tuning_pins"] = {
         let msg = "";
         if(!hasItem("调音扳手")) {
             gameState.items.push("调音扳手");
+            if(typeof showItemPopup === "function") showItemPopup("调音扳手");
             msg += `<div class="system-message">【获得物品】：调音扳手</div>`;
         }
         return msg;
@@ -3009,6 +3051,7 @@ scenes["musicroom_fill_score"] = {
         let msg = "";
         if(!hasItem("完整乐谱")) {
             gameState.items.push("完整乐谱");
+            if(typeof showItemPopup === "function") showItemPopup("完整乐谱");
             msg += `<div class="system-message">【获得物品】：完整乐谱</div>`;
         }
         return msg;
@@ -3027,12 +3070,14 @@ scenes["musicroom_play_full_score"] = {
         let msg = "";
         if(!hasItem("翠绿徽章")) {
             gameState.items.push("翠绿徽章");
+            if(typeof showItemPopup === "function") showItemPopup("翠绿徽章");
             gameState.medals.push("翠绿徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：翠绿徽章</div>`;
         }
         if(!hasItem("共鸣水晶")) {
             gameState.items.push("共鸣水晶");
+            if(typeof showItemPopup === "function") showItemPopup("共鸣水晶");
             msg += `<div class="system-message">【获得物品】：共鸣水晶</div>`;
         }
         return msg;
@@ -3049,6 +3094,7 @@ scenes["musicroom_use_crystal"] = {
         let msg = "";
         if(!hasItem("翠绿徽章")) {
             gameState.items.push("翠绿徽章");
+            if(typeof showItemPopup === "function") showItemPopup("翠绿徽章");
             gameState.medals.push("翠绿徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：翠绿徽章</div>`;
@@ -3115,15 +3161,19 @@ scenes["side_butler_quarters"] = {
         let msg = "";
         if(!hasItem("旧照片")) {
             gameState.items.push("旧照片");
+            if(typeof showItemPopup === "function") showItemPopup("旧照片");
             msg += `<div class="system-message">【获得物品】：旧照片</div>`;
         }
         if(!hasItem("生锈的钥匙")) {
             gameState.items.push("生锈的钥匙");
+            if(typeof showItemPopup === "function") showItemPopup("生锈的钥匙");
             msg += `<div class="system-message">【获得物品】：生锈的钥匙</div>`;
         }
         if(!hasItem("纸条（写有“对不起")) {
             gameState.items.push("纸条（写有“对不起");
+            if(typeof showItemPopup === "function") showItemPopup("纸条（写有“对不起");
             gameState.items.push("哥哥”）");
+            if(typeof showItemPopup === "function") showItemPopup("哥哥”）");
             msg += `<div class="system-message">【获得物品】：纸条（写有“对不起，哥哥”）</div>`;
         }
         return msg;
@@ -3260,6 +3310,7 @@ scenes["side_ending_master"] = {
         let msg = "";
         if(!hasItem("side_butler_completed")) {
             gameState.items.push("side_butler_completed");
+            if(typeof showItemPopup === "function") showItemPopup("side_butler_completed");
             msg += `<div class="system-message">【获得物品】：side_butler_completed</div>`;
         }
         return msg;
@@ -3324,10 +3375,12 @@ scenes["side_ending_memento"] = {
         let msg = "";
         if(!hasItem("side_butler_completed")) {
             gameState.items.push("side_butler_completed");
+            if(typeof showItemPopup === "function") showItemPopup("side_butler_completed");
             msg += `<div class="system-message">【获得物品】：side_butler_completed</div>`;
         }
         if(!hasItem("阿斯特的怀表（可在后续谜题中作为提示道具使用）")) {
             gameState.items.push("阿斯特的怀表（可在后续谜题中作为提示道具使用）");
+            if(typeof showItemPopup === "function") showItemPopup("阿斯特的怀表（可在后续谜题中作为提示道具使用）");
             msg += `<div class="system-message">【获得物品】：阿斯特的怀表（可在后续谜题中作为提示道具使用）</div>`;
         }
         return msg;
@@ -3393,10 +3446,12 @@ scenes["side_wisteria"] = {
         let msg = "";
         if(!hasItem("画展目录")) {
             gameState.items.push("画展目录");
+            if(typeof showItemPopup === "function") showItemPopup("画展目录");
             msg += `<div class="system-message">【获得物品】：画展目录</div>`;
         }
         if(!hasItem("艺术奖章")) {
             gameState.items.push("艺术奖章");
+            if(typeof showItemPopup === "function") showItemPopup("艺术奖章");
             msg += `<div class="system-message">【获得物品】：艺术奖章</div>`;
         }
         return msg;
@@ -3416,10 +3471,12 @@ scenes["side_medal_trigger"] = {
         let msg = "";
         if(!hasItem("铜钥匙")) {
             gameState.items.push("铜钥匙");
+            if(typeof showItemPopup === "function") showItemPopup("铜钥匙");
             msg += `<div class="system-message">【获得物品】：铜钥匙</div>`;
         }
         if(!hasItem("纸条（地窖第七级台阶）")) {
             gameState.items.push("纸条（地窖第七级台阶）");
+            if(typeof showItemPopup === "function") showItemPopup("纸条（地窖第七级台阶）");
             msg += `<div class="system-message">【获得物品】：纸条（地窖第七级台阶）</div>`;
         }
         return msg;
@@ -3437,10 +3494,12 @@ scenes["side_cellar_steps"] = {
         let msg = "";
         if(!hasItem("伊莲娜的日记")) {
             gameState.items.push("伊莲娜的日记");
+            if(typeof showItemPopup === "function") showItemPopup("伊莲娜的日记");
             msg += `<div class="system-message">【获得物品】：伊莲娜的日记</div>`;
         }
         if(!hasItem("银手镯")) {
             gameState.items.push("银手镯");
+            if(typeof showItemPopup === "function") showItemPopup("银手镯");
             msg += `<div class="system-message">【获得物品】：银手镯</div>`;
         }
         return msg;
@@ -3483,8 +3542,11 @@ scenes["side_cellar_hidden"] = {
         let msg = "";
         if(!hasItem("紫藤花束")) {
             gameState.items.push("紫藤花束");
+            if(typeof showItemPopup === "function") showItemPopup("紫藤花束");
             gameState.items.push("照片");
+            if(typeof showItemPopup === "function") showItemPopup("照片");
             gameState.items.push("画布碎片");
+            if(typeof showItemPopup === "function") showItemPopup("画布碎片");
             msg += `<div class="system-message">【获得物品】：紫藤花束、照片、画布碎片</div>`;
         }
         return msg;
@@ -3502,6 +3564,7 @@ scenes["side_bracelet_trigger"] = {
         let msg = "";
         if(!hasItem("阿斯特的遗信")) {
             gameState.items.push("阿斯特的遗信");
+            if(typeof showItemPopup === "function") showItemPopup("阿斯特的遗信");
             msg += `<div class="system-message">【获得物品】：阿斯特的遗信</div>`;
         }
         return msg;
@@ -3521,6 +3584,7 @@ scenes["side_elenor_fate"] = {
         let msg = "";
         if(!hasItem("伊莲娜纪念徽章")) {
             gameState.items.push("伊莲娜纪念徽章");
+            if(typeof showItemPopup === "function") showItemPopup("伊莲娜纪念徽章");
             gameState.medals.push("伊莲娜纪念徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：伊莲娜纪念徽章</div>`;
@@ -3544,6 +3608,7 @@ scenes["side_ending_reconciliation"] = {
         let msg = "";
         if(!hasItem("side_painting_completed")) {
             gameState.items.push("side_painting_completed");
+            if(typeof showItemPopup === "function") showItemPopup("side_painting_completed");
             msg += `<div class="system-message">【获得物品】：side_painting_completed</div>`;
         }
         return msg;
@@ -3561,6 +3626,7 @@ scenes["side_ending_legacy"] = {
         let msg = "";
         if(!hasItem("side_painting_completed")) {
             gameState.items.push("side_painting_completed");
+            if(typeof showItemPopup === "function") showItemPopup("side_painting_completed");
             msg += `<div class="system-message">【获得物品】：side_painting_completed</div>`;
         }
         return msg;
@@ -3607,18 +3673,22 @@ scenes["side_cave_table"] = {
         let msg = "";
         if(!hasItem("托马斯·赫胥黎的笔记本")) {
             gameState.items.push("托马斯·赫胥黎的笔记本");
+            if(typeof showItemPopup === "function") showItemPopup("托马斯·赫胥黎的笔记本");
             msg += `<div class="system-message">【获得物品】：托马斯·赫胥黎的笔记本</div>`;
         }
         if(!hasItem("矿石标本（七种金属）")) {
             gameState.items.push("矿石标本（七种金属）");
+            if(typeof showItemPopup === "function") showItemPopup("矿石标本（七种金属）");
             msg += `<div class="system-message">【获得物品】：矿石标本（七种金属）</div>`;
         }
         if(!hasItem("未寄出的信")) {
             gameState.items.push("未寄出的信");
+            if(typeof showItemPopup === "function") showItemPopup("未寄出的信");
             msg += `<div class="system-message">【获得物品】：未寄出的信</div>`;
         }
         if(!hasItem("照片")) {
             gameState.items.push("照片");
+            if(typeof showItemPopup === "function") showItemPopup("照片");
             msg += `<div class="system-message">【获得物品】：照片</div>`;
         }
         return msg;
@@ -3669,6 +3739,7 @@ scenes["side_cave_passage"] = {
         let msg = "";
         if(!hasItem("托马斯的地质锤")) {
             gameState.items.push("托马斯的地质锤");
+            if(typeof showItemPopup === "function") showItemPopup("托马斯的地质锤");
             msg += `<div class="system-message">【获得物品】：托马斯的地质锤</div>`;
         }
         return msg;
@@ -3750,10 +3821,12 @@ scenes["side_thomas_trail"] = {
         let msg = "";
         if(!hasItem("托马斯的遗信")) {
             gameState.items.push("托马斯的遗信");
+            if(typeof showItemPopup === "function") showItemPopup("托马斯的遗信");
             msg += `<div class="system-message">【获得物品】：托马斯的遗信</div>`;
         }
         if(!hasItem("洞穴地图")) {
             gameState.items.push("洞穴地图");
+            if(typeof showItemPopup === "function") showItemPopup("洞穴地图");
             msg += `<div class="system-message">【获得物品】：洞穴地图</div>`;
         }
         return msg;
@@ -3787,10 +3860,12 @@ scenes["side_seeker"] = {
         let msg = "";
         if(!hasItem("远古知识（所有谜题的解法自动知晓）")) {
             gameState.items.push("远古知识（所有谜题的解法自动知晓）");
+            if(typeof showItemPopup === "function") showItemPopup("远古知识（所有谜题的解法自动知晓）");
             msg += `<div class="system-message">【获得物品】：远古知识（所有谜题的解法自动知晓）</div>`;
         }
         if(!hasItem("星之印记（额头）")) {
             gameState.items.push("星之印记（额头）");
+            if(typeof showItemPopup === "function") showItemPopup("星之印记（额头）");
             msg += `<div class="system-message">【获得物品】：星之印记（额头）</div>`;
         }
         return msg;
@@ -3808,10 +3883,12 @@ scenes["side_guardian"] = {
         let msg = "";
         if(!hasItem("守护者符文（可封印古老能量）")) {
             gameState.items.push("守护者符文（可封印古老能量）");
+            if(typeof showItemPopup === "function") showItemPopup("守护者符文（可封印古老能量）");
             msg += `<div class="system-message">【获得物品】：守护者符文（可封印古老能量）</div>`;
         }
         if(!hasItem("克劳利家族的认可")) {
             gameState.items.push("克劳利家族的认可");
+            if(typeof showItemPopup === "function") showItemPopup("克劳利家族的认可");
             msg += `<div class="system-message">【获得物品】：克劳利家族的认可</div>`;
         }
         if(!getFlag("被束缚于谜语馆周边")) {
@@ -3840,10 +3917,12 @@ scenes["side_east_exit"] = {
         let msg = "";
         if(!hasItem("托马斯的骨骸（可安葬）")) {
             gameState.items.push("托马斯的骨骸（可安葬）");
+            if(typeof showItemPopup === "function") showItemPopup("托马斯的骨骸（可安葬）");
             msg += `<div class="system-message">【获得物品】：托马斯的骨骸（可安葬）</div>`;
         }
         if(!hasItem("身份证明和遗书")) {
             gameState.items.push("身份证明和遗书");
+            if(typeof showItemPopup === "function") showItemPopup("身份证明和遗书");
             msg += `<div class="system-message">【获得物品】：身份证明和遗书</div>`;
         }
         return msg;
@@ -3872,6 +3951,7 @@ scenes["side_ending_guardian"] = {
         let msg = "";
         if(!hasItem("side_underground_completed")) {
             gameState.items.push("side_underground_completed");
+            if(typeof showItemPopup === "function") showItemPopup("side_underground_completed");
             msg += `<div class="system-message">【获得物品】：side_underground_completed</div>`;
         }
         return msg;
@@ -3890,6 +3970,7 @@ scenes["side_ending_truth"] = {
         let msg = "";
         if(!hasItem("side_underground_completed")) {
             gameState.items.push("side_underground_completed");
+            if(typeof showItemPopup === "function") showItemPopup("side_underground_completed");
             msg += `<div class="system-message">【获得物品】：side_underground_completed</div>`;
         }
         if(!hasClue("托马斯地质学会正名")) {
@@ -4009,10 +4090,12 @@ scenes["side_piano_stool"] = {
         let msg = "";
         if(!hasItem("埃莉诺的完整乐谱（前六乐章）")) {
             gameState.items.push("埃莉诺的完整乐谱（前六乐章）");
+            if(typeof showItemPopup === "function") showItemPopup("埃莉诺的完整乐谱（前六乐章）");
             msg += `<div class="system-message">【获得物品】：埃莉诺的完整乐谱（前六乐章）</div>`;
         }
         if(!hasItem("夜莺胸针")) {
             gameState.items.push("夜莺胸针");
+            if(typeof showItemPopup === "function") showItemPopup("夜莺胸针");
             msg += `<div class="system-message">【获得物品】：夜莺胸针</div>`;
         }
         return msg;
@@ -4031,10 +4114,12 @@ scenes["side_brooch_clue"] = {
         let msg = "";
         if(!hasItem("埃莉诺的遗信")) {
             gameState.items.push("埃莉诺的遗信");
+            if(typeof showItemPopup === "function") showItemPopup("埃莉诺的遗信");
             msg += `<div class="system-message">【获得物品】：埃莉诺的遗信</div>`;
         }
         if(!hasItem("铜钥匙")) {
             gameState.items.push("铜钥匙");
+            if(typeof showItemPopup === "function") showItemPopup("铜钥匙");
             msg += `<div class="system-message">【获得物品】：铜钥匙</div>`;
         }
         return msg;
@@ -4054,6 +4139,7 @@ scenes["side_fireplace_secret"] = {
         let msg = "";
         if(!hasItem("埃莉诺的制琴笔记")) {
             gameState.items.push("埃莉诺的制琴笔记");
+            if(typeof showItemPopup === "function") showItemPopup("埃莉诺的制琴笔记");
             msg += `<div class="system-message">【获得物品】：埃莉诺的制琴笔记</div>`;
         }
         return msg;
@@ -4071,6 +4157,7 @@ scenes["side_elenor_diary"] = {
         let msg = "";
         if(!hasItem("埃莉诺的琴弓")) {
             gameState.items.push("埃莉诺的琴弓");
+            if(typeof showItemPopup === "function") showItemPopup("埃莉诺的琴弓");
             msg += `<div class="system-message">【获得物品】：埃莉诺的琴弓</div>`;
         }
         return msg;
@@ -4095,12 +4182,14 @@ scenes["side_play_elenor_violin"] = {
         let msg = "";
         if(!hasItem("夜莺徽章（纪念品）")) {
             gameState.items.push("夜莺徽章（纪念品）");
+            if(typeof showItemPopup === "function") showItemPopup("夜莺徽章（纪念品）");
             gameState.medals.push("夜莺徽章（纪念品）");
             addMedal();
             msg += `<div class="system-message">【获得物品】：夜莺徽章（纪念品）</div>`;
         }
         if(!hasItem("埃莉诺的完整交响曲（七乐章全本）")) {
             gameState.items.push("埃莉诺的完整交响曲（七乐章全本）");
+            if(typeof showItemPopup === "function") showItemPopup("埃莉诺的完整交响曲（七乐章全本）");
             msg += `<div class="system-message">【获得物品】：埃莉诺的完整交响曲（七乐章全本）</div>`;
         }
         return msg;
@@ -4130,6 +4219,7 @@ scenes["side_ending_music_public"] = {
         let msg = "";
         if(!hasItem("side_music_completed")) {
             gameState.items.push("side_music_completed");
+            if(typeof showItemPopup === "function") showItemPopup("side_music_completed");
             msg += `<div class="system-message">【获得物品】：side_music_completed</div>`;
         }
         return msg;
@@ -4148,6 +4238,7 @@ scenes["side_ending_music_keep"] = {
         let msg = "";
         if(!hasItem("side_music_completed")) {
             gameState.items.push("side_music_completed");
+            if(typeof showItemPopup === "function") showItemPopup("side_music_completed");
             msg += `<div class="system-message">【获得物品】：side_music_completed</div>`;
         }
         return msg;
@@ -4165,12 +4256,16 @@ scenes["side_music_final_mechanism"] = {
         let msg = "";
         if(!hasItem("紫藤花种子（可种在庄园花园）")) {
             gameState.items.push("紫藤花种子（可种在庄园花园）");
+            if(typeof showItemPopup === "function") showItemPopup("紫藤花种子（可种在庄园花园）");
             msg += `<div class="system-message">【获得物品】：紫藤花种子（可种在庄园花园）</div>`;
         }
         if(!hasItem("埃莉诺的祝福（在最终密室中")) {
             gameState.items.push("埃莉诺的祝福（在最终密室中");
+            if(typeof showItemPopup === "function") showItemPopup("埃莉诺的祝福（在最终密室中");
             gameState.items.push("你将获得一次“灵感”加成");
+            if(typeof showItemPopup === "function") showItemPopup("你将获得一次“灵感”加成");
             gameState.items.push("自动破解一个难题）");
+            if(typeof showItemPopup === "function") showItemPopup("自动破解一个难题）");
             msg += `<div class="system-message">【获得物品】：埃莉诺的祝福（在最终密室中，你将获得一次“灵感”加成，自动破解一个难题）</div>`;
         }
         return msg;
@@ -4449,12 +4544,14 @@ scenes["library_find_codex"] = {
         let msg = "";
         if(!hasItem("蓝宝石徽章")) {
             gameState.items.push("蓝宝石徽章");
+            if(typeof showItemPopup === "function") showItemPopup("蓝宝石徽章");
             gameState.medals.push("蓝宝石徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：蓝宝石徽章</div>`;
         }
         if(!hasItem("克劳利的日记")) {
             gameState.items.push("克劳利的日记");
+            if(typeof showItemPopup === "function") showItemPopup("克劳利的日记");
             msg += `<div class="system-message">【获得物品】：克劳利的日记</div>`;
         }
         return msg;
@@ -4473,12 +4570,14 @@ scenes["clocktower_diary_solution"] = {
         let msg = "";
         if(!hasItem("红宝石徽章")) {
             gameState.items.push("红宝石徽章");
+            if(typeof showItemPopup === "function") showItemPopup("红宝石徽章");
             gameState.medals.push("红宝石徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：红宝石徽章</div>`;
         }
         if(!hasItem("机械齿轮")) {
             gameState.items.push("机械齿轮");
+            if(typeof showItemPopup === "function") showItemPopup("机械齿轮");
             msg += `<div class="system-message">【获得物品】：机械齿轮</div>`;
         }
         return msg;
@@ -4505,12 +4604,14 @@ scenes["musicroom_gear_solution"] = {
         let msg = "";
         if(!hasItem("翠绿徽章")) {
             gameState.items.push("翠绿徽章");
+            if(typeof showItemPopup === "function") showItemPopup("翠绿徽章");
             gameState.medals.push("翠绿徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：翠绿徽章</div>`;
         }
         if(!hasItem("共鸣水晶")) {
             gameState.items.push("共鸣水晶");
+            if(typeof showItemPopup === "function") showItemPopup("共鸣水晶");
             msg += `<div class="system-message">【获得物品】：共鸣水晶</div>`;
         }
         return msg;
@@ -4527,12 +4628,14 @@ scenes["studio_crystal_solution"] = {
         let msg = "";
         if(!hasItem("橙色徽章")) {
             gameState.items.push("橙色徽章");
+            if(typeof showItemPopup === "function") showItemPopup("橙色徽章");
             gameState.medals.push("橙色徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：橙色徽章</div>`;
         }
         if(!hasItem("神秘颜料")) {
             gameState.items.push("神秘颜料");
+            if(typeof showItemPopup === "function") showItemPopup("神秘颜料");
             msg += `<div class="system-message">【获得物品】：神秘颜料</div>`;
         }
         return msg;
@@ -4549,12 +4652,14 @@ scenes["greenhouse_pigment_solution"] = {
         let msg = "";
         if(!hasItem("金色徽章")) {
             gameState.items.push("金色徽章");
+            if(typeof showItemPopup === "function") showItemPopup("金色徽章");
             gameState.medals.push("金色徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：金色徽章</div>`;
         }
         if(!hasItem("生命之露")) {
             gameState.items.push("生命之露");
+            if(typeof showItemPopup === "function") showItemPopup("生命之露");
             msg += `<div class="system-message">【获得物品】：生命之露</div>`;
         }
         return msg;
@@ -4571,12 +4676,14 @@ scenes["basement_dew_solution"] = {
         let msg = "";
         if(!hasItem("紫色徽章")) {
             gameState.items.push("紫色徽章");
+            if(typeof showItemPopup === "function") showItemPopup("紫色徽章");
             gameState.medals.push("紫色徽章");
             addMedal();
             msg += `<div class="system-message">【获得物品】：紫色徽章</div>`;
         }
         if(!hasItem("符文石")) {
             gameState.items.push("符文石");
+            if(typeof showItemPopup === "function") showItemPopup("符文石");
             msg += `<div class="system-message">【获得物品】：符文石</div>`;
         }
         return msg;
