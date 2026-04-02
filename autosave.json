@@ -1,20 +1,41 @@
 {
     "medals": [],
     "rooms_completed": [],
-    "items": [],
-    "clues": [],
+    "items": [
+        "彩虹徽章"
+    ],
+    "clues": [
+        "主人建造谜语馆的动机——传承谜语精神",
+        "窗外可能有提示",
+        "喷泉池底的七角星图案",
+        "子夜时喷泉倒影可能揭示答案"
+    ],
     "side_quests": {},
-    "hall_medal_count": 0,
-    "current_scene_id": "hall_main",
+    "hall_medal_count": 1,
+    "current_scene_id": "title",
     "visited_options": [
         "title->opening_studio",
         "opening_studio->opening_gate",
         "opening_gate->hall_initial_enter",
-        "hall_initial_enter->hall_history",
-        "hall_history->hall_main",
-        "hall_main->puzzle_statues",
-        "puzzle_statues->hall_main",
+        "hall_initial_enter->hall_main",
         "hall_main->bedroom_entry",
-        "bedroom_entry->hall_main"
+        "bedroom_entry->bedroom_diary",
+        "bedroom_diary->bedroom_window",
+        "bedroom_window->bedroom_telescope",
+        "bedroom_telescope->bedroom_window",
+        "bedroom_window->bedroom_midnight_fountain",
+        "bedroom_midnight_fountain->bedroom_answer_correct",
+        "bedroom_answer_correct->bedroom_closet_back",
+        "bedroom_closet_back->final_chamber_entry",
+        "final_chamber_entry->final_test_1",
+        "final_test_1->final_test_1_correct",
+        "final_test_1_correct->final_test_2",
+        "final_test_2->final_test_2_correct",
+        "final_test_2_correct->final_test_3",
+        "final_test_3->final_test_3_correct",
+        "final_test_3_correct->final_test_4",
+        "final_test_4->ending_1",
+        "ending_1->title",
+        "title->title"
     ]
 }
