@@ -558,32 +558,7 @@ function renderScene(sceneId) {
                 ? rawText
                 : (opt.target === "title"
                     ? "返回主界面"
-                    : ((opt.target === "hall_main" || opt.target === "hall_main") ? "返回大厅" : "继续探索"));
-            
-            let suffix = "";
-        const roomMedalMap = {
-            "puzzle_statues": "勇气徽章",
-            "library_entry": "知识徽章",
-            "musicroom_entry": "和谐徽章",
-            "greenhouse_entry": "生命徽章",
-            "studio_entry": "洞察徽章",
-            "basement_entry": "转化徽章",
-            "clocktower_entry": "怀表"
-        };
-        var visitedKey = sceneId + "->" + opt.target;
-        if (!globalState.visitedOptions) globalState.visitedOptions = {};
-        if (globalState.visitedOptions[visitedKey]) {
-            suffix += " <span style='color:#777;'>(已勘查)</span>";
-        }
-
-        if (roomMedalMap[opt.target]) {
-            const req = roomMedalMap[opt.target];
-            if (gameState.items.some(i => i.includes(req))) {
-                suffix = ' <span style="color:#d4af37; font-weight:bold; font-size:1.1em;">(✓ 已解开)</span>';
-            }
-        }
-
-            
+                    : ((opt.target === "hall_main" || opt.target === "hall_main") ? "返回大厅" : "继续探索"));            
             let suffix = "";
         const roomMedalMap = {
             "puzzle_statues": "勇气徽章",
