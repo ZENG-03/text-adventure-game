@@ -41,14 +41,15 @@ PROTECTED_IDS = frozenset({
 EXPANSION_FILE_KEYWORDS = ("谜题-", "支线", "大结局.txt", "补充2.txt")
 
 FILES = [
+    "文本/补充1.txt",
+    "文本/补充2.txt",
     "文本/谜题-地下室.txt",
     "文本/谜题-画室.txt",
     "文本/谜题-图书馆.txt",
     "文本/谜题-温室.txt",
     "文本/谜题-卧室.txt",
     "文本/谜题-音乐室.txt",
-    "文本/谜题-钟楼1.txt",
-    "文本/谜题-钟楼2.txt",
+    "文本/谜题-钟楼.txt",
     "文本/支线1.txt",
     "文本/支线2.txt",
     "文本/支线3.txt",
@@ -56,8 +57,8 @@ FILES = [
     "文本/大结局.txt",
     "文本/主线.txt",
     "文本/主线2.txt",
-    "文本/补充1.txt",
-    "文本/补充2.txt",
+    "文本/主线3_补全内容.txt",
+    "文本/主线4_机关与结局.txt",
 ]
 
 
@@ -111,6 +112,20 @@ def parse_txt(file_path: Path) -> dict:
             ):
                 effs.append(raw.replace("**", "").strip())
                 continue
+            
+            eff_match = re.match(r"^效果：\[(.*?)\]", raw)
+            if eff_match:
+                eff_content = eff_match.group(1).strip()
+                if "获得 线索：" in eff_content:
+                    effs.append("获得线索：" + eff_content.replace("获得 线索：", "").strip())
+                elif "获得 " in eff_content:
+                    effs.append("获得：" + eff_content.replace("获得 ", "").strip())
+                elif "消耗 " in eff_content:
+                    effs.append("消耗物品：" + eff_content.replace("消耗 ", "").strip())
+                else:
+                    effs.append(eff_content)
+                continue
+
             # 纯加粗小标题行并入描述
             desc_lines.append(raw.replace("**", ""))
 

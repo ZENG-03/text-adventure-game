@@ -542,6 +542,671 @@ scenes["sys_side_story_4_trigger"] = {
 };
 
 
+// --- 自动生成的 文本/补充1.txt 场景 ---
+
+// --- 自动生成的 文本/补充2.txt 场景 ---
+scenes["prologue_character"] = {
+    desc: `你叫塞拉斯·诺斯，三十四岁，是迷雾城最出色的私家侦探。你以破解冷案和谜团闻名，从不依靠运气，只相信逻辑与观察。随身携带的侦探笔记记录了你经手的每一个案件——从失窃的油画到消失的遗产，没有一桩难倒过你。此刻，空白页正等待着新的谜题。
+
+午夜，一封没有邮戳的信静静躺在门垫上。火漆上压印着七条弧线交织的徽记。你合上笔记，将地图折好放进口袋。直觉告诉你，这次委托将不同于以往任何案件。
+侦探笔记功能说明（在序章后插入提示）：
+*提示：在游戏过程中，所有获得的关键线索、日记内容、地图都会自动记录在笔记中。你可以随时输入“查看笔记”来回顾已获得的线索。*
+初始大厅（已有，但补充管家对话）`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["hall_initial"] = {
+    desc: `门厅内，水晶吊灯蒙着薄灰，墙壁上挂着七幅抽象画，每一幅都似乎在注视着你。一位身着燕尾服、面容古板的老人无声地出现在你面前，眼睛如同深不见底的黑曜石。
+
+“欢迎，探索者。我是管家奥尔德斯，主人的意志将由我传达。”他的声音沙哑而平静，“主人留下遗嘱：庄园内设有七道谜题，分别位于七个房间。每解开一道，你将获得一枚宝石徽章。集齐七枚徽章，便可开启中央密室，获取遗产。但请记住——谜题可能致命，而选择不可逆转。你确定要开始吗？”`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["hall_1_medal"] = {
+    desc: `你将[颜色]徽章放在壁炉台上。蓝宝石在火光中闪烁，映出一小片星图。管家瞥了一眼，微微点头：“第一枚。还有六道门等待着你。”
+
+你注意到墙上七幅抽象画中的第一幅似乎变得明亮了一些，原本模糊的线条现在隐约能看出——那是图书馆的轮廓。
+管家对话（1枚徽章后）：
+“你已经踏出了第一步。但后面的谜题只会更难。如果需要休息，随时可以回到这里。”
+大厅状态2：获得3枚徽章后`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["hall_3_medals"] = {
+    desc: `三枚徽章在壁炉台上并排闪烁，光芒交织成柔和的虹彩。大厅的光线似乎比之前更亮了，三幅抽象画已经焕发出清晰的色彩——图书馆的书籍、钟楼的齿轮、音乐室的音符，栩栩如生。
+
+管家递给你一杯热茶：“你比我想象的更快。但后面的谜题会更难。有些人在这里停下了脚步，希望你不一样。”
+管家对话（3枚徽章后）：
+“主人的日记里提到，画室和温室藏着最私密的记忆。如果你在那里看到什么……不必惊讶。”
+大厅状态3：获得6枚徽章后`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["hall_6_medals"] = {
+    desc: `六枚徽章的光芒照亮了整个房间，壁炉台几乎成了一座小小的灯塔。墙上的六幅抽象画已经变成了生动的场景——图书馆的静谧、钟楼的庄严、音乐室的辉煌、画室的色彩、温室的生机、地下室的神秘。只差最后一幅。
+
+管家的声音里带着一丝期待，也有一丝不易察觉的颤抖：“最后一枚徽章在卧室。主人的私人空间，藏着最终的秘密。那扇门……我已经很久没有打开了。”
+管家对话（6枚徽章后）：
+“卧室的谜题不在地上，而在心里。主人的遗嘱说，最后一扇门只向真正理解谜语意义的人敞开。”
+大厅状态4：集齐7枚徽章后`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["hall_7_medals"] = {
+    desc: `七枚徽章齐聚的瞬间，大厅中央的石台发出轰鸣，缓缓下沉，露出一条螺旋石梯，石阶向下延伸，消失在淡蓝色的荧光中。七幅抽象画同时燃烧起来——不是真的燃烧，而是化作七色光，汇聚成一道光束，照亮了石梯的入口。
+
+管家站在阴影中，深深鞠躬，声音沙哑：“主人等候已久。请沿着这条路，去揭开最后的谜底。我……在这里等你回来。”
+每个房间谜题完成后，自动显示以下文本（可替换房间名称和颜色），然后返回大厅：`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["return_from_"] = {
+    desc: `[room]
+你将[颜色]徽章收入怀中，最后看了一眼[房间名称]。似乎有什么东西在角落里轻轻叹息，然后一切归于沉寂。当你走出房门时，门在你身后无声地关闭，门把手上的光泽消失了——仿佛它已经完成了自己的使命。
+
+你回到大厅，将徽章与其他徽章并排放在壁炉台上。管家无声地递上一杯热茶，没有多问。
+示例（图书馆）：
+你将蓝宝石徽章收入怀中，最后看了一眼图书馆。似乎有什么东西在角落里轻轻叹息，然后一切归于沉寂。当你走出房门时，门在你身后无声地关闭，门把手上的光泽消失了——仿佛它已经完成了自己的使命。
+
+你回到大厅，将蓝宝石徽章与其他徽章并排放在壁炉台上。管家无声地递上一杯热茶，没有多问。
+当玩家满足支线触发条件时，在返回大厅或进入特定房间时自动显示：
+管家支线触发（完成任意三个房间后，返回大厅时）
+你走进大厅，发现管家不在往常的位置。壁炉台上压着一张纸条：“我去地下室取些东西，请稍候。” 你拿起纸条，背面隐约有字迹，似乎是被人擦过的痕迹：“不要相信……” 你的直觉告诉你，这位沉默寡言的管家藏着秘密。
+
+*新区域已解锁：管家的起居室（大厅侧门）、地窖（地下室入口旁）。*
+画室支线触发（完成画室谜题后，再次进入画室时）
+画室的门虚掩着。你推门而入，发现南墙的彩色玻璃窗投下的光斑在地面上拼出一个女人的侧影轮廓。七幅完成的画作中，似乎每一幅里都有一个女子的身影若隐若现。你的手不自觉地抬起，触碰赤色画的表面——画面微微发烫，一个声音在脑海中响起：“他把我画进了每一道光里，却始终画不出我的灵魂。”
+
+*新线索已记录：画背面的文字、紫藤花架的位置。*
+地下支线触发（完成地下室谜题后，且至少完成两个其他房间，再次经过地下室入口时）
+你经过地下室的入口，注意到旁边的墙壁上有一道之前没见过的裂缝。裂缝很细，但有冷风从里面渗出。你将耳朵贴近，隐约听到有节奏的敲击声——像是有人在用石头敲打岩石，一下，两下，三下，停顿，重复。你询问管家，他的眼神闪烁：“那只是岩壁。” 你知道他在说谎。
+
+*新区域已解锁：地下裂缝通道。*
+音乐室支线触发（完成音乐室谜题后，再次经过音乐室时）
+当你经过音乐室时，紧闭的门内传出微弱的音乐声——不是管风琴的庄严旋律，而是一把小提琴的独奏，曲调忧伤而优美。你推开门，音乐声戛然而止，空无一人。小提琴的琴弦还有余温，琴谱架上多了一份你从未见过的手稿：《第七交响曲：未完成》。
+
+*新线索已记录：埃莉诺·布莱克伍德的名字、乐器上的夜莺标记。*
+所有死亡结局采用以下模板，并在末尾提供选项。我们为已有的死亡场景统一添加此格式。
+模板：
+[死亡描述文字]
+
+你的意识逐渐模糊。在最后的瞬间，你听见管家奥尔德斯的声音从遥远的地方传来：“鲁莽是解谜的大敌。” 世界陷入黑暗。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["final_chamber_transition"] = {
+    desc: `当第七枚徽章嵌入油画的瞬间，整个卧室都开始震动。油画中的七扇窗户同时亮起，光芒汇聚成一束，射向地面。地板裂开，露出一条螺旋石梯，石阶向下延伸，消失在淡蓝色的荧光中。
+
+管家不知何时站在门口，他的眼中映着七色光：“这条路通往庄园的最深处，也是主人最后的谜题所在。我在这里等你回来。”
+
+你深吸一口气，踏上了石阶。身后的光芒逐渐暗淡，前方的黑暗却透出微弱的荧光。石梯似乎很长，每一步都回荡着你的心跳。螺旋下降的墙壁上刻着七道谜题的缩影——图书馆的星盘、钟楼的齿轮、音乐室的音符……你走过的路在身后化作星光。
+
+不知走了多久，你终于看到一扇敞开的石门。门楣上刻着一行字：“最后的谜题，是你自己。”
+
+你跨过门槛，进入了中央密室。
+在每个结局后添加统一的重玩界面：`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["game_over_txt"] = {
+    desc: `—— 游戏结束 ——
+
+你解锁的结局：[结局名称]
+
+本次游玩解锁的成就：[成就列表，如有]`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["basement_activate_planets"] = {
+    desc: `描述: 【系统提示】该区域（basement_activate_planets）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["basement_extract_essence"] = {
+    desc: `描述: 【系统提示】该区域（basement_extract_essence）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["basement_furnace_with_key"] = {
+    desc: `描述: 【系统提示】该区域（basement_furnace_with_key）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["basement_periodic_table"] = {
+    desc: `描述: 【系统提示】该区域（basement_periodic_table）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["basement_prepare_materials"] = {
+    desc: `描述: 【系统提示】该区域（basement_prepare_materials）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["basement_put_metals"] = {
+    desc: `描述: 【系统提示】该区域（basement_put_metals）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["basement_runes"] = {
+    desc: `描述: 【系统提示】该区域（basement_runes）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["basement_search_metals"] = {
+    desc: `描述: 【系统提示】该区域（basement_search_metals）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["basement_weigh_metals"] = {
+    desc: `描述: 【系统提示】该区域（basement_weigh_metals）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["bedroom_candle_midnight"] = {
+    desc: `描述: 【系统提示】该区域（bedroom_candle_midnight）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["bedroom_final_secret"] = {
+    desc: `描述: 【系统提示】该区域（bedroom_final_secret）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["bedroom_painting_details"] = {
+    desc: `描述: 【系统提示】该区域（bedroom_painting_details）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["bedroom_telescope"] = {
+    desc: `描述: 【系统提示】该区域（bedroom_telescope）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_behind_clock"] = {
+    desc: `描述: 【系统提示】该区域（clocktower_behind_clock）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_door"] = {
+    desc: `描述: 【系统提示】该区域（clocktower_door）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_gear_clues"] = {
+    desc: `描述: 【系统提示】该区域（clocktower_gear_clues）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_gears"] = {
+    desc: `描述: 【系统提示】该区域（clocktower_gears）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["greenhouse_basin"] = {
+    desc: `描述: 【系统提示】该区域（greenhouse_basin）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["greenhouse_check_seeds"] = {
+    desc: `描述: 【系统提示】该区域（greenhouse_check_seeds）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["greenhouse_clean_pipes"] = {
+    desc: `描述: 【系统提示】该区域（greenhouse_clean_pipes）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["greenhouse_fix_pump"] = {
+    desc: `描述: 【系统提示】该区域（greenhouse_fix_pump）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["greenhouse_mix_dead"] = {
+    desc: `描述: 【系统提示】该区域（greenhouse_mix_dead）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["greenhouse_mix_nutrient"] = {
+    desc: `描述: 【系统提示】该区域（greenhouse_mix_nutrient）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["greenhouse_nursery"] = {
+    desc: `描述: 【系统提示】该区域（greenhouse_nursery）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["greenhouse_pipes"] = {
+    desc: `描述: 【系统提示】该区域（greenhouse_pipes）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["greenhouse_use_fertilizer"] = {
+    desc: `描述: 【系统提示】该区域（greenhouse_use_fertilizer）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["hall_injured"] = {
+    desc: `描述: 你受伤了，剧烈的疼痛让你无法继续当前的探索。你只能跌跌撞撞地回到大厅休息，处理伤口。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["library_astrolabe_success"] = {
+    desc: `描述: 【系统提示】该区域（library_astrolabe_success）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["library_fail"] = {
+    desc: `描述: 你拉动了书籍，但似乎缺少了什么核心条件，装置发出刺耳的摩擦声后彻底卡死了。目前无法继续操作。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["library_gaps"] = {
+    desc: `描述: 【系统提示】该区域（library_gaps）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["library_labels"] = {
+    desc: `描述: 【系统提示】该区域（library_labels）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["library_scholar_order"] = {
+    desc: `描述: 【系统提示】该区域（library_scholar_order）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["library_sort_attempt"] = {
+    desc: `描述: 【系统提示】该区域（library_sort_attempt）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["library_window_move"] = {
+    desc: `描述: 【系统提示】该区域（library_window_move）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_autoplayer"] = {
+    desc: `描述: 【系统提示】该区域（musicroom_autoplayer）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_copy_score"] = {
+    desc: `描述: 【系统提示】该区域（musicroom_copy_score）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_find_score_parts"] = {
+    desc: `描述: 【系统提示】该区域（musicroom_find_score_parts）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_inside"] = {
+    desc: `描述: 【系统提示】该区域（musicroom_inside）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_inspect"] = {
+    desc: `描述: 【系统提示】该区域（musicroom_inspect）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_instrument_order"] = {
+    desc: `描述: 【系统提示】该区域（musicroom_instrument_order）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_order_by_score"] = {
+    desc: `描述: 【系统提示】该区域（musicroom_order_by_score）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_play_instruments_order"] = {
+    desc: `描述: 【系统提示】该区域（musicroom_play_instruments_order）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_play_organ"] = {
+    desc: `描述: 【系统提示】该区域（musicroom_play_organ）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_reflector_ropes"] = {
+    desc: `描述: 【系统提示】该区域（musicroom_reflector_ropes）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_search_crystal"] = {
+    desc: `描述: 【系统提示】该区域（musicroom_search_crystal）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_tune_by_ear"] = {
+    desc: `描述: 【系统提示】该区域（musicroom_tune_by_ear）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_alternate_path"] = {
+    desc: `描述: 【系统提示】该区域（side_alternate_path）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_ask_butler"] = {
+    desc: `描述: 【系统提示】该区域（side_ask_butler）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_attic"] = {
+    desc: `描述: 【系统提示】该区域（side_attic）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_butler_knows"] = {
+    desc: `描述: 【系统提示】该区域（side_butler_knows）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_butler_last_days"] = {
+    desc: `描述: 【系统提示】该区域（side_butler_last_days）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_cave_deeper"] = {
+    desc: `描述: 【系统提示】该区域（side_cave_deeper）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_cellar_key"] = {
+    desc: `描述: 【系统提示】该区域（side_cellar_key）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_dig_with_hammer"] = {
+    desc: `描述: 【系统提示】该区域（side_dig_with_hammer）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_elenor_grave"] = {
+    desc: `描述: 【系统提示】该区域（side_elenor_grave）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_hidden_drawer"] = {
+    desc: `描述: 【系统提示】该区域（side_hidden_drawer）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_leave_cave"] = {
+    desc: `描述: 【系统提示】该区域（side_leave_cave）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_mirror_again"] = {
+    desc: `描述: 【系统提示】该区域（side_mirror_again）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_music_hidden"] = {
+    desc: `描述: 【系统提示】该区域（side_music_hidden）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_music_room_play"] = {
+    desc: `描述: 【系统提示】该区域（side_music_room_play）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_palette_clue"] = {
+    desc: `描述: 【系统提示】该区域（side_palette_clue）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_play_violin"] = {
+    desc: `描述: 【系统提示】该区域（side_play_violin）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_score_details"] = {
+    desc: `描述: 【系统提示】该区域（side_score_details）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_search_elenor"] = {
+    desc: `描述: 【系统提示】该区域（side_search_elenor）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_servant_room"] = {
+    desc: `描述: 【系统提示】该区域（side_servant_room）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_study_murals"] = {
+    desc: `描述: 【系统提示】该区域（side_study_murals）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_tell_butler"] = {
+    desc: `描述: 【系统提示】该区域（side_tell_butler）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["studio_cabinet_open"] = {
+    desc: `描述: 【系统提示】该区域（studio_cabinet_open）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["studio_find_solvent"] = {
+    desc: `描述: 【系统提示】该区域（studio_find_solvent）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["studio_mix"] = {
+    desc: `描述: 【系统提示】该区域（studio_mix）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["studio_paint_mirror_fix"] = {
+    desc: `描述: 【系统提示】该区域（studio_paint_mirror_fix）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["studio_paint_portrait"] = {
+    desc: `描述: 【系统提示】该区域（studio_paint_portrait）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["studio_press_gems"] = {
+    desc: `描述: 【系统提示】该区域（studio_press_gems）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["studio_rotate_scale"] = {
+    desc: `描述: 【系统提示】该区域（studio_rotate_scale）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["studio_sketches"] = {
+    desc: `描述: 【系统提示】该区域（studio_sketches）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["studio_water_tank"] = {
+    desc: `描述: 【系统提示】该区域（studio_water_tank）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
 // --- 自动生成的 文本/谜题-地下室.txt 场景 ---
 scenes["basement_entry"] = {
     desc: `地下室的入口位于大厅楼梯下方，一扇沉重的铁门布满锈迹。推开铁门，一股混合着泥土、铁锈和某种古老香料的气味扑面而来。石阶向下延伸，两侧墙壁上的火把在你经过时自动燃起，发出幽蓝的火焰。
@@ -3140,9 +3805,431 @@ scenes["hall"] = {
     ]
 };
 
-// --- 自动生成的 文本/谜题-钟楼1.txt 场景 ---
+// --- 自动生成的 文本/谜题-钟楼.txt 场景 ---
+scenes["clocktower_entry"] = {
+    desc: `钟楼位于庄园东侧，是一座独立的石制塔楼，与主建筑通过一条封闭的玻璃廊桥相连。推开厚重的橡木门，一股夹杂着机油和铁锈的气味扑面而来。螺旋石梯盘旋而上，石阶被岁月磨得光滑。巨大的机械钟占据了三层楼的高度，齿轮、摆锤、擒纵轮在幽暗中隐约可见，发出有节奏的轰鸣。
+钟盘位于塔楼第三层，直径足有两米，指针停留在11:55，分针微微颤抖，仿佛被什么卡住。钟盘下方有一扇小门，门上刻着一行拉丁文：“Tempus edax rerum”（时间吞噬万物）。
+墙面和楼梯扶手上随处可见齿轮图案和钟表零件装饰。二层平台处有一张工作台，散落着各种钟表修理工具和一叠泛黄的图纸。三层钟盘旁有一个观察窗，可以俯瞰庄园全貌。
+管家曾提醒过你：“钟楼的谜题与时间有关，但强行拨动指针可能触发致命的机关。”`,
+    options: [
+        { text: "登上螺旋楼梯，前往二层工作台", target: "clocktower_workbench" },
+        { text: "直接上三层，检查钟盘", target: "clocktower_clockface" },
+        { text: "观察钟摆后的空间", target: "clocktower_pendulum" },
+        { text: "先查看廊桥入口处的铭牌", target: "clocktower_plaque" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
 
-// --- 自动生成的 文本/谜题-钟楼2.txt 场景 ---
+scenes["clocktower_workbench"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("钟楼维护日志（部分）")) {
+            gameState.clues.push("钟楼维护日志（部分）");
+            msg += `<div class="system-message">【获得线索】：钟楼维护日志（部分）</div>`;
+        }
+        if(!hasClue("齿轮传动图纸")) {
+            gameState.clues.push("齿轮传动图纸");
+            msg += `<div class="system-message">【获得线索】：齿轮传动图纸</div>`;
+        }
+        return msg;
+    },
+    desc: `工作台布满灰尘，但工具摆放整齐：螺丝刀、镊子、放大镜、一小瓶润滑油，还有一个打开的工具箱。台面上摊着一张机械图纸，上面画着钟楼的内部结构，标注着齿轮编号和传动路线。图纸一角有手写注释：“第三级传动轮偏移2度，导致分针卡滞。需在月升时校准，否则触发防护机关。”
+图纸旁有一本皮质封面的《钟楼维护日志》，最近一条记录日期是二十年前：“主人在此设置考验。欲解谜者，需使钟鸣七声，且每声间隔相等。调整之法，见齿轮室。”
+你翻看日志，发现中间几页被撕掉了，只留下一些残句：“…分针与时针重合于12…”“…听指针的低语…”“…切勿在子时前触碰…”`,
+    options: [
+        { text: "根据图纸寻找齿轮室", target: "clocktower_gear_room" },
+        { text: "检查工作台上的工具", target: "clocktower_tools" },
+        { text: "继续上三层", target: "clocktower_clockface" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_tools"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("齿轮钥匙（VII号）")) {
+            gameState.items.push("齿轮钥匙（VII号）");
+            if(typeof showItemPopup === "function") showItemPopup("齿轮钥匙（VII号）");
+            msg += `<div class="system-message">【获得物品】：齿轮钥匙（VII号）</div>`;
+        }
+        return msg;
+    },
+    desc: `你仔细检查工具。放大镜的镜片有轻微的裂痕，但还能用。润滑油瓶几乎空了，底部残留少许深色油液。工具箱底层有一把造型奇特的钥匙，钥匙柄是一个齿轮形状，上面刻着编号“VII”。你把钥匙收好。`,
+    options: [
+        { text: "继续探索", target: "clocktower_workbench" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_gear_room"] = {
+    desc: `根据图纸，齿轮室位于二层与三层之间的夹层，入口是一扇伪装成石墙的暗门，需要用齿轮钥匙打开。你找到暗门，将VII号钥匙插入锁孔，轻轻旋转。门后是一条狭窄的通道，通向一个圆形小室。
+齿轮室中央是一个复杂的齿轮组，大小不一的齿轮互相咬合，从地板延伸到天花板。墙壁上有七个齿轮轴端，每个轴端都有一个编号（I至VII）和一个可以插入手柄的方孔。图纸显示，通过旋转这些轴端可以调整传动比，从而改变钟声的间隔。
+齿轮室的地板上刻着一行字：“七声钟鸣，间隔相等。如心律之搏动，如潮汐之涨落。”
+你发现齿轮组中，I至VI号齿轮都可以转动，但VII号齿轮的轴端是空的——你手中的钥匙正是用来转动它的？实际上，钥匙已经用来开门，现在你需要一个手柄来转动轴端。工作台上的工具箱里或许有。`,
+    options: [
+        { text: "返回工作台寻找手柄", target: "clocktower_find_handle" },
+        { text: "尝试直接用手转动轴端", target: "clocktower_turn_by_hand" },
+        { text: "检查齿轮组是否有其他线索", target: "clocktower_gear_clues" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_find_handle"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("摇柄")) {
+            gameState.items.push("摇柄");
+            if(typeof showItemPopup === "function") showItemPopup("摇柄");
+            msg += `<div class="system-message">【获得物品】：摇柄</div>`;
+        }
+        return msg;
+    },
+    desc: `你回到工作台，在工具箱底层找到一根可拆卸的摇柄，正好可以插入齿轮轴端的方孔。`,
+    options: [
+        { text: "返回齿轮室", target: "clocktower_gear_room_2" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_turn_by_hand"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!getFlag("受伤，铁栅栏封锁（需要另寻出路）")) {
+            setFlag("受伤，铁栅栏封锁（需要另寻出路）", true);
+            msg += `<div class="system-message">【状态】：受伤，铁栅栏封锁（需要另寻出路）</div>`;
+        }
+        return msg;
+    },
+    desc: `你试图用手转动VII号轴端，但齿轮阻力极大，你的手指被齿轮咬合处夹伤，鲜血直流。你赶紧抽手，但齿轮已经偏移，整个传动系统发出刺耳的噪音，钟楼剧烈震动。你意识到可能触发了机关，急忙退出齿轮室。回到二层时，发现通往三层的楼梯已经降下一道铁栅栏，将你困在二层。`,
+    options: [
+        { text: "寻找其他出口", target: "clocktower_escape" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_gear_room_2"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("需要校准七个齿轮的转动量，使钟声间隔相等")) {
+            gameState.clues.push("需要校准七个齿轮的转动量，使钟声间隔相等");
+            msg += `<div class="system-message">【获得线索】：需要校准七个齿轮的转动量，使钟声间隔相等</div>`;
+        }
+        return msg;
+    },
+    desc: `你将摇柄插入VII号轴端，顺时针旋转。齿轮缓缓转动，发出沉重的机械声。每转一圈，钟楼某处就传来一声低沉的钟鸣。你数着圈数，当转到第七圈时，钟鸣连续响了七声，但间隔并不相等——有的间隔长，有的短。
+你意识到需要调整每个齿轮的转动量，使七声钟鸣的时间间隔完全相等。图纸上标注了每个齿轮对应的传动比，但你需要找到一个参考时间。日志中提到“听指针的低语”——或许需要观察钟盘指针的移动。`,
+    options: [
+        { text: "去三层观察钟盘指针的移动", target: "clocktower_observe_hands" },
+        { text: "在齿轮室寻找校准标准", target: "clocktower_calibration" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_observe_hands"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("指针低语模式（七组节奏）")) {
+            gameState.clues.push("指针低语模式（七组节奏）");
+            msg += `<div class="system-message">【获得线索】：指针低语模式（七组节奏）</div>`;
+        }
+        return msg;
+    },
+    desc: `你来到三层，站在巨大的钟盘前。分针仍然卡在11:55的位置，秒针在12的位置微微颤动。你注意到钟盘外圈有一圈细小的刻度，每两个数字之间有五格，代表分钟。当秒针跳动时，分针几乎不动。
+你想起日志中的提示：“听指针的低语”。你贴近钟盘，听到指针内部有细微的咔哒声，像是某种编码。你仔细分辨，发现秒针每跳一下，咔哒声的间隔并不恒定——有时快，有时慢。你拿出侦探笔记，记录下声音模式：
+- 第一分钟：长-短-短-长-短
+- 第二分钟：短-长-短-长-长
+- 第三分钟：……（如此重复）
+你意识到这可能是摩尔斯电码。你尝试翻译第一段：“-.. .- - .-”（DATA），第二段：“.-.. .. -- .”（LIME），第三段：“... --- .. .-..”（SOIL）——数据？石灰？土壤？似乎没有意义。你继续记录，发现一共有七组，每组对应一分钟。第七组是：“- .. -- .”（TIME）。
+你恍然大悟：这七组摩尔斯电码对应七个齿轮的调整值！每组代表一个数字（摩尔斯电码中的数字有标准表示法）。但刚才翻译的是字母，可能你需要的是数字。再仔细听，其实声音模式更像是数字摩尔斯：
+第一组：“-....” = 6
+第二组：“.--.” 这不对，数字摩尔斯没有这种。也许不是标准摩尔斯，而是某种自定义编码。你决定先记下所有七组声音的节奏模式，待会儿在齿轮室对照。`,
+    options: [
+        { text: "返回齿轮室，尝试匹配节奏", target: "clocktower_match_rhythm" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_match_rhythm"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("红宝石徽章")) {
+            gameState.items.push("红宝石徽章");
+            if(typeof showItemPopup === "function") showItemPopup("红宝石徽章");
+            gameState.medals.push("红宝石徽章");
+            addMedal();
+            msg += `<div class="system-message">【获得物品】：红宝石徽章</div>`;
+        }
+        if(!hasItem("便条（内容：“齿轮钥匙可开启更多秘密。VII号门后")) {
+            gameState.items.push("便条（内容：“齿轮钥匙可开启更多秘密。VII号门后");
+            if(typeof showItemPopup === "function") showItemPopup("便条（内容：“齿轮钥匙可开启更多秘密。VII号门后");
+            gameState.items.push("有通往画室的密道。”）");
+            if(typeof showItemPopup === "function") showItemPopup("有通往画室的密道。”）");
+            msg += `<div class="system-message">【获得物品】：便条（内容：“齿轮钥匙可开启更多秘密。VII号门后，有通往画室的密道。”）</div>`;
+        }
+        return msg;
+    },
+    desc: `你回到齿轮室，根据记录的七组节奏，用摇柄依次转动I至VII号轴端，使每组齿轮转动的圈数或角度与节奏的“长-短”模式对应。你设定：长代表转一圈，短代表转半圈。按此调整后，你拉动钟绳，钟声连续响起，间隔完全相等——每一响之间恰好间隔七秒。
+随着最后一声钟鸣，钟楼内响起一阵齿轮咬合的声音，钟盘上的分针终于开始移动，指向12。钟盘下方的小门自动打开，露出一枚红宝石徽章和一张泛黄的便条。`,
+    options: [
+        { text: "返回大厅", target: "hall" },
+        { text: "探索VII号门", target: "clocktower_door_vii" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_door_vii"] = {
+    desc: `你拿着齿轮钥匙，在钟楼内寻找“VII号门”。最终在二层楼梯拐角处发现一扇与墙壁融为一体的铁门，门上有罗马数字VII。插入钥匙，门开后是一条狭窄的通道，尽头是一扇通往画室的暗门。你打开暗门，发现自己站在画室的书架后面。
+（这为画室谜题提供了捷径，但不会直接获得画室徽章。）`,
+    options: [
+        { text: "进入画室", target: "studio_entry" },
+        { text: "返回钟楼", target: "clocktower_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_clockface"] = {
+    desc: `你站在三层，仰头观察巨大的钟盘。指针停在11:55，分针有轻微颤动。钟盘玻璃上有一道细小的裂纹，裂纹的形状像一条蛇。钟盘外圈的数字是罗马数字，但IV被写成了IIII（常见于古老钟表）。数字下方有微小的孔洞，可能是用于固定指针的螺丝。
+钟盘中央有一个小盖板，可以打开，里面是机芯。你打开盖板，看到复杂的齿轮系，但最显眼的是分针轴心处有一个小杠杆，似乎可以拨动。杠杆旁边刻着：“勿于子时前动此杆。”
+你看了看怀表，现在是晚上十一点（23:00），距离子时（午夜）还有一个小时。`,
+    options: [
+        { text: "等待到子时再拨动杠杆", target: "clocktower_lever_midnight" },
+        { text: "现在强行拨动杠杆", target: "clocktower_lever_early" },
+        { text: "检查钟盘背后的空间", target: "clocktower_behind_clock" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_lever_midnight"] = {
+    desc: `你耐心等待。当怀表指针指向12点整，子时来临。你拨动杠杆，只听“咔”一声，分针开始缓缓移动，经过12、1、2……一直走到11:55的位置停下。钟声没有响起，但钟盘下方的小门开了。你走进去，发现里面是一个小房间，房间中央的石台上放着一枚红宝石徽章，但周围布满细线，细线连接着墙壁上的箭头——显然有陷阱。`,
+    options: [
+        { text: "尝试绕过细线取徽章", target: "clocktower_trap_room" },
+        { text: "先检查房间四周", target: "clocktower_trap_inspect" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_trap_room"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!getFlag("受伤（但获得徽章）")) {
+            setFlag("受伤（但获得徽章）", true);
+            msg += `<div class="system-message">【状态】：受伤（但获得徽章）</div>`;
+        }
+        if(!hasItem("红宝石徽章")) {
+            gameState.items.push("红宝石徽章");
+            if(typeof showItemPopup === "function") showItemPopup("红宝石徽章");
+            gameState.medals.push("红宝石徽章");
+            addMedal();
+            msg += `<div class="system-message">【获得物品】：红宝石徽章</div>`;
+        }
+        return msg;
+    },
+    desc: `你小心翼翼地在细线间穿行。这些线几乎透明，在昏暗的光线中很难看清。你跨过一根，低头避开另一根，但脚下一滑，碰断了一根线。墙壁上的箭矢瞬间射出，你勉强躲过，但另一根箭射中了你的肩膀。你忍痛取出箭，简单包扎，然后取走徽章，退出房间。`,
+    options: [
+        { text: "返回大厅", target: "hall" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_trap_inspect"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("红宝石徽章")) {
+            gameState.items.push("红宝石徽章");
+            if(typeof showItemPopup === "function") showItemPopup("红宝石徽章");
+            gameState.medals.push("红宝石徽章");
+            addMedal();
+            msg += `<div class="system-message">【获得物品】：红宝石徽章</div>`;
+        }
+        return msg;
+    },
+    desc: `你仔细检查房间，发现细线连接的不是箭矢，而是一些铃铛。原来这是一个警报系统，而非致命陷阱。你轻轻解开细线，没有触发警报，顺利拿到徽章。`,
+    options: [
+        { text: "返回大厅", target: "hall" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_lever_early"] = {
+    desc: `你不顾警告，强行拨动杠杆。分针突然快速旋转，整个钟楼发出震耳欲聋的轰鸣，齿轮疯狂转动，摆锤猛烈摆动。你被摆锤击中，从三层摔落到二层，头破血流，当场昏迷。等你醒来，发现自己躺在庄园外的草地上，管家站在一旁：“你违反了时间的规则，被钟楼驱逐了。若想再试，需等下一个子夜。”
+（游戏未结束，但钟楼暂时无法进入，需要等待游戏内时间流逝。你可以先去其他房间。）`,
+    options: [
+        { text: "返回大厅", target: "hall" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_pendulum"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("钟楼结构图")) {
+            gameState.items.push("钟楼结构图");
+            if(typeof showItemPopup === "function") showItemPopup("钟楼结构图");
+            msg += `<div class="system-message">【获得物品】：钟楼结构图</div>`;
+        }
+        return msg;
+    },
+    desc: `钟摆悬挂在塔楼中央，从三层一直垂到一层，巨大的金属摆锤表面刻满了纹路。你绕到钟摆背面，发现摆锤的背面有一个凹槽，形状与齿轮钥匙（VII号）相似。你将钥匙插入，轻轻转动，摆锤内部发出咔哒声，摆锤侧面弹开一个小门，里面是一个暗格，放着一卷羊皮纸。
+羊皮纸上画着钟楼的侧视图，标注了每个楼层的秘密房间，并特别指出：“齿轮室VII号轴调整正确后，可开启钟楼顶部的天文望远镜，观察星象以解画室之谜。”`,
+    options: [
+        { text: "继续探索", target: "clocktower_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_plaque"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("月相观察窗")) {
+            gameState.clues.push("月相观察窗");
+            msg += `<div class="system-message">【获得线索】：月相观察窗</div>`;
+        }
+        return msg;
+    },
+    desc: `廊桥入口处有一块铜质铭牌，上面写着：“此钟楼建于1865年，由著名钟表匠赫雷米亚斯·克劳利设计。其子阿斯特·克劳利在此设置七谜之一。欲破此谜，须知时间并非直线，而是循环之圆。”
+铭牌下方有一个小的金属旋钮，旋钮上刻着“月相”。你转动旋钮，发现它可以调节到一个观察窗，透过观察窗可以看到月亮。当前月亮接近满月。`,
+    options: [
+        { text: "尝试调节月相至满月", target: "clocktower_full_moon" },
+        { text: "继续探索", target: "clocktower_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_full_moon"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("秒针阴影提示")) {
+            gameState.clues.push("秒针阴影提示");
+            msg += `<div class="system-message">【获得线索】：秒针阴影提示</div>`;
+        }
+        return msg;
+    },
+    desc: `你将月相旋钮调到满月位置，钟楼内部传来一声轻响，一束月光通过棱镜折射，照在二层工作台的图纸上，显现出之前看不见的隐藏文字：“月升之时，秒针的阴影会指向正确的齿轮调整值。”`,
+    options: [
+        { text: "等待月升，观察秒针阴影", target: "clocktower_shadow" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_shadow"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("齿轮调整顺序（6-3-1-7-4-2-5）")) {
+            gameState.clues.push("齿轮调整顺序（6-3-1-7-4-2-5）");
+            msg += `<div class="system-message">【获得线索】：齿轮调整顺序（6-3-1-7-4-2-5）</div>`;
+        }
+        return msg;
+    },
+    desc: `午夜时分，月亮升至中天，月光透过钟盘玻璃上的裂纹，在钟楼地板上投下秒针的阴影。阴影指向地面上的一个数字刻度盘，刻度盘上标有1至7。秒针阴影每跳动一次，指向的数字就变化一次，依次指向：6, 3, 1, 7, 4, 2, 5。你记下这个顺序。`,
+    options: [
+        { text: "去齿轮室按此顺序调整齿轮", target: "clocktower_shadow_solution" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_shadow_solution"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("红宝石徽章")) {
+            gameState.items.push("红宝石徽章");
+            if(typeof showItemPopup === "function") showItemPopup("红宝石徽章");
+            gameState.medals.push("红宝石徽章");
+            addMedal();
+            msg += `<div class="system-message">【获得物品】：红宝石徽章</div>`;
+        }
+        return msg;
+    },
+    desc: `你回到齿轮室，按照秒针阴影指示的顺序（6,3,1,7,4,2,5）依次转动对应编号的齿轮轴端，每个转动一圈。完成后，钟声自动响起，间隔相等，钟门开启，获得红宝石徽章。`,
+    options: [
+        { text: "返回大厅", target: "hall" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_calibration"] = {
+    desc: `如果你没有获得指针低语或月相阴影的线索，也可以尝试通过逻辑推理校准齿轮。齿轮室墙壁上有一幅星图，标注了七颗行星的位置，每颗行星旁边有一个数字，代表它们的公转周期比（简化版）。你需要将这些比例转化为齿轮转动圈数，使七声钟鸣的间隔等于某个恒定值。
+你可以尝试解这个谜题，但若推理错误，可能触发陷阱。`,
+    options: [
+        { text: "按照行星顺序转动齿轮", target: "clocktower_calibration_fail" },
+        { text: "按照行星周期比例转动", target: "clocktower_calibration_success" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_calibration_fail"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!getFlag("受伤，钟楼暂时无法进入")) {
+            setFlag("受伤，钟楼暂时无法进入", true);
+            msg += `<div class="system-message">【状态】：受伤，钟楼暂时无法进入</div>`;
+        }
+        return msg;
+    },
+    desc: `你按照直觉转动齿轮，钟声响起，但间隔不均，且最后一声钟响时，钟楼内喷出大量蒸汽，你被烫伤，慌忙逃出。`,
+    options: [
+        { text: "返回大厅", target: "hall" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_calibration_success"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("红宝石徽章")) {
+            gameState.items.push("红宝石徽章");
+            if(typeof showItemPopup === "function") showItemPopup("红宝石徽章");
+            gameState.medals.push("红宝石徽章");
+            addMedal();
+            msg += `<div class="system-message">【获得物品】：红宝石徽章</div>`;
+        }
+        return msg;
+    },
+    desc: `你根据行星公转周期的比例（水星:金星:地球:火星:木星:土星:天王星 = 0.24:0.615:1:1.88:11.86:29.46:84.01），将它们简化为整数比，然后按比例转动齿轮。完成后，钟声均匀响起，获得徽章。`,
+    options: [
+        { text: "返回大厅", target: "hall" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_escape"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!getFlag("失去外套（无实质影响）")) {
+            setFlag("失去外套（无实质影响）", true);
+            msg += `<div class="system-message">【状态】：失去外套（无实质影响）</div>`;
+        }
+        return msg;
+    },
+    desc: `如果你被铁栅栏困在二层，需要寻找出路。二层有一个通风管道，但管道狭窄，需要脱掉外套才能挤进去。你成功爬出，但外套被卡住，你只能舍弃它。出来后是庄园的花园，你绕回大厅。`,
+    options: [
+        { text: "返回大厅", target: "hall" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_death_gear"] = {
+    desc: `在齿轮室中，如果你错误地强行转动VII号轴端且没有摇柄，齿轮脱扣，巨大的齿轮飞脱，将你碾压致死。
+（游戏结束）`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_death_fall"] = {
+    desc: `在拨动杠杆时被摆锤击中摔死。
+（游戏结束）`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["hall"] = {
+    desc: `（返回大厅，钟楼谜题完成）
+以上扩展为钟楼之谜提供了丰富的分支、多种解谜路径、线索联动、陷阱机制和失败结局，总文本量约5000字。您可以根据实际需要调整分支深度和选项数量，确保与已有谜题（如图书馆）的线索联动自然衔接。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
 
 // --- 自动生成的 文本/支线1.txt 场景 ---
 scenes["side_story_1_start"] = {
@@ -4778,668 +5865,524 @@ Neg0
     ]
 };
 
-// --- 自动生成的 文本/补充1.txt 场景 ---
-
-// --- 自动生成的 文本/补充2.txt 场景 ---
-scenes["prologue_character"] = {
-    desc: `你叫塞拉斯·诺斯，三十四岁，是迷雾城最出色的私家侦探。你以破解冷案和谜团闻名，从不依靠运气，只相信逻辑与观察。随身携带的侦探笔记记录了你经手的每一个案件——从失窃的油画到消失的遗产，没有一桩难倒过你。此刻，空白页正等待着新的谜题。
-
-午夜，一封没有邮戳的信静静躺在门垫上。火漆上压印着七条弧线交织的徽记。你合上笔记，将地图折好放进口袋。直觉告诉你，这次委托将不同于以往任何案件。
-侦探笔记功能说明（在序章后插入提示）：
-*提示：在游戏过程中，所有获得的关键线索、日记内容、地图都会自动记录在笔记中。你可以随时输入“查看笔记”来回顾已获得的线索。*
-初始大厅（已有，但补充管家对话）`,
+// --- 自动生成的 文本/主线3_补全内容.txt 场景 ---
+scenes["studio_water_tank"] = {
+    desc: `描述: 你走近画室角落里废弃的洗笔水槽。水槽中积满了一层浑浊的、散发着刺鼻化学气味的暗色液体。借着微弱的光线，你注意到水底似乎沉着一块刻着符号的奇怪薄片。`,
     options: [
+        { text: "强忍不适，伸手摸索水底的物品", target: "studio_water_tank_success" },
+        { text: "还是不要随意触碰不明化学液体了", target: "studio_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["hall_initial"] = {
-    desc: `门厅内，水晶吊灯蒙着薄灰，墙壁上挂着七幅抽象画，每一幅都似乎在注视着你。一位身着燕尾服、面容古板的老人无声地出现在你面前，眼睛如同深不见底的黑曜石。
-
-“欢迎，探索者。我是管家奥尔德斯，主人的意志将由我传达。”他的声音沙哑而平静，“主人留下遗嘱：庄园内设有七道谜题，分别位于七个房间。每解开一道，你将获得一枚宝石徽章。集齐七枚徽章，便可开启中央密室，获取遗产。但请记住——谜题可能致命，而选择不可逆转。你确定要开始吗？”`,
+scenes["studio_water_tank_success"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("沾满颜料的调色刮刀")) {
+            gameState.items.push("沾满颜料的调色刮刀");
+            if(typeof showItemPopup === "function") showItemPopup("沾满颜料的调色刮刀");
+            msg += `<div class="system-message">【获得物品】：沾满颜料的调色刮刀</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你将手伸入冰冷刺骨且粘稠的洗笔水中，摸索了片刻，捞出了一块【沾满颜料的调色刮刀】。刮刀的柄上刻着一个小小的“E”字（代表埃莉诺）。这也是画室主人生前常用的工具之一。`,
     options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["hall_1_medal"] = {
-    desc: `你将[颜色]徽章放在壁炉台上。蓝宝石在火光中闪烁，映出一小片星图。管家瞥了一眼，微微点头：“第一枚。还有六道门等待着你。”
-
-你注意到墙上七幅抽象画中的第一幅似乎变得明亮了一些，原本模糊的线条现在隐约能看出——那是图书馆的轮廓。
-管家对话（1枚徽章后）：
-“你已经踏出了第一步。但后面的谜题只会更难。如果需要休息，随时可以回到这里。”
-大厅状态2：获得3枚徽章后`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["hall_3_medals"] = {
-    desc: `三枚徽章在壁炉台上并排闪烁，光芒交织成柔和的虹彩。大厅的光线似乎比之前更亮了，三幅抽象画已经焕发出清晰的色彩——图书馆的书籍、钟楼的齿轮、音乐室的音符，栩栩如生。
-
-管家递给你一杯热茶：“你比我想象的更快。但后面的谜题会更难。有些人在这里停下了脚步，希望你不一样。”
-管家对话（3枚徽章后）：
-“主人的日记里提到，画室和温室藏着最私密的记忆。如果你在那里看到什么……不必惊讶。”
-大厅状态3：获得6枚徽章后`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["hall_6_medals"] = {
-    desc: `六枚徽章的光芒照亮了整个房间，壁炉台几乎成了一座小小的灯塔。墙上的六幅抽象画已经变成了生动的场景——图书馆的静谧、钟楼的庄严、音乐室的辉煌、画室的色彩、温室的生机、地下室的神秘。只差最后一幅。
-
-管家的声音里带着一丝期待，也有一丝不易察觉的颤抖：“最后一枚徽章在卧室。主人的私人空间，藏着最终的秘密。那扇门……我已经很久没有打开了。”
-管家对话（6枚徽章后）：
-“卧室的谜题不在地上，而在心里。主人的遗嘱说，最后一扇门只向真正理解谜语意义的人敞开。”
-大厅状态4：集齐7枚徽章后`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["hall_7_medals"] = {
-    desc: `七枚徽章齐聚的瞬间，大厅中央的石台发出轰鸣，缓缓下沉，露出一条螺旋石梯，石阶向下延伸，消失在淡蓝色的荧光中。七幅抽象画同时燃烧起来——不是真的燃烧，而是化作七色光，汇聚成一道光束，照亮了石梯的入口。
-
-管家站在阴影中，深深鞠躬，声音沙哑：“主人等候已久。请沿着这条路，去揭开最后的谜底。我……在这里等你回来。”
-每个房间谜题完成后，自动显示以下文本（可替换房间名称和颜色），然后返回大厅：`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["return_from_"] = {
-    desc: `[room]
-你将[颜色]徽章收入怀中，最后看了一眼[房间名称]。似乎有什么东西在角落里轻轻叹息，然后一切归于沉寂。当你走出房门时，门在你身后无声地关闭，门把手上的光泽消失了——仿佛它已经完成了自己的使命。
-
-你回到大厅，将徽章与其他徽章并排放在壁炉台上。管家无声地递上一杯热茶，没有多问。
-示例（图书馆）：
-你将蓝宝石徽章收入怀中，最后看了一眼图书馆。似乎有什么东西在角落里轻轻叹息，然后一切归于沉寂。当你走出房门时，门在你身后无声地关闭，门把手上的光泽消失了——仿佛它已经完成了自己的使命。
-
-你回到大厅，将蓝宝石徽章与其他徽章并排放在壁炉台上。管家无声地递上一杯热茶，没有多问。
-当玩家满足支线触发条件时，在返回大厅或进入特定房间时自动显示：
-管家支线触发（完成任意三个房间后，返回大厅时）
-你走进大厅，发现管家不在往常的位置。壁炉台上压着一张纸条：“我去地下室取些东西，请稍候。” 你拿起纸条，背面隐约有字迹，似乎是被人擦过的痕迹：“不要相信……” 你的直觉告诉你，这位沉默寡言的管家藏着秘密。
-
-*新区域已解锁：管家的起居室（大厅侧门）、地窖（地下室入口旁）。*
-画室支线触发（完成画室谜题后，再次进入画室时）
-画室的门虚掩着。你推门而入，发现南墙的彩色玻璃窗投下的光斑在地面上拼出一个女人的侧影轮廓。七幅完成的画作中，似乎每一幅里都有一个女子的身影若隐若现。你的手不自觉地抬起，触碰赤色画的表面——画面微微发烫，一个声音在脑海中响起：“他把我画进了每一道光里，却始终画不出我的灵魂。”
-
-*新线索已记录：画背面的文字、紫藤花架的位置。*
-地下支线触发（完成地下室谜题后，且至少完成两个其他房间，再次经过地下室入口时）
-你经过地下室的入口，注意到旁边的墙壁上有一道之前没见过的裂缝。裂缝很细，但有冷风从里面渗出。你将耳朵贴近，隐约听到有节奏的敲击声——像是有人在用石头敲打岩石，一下，两下，三下，停顿，重复。你询问管家，他的眼神闪烁：“那只是岩壁。” 你知道他在说谎。
-
-*新区域已解锁：地下裂缝通道。*
-音乐室支线触发（完成音乐室谜题后，再次经过音乐室时）
-当你经过音乐室时，紧闭的门内传出微弱的音乐声——不是管风琴的庄严旋律，而是一把小提琴的独奏，曲调忧伤而优美。你推开门，音乐声戛然而止，空无一人。小提琴的琴弦还有余温，琴谱架上多了一份你从未见过的手稿：《第七交响曲：未完成》。
-
-*新线索已记录：埃莉诺·布莱克伍德的名字、乐器上的夜莺标记。*
-所有死亡结局采用以下模板，并在末尾提供选项。我们为已有的死亡场景统一添加此格式。
-模板：
-[死亡描述文字]
-
-你的意识逐渐模糊。在最后的瞬间，你听见管家奥尔德斯的声音从遥远的地方传来：“鲁莽是解谜的大敌。” 世界陷入黑暗。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["final_chamber_transition"] = {
-    desc: `当第七枚徽章嵌入油画的瞬间，整个卧室都开始震动。油画中的七扇窗户同时亮起，光芒汇聚成一束，射向地面。地板裂开，露出一条螺旋石梯，石阶向下延伸，消失在淡蓝色的荧光中。
-
-管家不知何时站在门口，他的眼中映着七色光：“这条路通往庄园的最深处，也是主人最后的谜题所在。我在这里等你回来。”
-
-你深吸一口气，踏上了石阶。身后的光芒逐渐暗淡，前方的黑暗却透出微弱的荧光。石梯似乎很长，每一步都回荡着你的心跳。螺旋下降的墙壁上刻着七道谜题的缩影——图书馆的星盘、钟楼的齿轮、音乐室的音符……你走过的路在身后化作星光。
-
-不知走了多久，你终于看到一扇敞开的石门。门楣上刻着一行字：“最后的谜题，是你自己。”
-
-你跨过门槛，进入了中央密室。
-在每个结局后添加统一的重玩界面：`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["game_over_txt"] = {
-    desc: `—— 游戏结束 ——
-
-你解锁的结局：[结局名称]
-
-本次游玩解锁的成就：[成就列表，如有]`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["basement_activate_planets"] = {
-    desc: `描述: 【系统提示】该区域（basement_activate_planets）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["basement_extract_essence"] = {
-    desc: `描述: 【系统提示】该区域（basement_extract_essence）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
+        { text: "返回画室中心", target: "studio_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
 scenes["basement_furnace_with_key"] = {
-    desc: `描述: 【系统提示】该区域（basement_furnace_with_key）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    desc: `描述: 你用刚刚找到的一把厚重铁钥匙，成功插.入了熔炉控制闸下方那个生锈的钥匙孔。伴随着令人牙酸的“嘎吱”一声，锁芯弹开，熔炉的通风阀被完全打开了。炉火再度旺盛地燃烧起来，照亮了整个地下室的角落。`,
     options: [
+        { text: "尝试提取熔炉内的结晶", target: "basement_extract_essence" },
+        { text: "离开熔炉前往地下室入口", target: "basement_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["basement_periodic_table"] = {
-    desc: `描述: 【系统提示】该区域（basement_periodic_table）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["basement_extract_essence"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("火之精华")) {
+            gameState.items.push("火之精华");
+            if(typeof showItemPopup === "function") showItemPopup("火之精华");
+            msg += `<div class="system-message">【获得物品】：火之精华</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 借着熔炉的高热，你利用旁边的金属钳将一块从矿石中析出的发光结晶夹了出来。这块【火之精华】散发着稳定的热量，或许能用来融化其他被冻住的机关，或者作为某种驱动能源。`,
     options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["basement_prepare_materials"] = {
-    desc: `描述: 【系统提示】该区域（basement_prepare_materials）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["basement_put_metals"] = {
-    desc: `描述: 【系统提示】该区域（basement_put_metals）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["basement_runes"] = {
-    desc: `描述: 【系统提示】该区域（basement_runes）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["basement_search_metals"] = {
-    desc: `描述: 【系统提示】该区域（basement_search_metals）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["basement_weigh_metals"] = {
-    desc: `描述: 【系统提示】该区域（basement_weigh_metals）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["bedroom_candle_midnight"] = {
-    desc: `描述: 【系统提示】该区域（bedroom_candle_midnight）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["bedroom_final_secret"] = {
-    desc: `描述: 【系统提示】该区域（bedroom_final_secret）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["bedroom_painting_details"] = {
-    desc: `描述: 【系统提示】该区域（bedroom_painting_details）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["bedroom_telescope"] = {
-    desc: `描述: 【系统提示】该区域（bedroom_telescope）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["clocktower_behind_clock"] = {
-    desc: `描述: 【系统提示】该区域（clocktower_behind_clock）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["clocktower_door"] = {
-    desc: `描述: 【系统提示】该区域（clocktower_door）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["clocktower_gear_clues"] = {
-    desc: `描述: 【系统提示】该区域（clocktower_gear_clues）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["clocktower_gears"] = {
-    desc: `描述: 【系统提示】该区域（clocktower_gears）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["greenhouse_basin"] = {
-    desc: `描述: 【系统提示】该区域（greenhouse_basin）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["greenhouse_check_seeds"] = {
-    desc: `描述: 【系统提示】该区域（greenhouse_check_seeds）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["greenhouse_clean_pipes"] = {
-    desc: `描述: 【系统提示】该区域（greenhouse_clean_pipes）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
+        { text: "将它收好，返回地下室入口", target: "basement_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
 scenes["greenhouse_fix_pump"] = {
-    desc: `描述: 【系统提示】该区域（greenhouse_fix_pump）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    desc: `描述: 温室的水泵系统发生了严重的堵塞。你用旁边找来的扳手和工具，费力地拆开了过滤网，将里面常年积累的枯叶和不明的绿色藤蔓根结清理干净。随着一阵水流的轰鸣声，温室的灌溉系统恢复了运作！`,
     options: [
+        { text: "观察水流流向的水槽", target: "greenhouse_basin" },
+        { text: "返回温室中心", target: "greenhouse_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["greenhouse_mix_dead"] = {
-    desc: `描述: 【系统提示】该区域（greenhouse_mix_dead）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["greenhouse_basin"] = {
+    desc: `描述: 随着水泵恢复运作，清澈的水流注满了石制的水槽。水槽底部逐渐浮现出一排排古老的拉丁文刻字，似乎在指引着某种植物的培育顺序。`,
     options: [
+        { text: "记下刻字内容，返回温室", target: "greenhouse_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["greenhouse_mix_nutrient"] = {
-    desc: `描述: 【系统提示】该区域（greenhouse_mix_nutrient）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["side_attic"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("被涂脸的全家福")) {
+            gameState.clues.push("被涂脸的全家福");
+            msg += `<div class="system-message">【获得线索】：被涂脸的全家福</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你顺着一条隐蔽而陡峭的木台阶爬上庄园的阁楼。阁楼里灰尘弥漫，堆满了盖着白布的旧家具。在最深处的一个木箱上，你发现了一张泛黄的全家福照片。照片上是两名少爷（阿斯特和托马斯），以及一位被故意用黑笔涂掉脸的少女。这是谁？`,
     options: [
-        { text: "返回大厅", target: "hall_main" }
+        { text: "在阁楼继续搜索", target: "side_hidden_drawer" },
+        { text: "带着疑问返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["greenhouse_nursery"] = {
-    desc: `描述: 【系统提示】该区域（greenhouse_nursery）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["greenhouse_pipes"] = {
-    desc: `描述: 【系统提示】该区域（greenhouse_pipes）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["greenhouse_use_fertilizer"] = {
-    desc: `描述: 【系统提示】该区域（greenhouse_use_fertilizer）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["hall_injured"] = {
-    desc: `描述: 你受伤了，剧烈的疼痛让你无法继续当前的探索。你只能跌跌撞撞地回到大厅休息，处理伤口。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["library_astrolabe_success"] = {
-    desc: `描述: 【系统提示】该区域（library_astrolabe_success）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["library_fail"] = {
-    desc: `描述: 你拉动了书籍，但似乎缺少了什么核心条件，装置发出刺耳的摩擦声后彻底卡死了。目前无法继续操作。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["library_gaps"] = {
-    desc: `描述: 【系统提示】该区域（library_gaps）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["library_labels"] = {
-    desc: `描述: 【系统提示】该区域（library_labels）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["library_scholar_order"] = {
-    desc: `描述: 【系统提示】该区域（library_scholar_order）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["library_sort_attempt"] = {
-    desc: `描述: 【系统提示】该区域（library_sort_attempt）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["library_window_move"] = {
-    desc: `描述: 【系统提示】该区域（library_window_move）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["musicroom_autoplayer"] = {
-    desc: `描述: 【系统提示】该区域（musicroom_autoplayer）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["musicroom_copy_score"] = {
-    desc: `描述: 【系统提示】该区域（musicroom_copy_score）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["musicroom_find_score_parts"] = {
-    desc: `描述: 【系统提示】该区域（musicroom_find_score_parts）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["musicroom_inside"] = {
-    desc: `描述: 【系统提示】该区域（musicroom_inside）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["musicroom_inspect"] = {
-    desc: `描述: 【系统提示】该区域（musicroom_inspect）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["musicroom_instrument_order"] = {
-    desc: `描述: 【系统提示】该区域（musicroom_instrument_order）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["musicroom_order_by_score"] = {
-    desc: `描述: 【系统提示】该区域（musicroom_order_by_score）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["musicroom_play_instruments_order"] = {
-    desc: `描述: 【系统提示】该区域（musicroom_play_instruments_order）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["musicroom_play_organ"] = {
-    desc: `描述: 【系统提示】该区域（musicroom_play_organ）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["musicroom_reflector_ropes"] = {
-    desc: `描述: 【系统提示】该区域（musicroom_reflector_ropes）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["musicroom_search_crystal"] = {
-    desc: `描述: 【系统提示】该区域（musicroom_search_crystal）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["musicroom_tune_by_ear"] = {
-    desc: `描述: 【系统提示】该区域（musicroom_tune_by_ear）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["side_alternate_path"] = {
-    desc: `描述: 【系统提示】该区域（side_alternate_path）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["side_hidden_drawer"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("阁楼隐秘日记残页")) {
+            gameState.clues.push("阁楼隐秘日记残页");
+            msg += `<div class="system-message">【获得线索】：阁楼隐秘日记残页</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你在阁楼的旧梳妆台里发现了一个带有暗格的抽屉。敲碎夹层后，你找到了一本日记的残页。上面写着：“她的精神越来越不稳定了……画室里的色彩不是颜料，是她的……”这显然是管家或者某位家主留下的记录。`,
     options: [
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
 scenes["side_ask_butler"] = {
-    desc: `描述: 【系统提示】该区域（side_ask_butler）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    desc: `描述: 你拿着找到的各种关于“埃莉诺”以及兄弟相残的证据，在大厅拦住了管家奥尔德斯。你直视着他苍老的眼睛，质问他当年到底发生了什么。管家的身躯微微一震，“您……不该挖掘这些被埋葬在时间里的东西，少爷。”`,
     options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["side_attic"] = {
-    desc: `描述: 【系统提示】该区域（side_attic）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
+        { text: "“告诉我真相！”继续追问", target: "side_butler_knows" },
+        { text: "暂时不刺激他，放弃追问", target: "hall_main" }
     ]
 };
 
 scenes["side_butler_knows"] = {
-    desc: `描述: 【系统提示】该区域（side_butler_knows）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("管家的坦白")) {
+            gameState.clues.push("管家的坦白");
+            msg += `<div class="system-message">【获得线索】：管家的坦白</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 管家长叹了一口气，颓然地坐在椅子上。“是的，阿斯特少爷和托马斯少爷因为对庄园地下埋藏的‘力量’意见不合，最终拔剑相向……而埃莉诺小姐，她为了阻止他们，选择了把自己封印在画中。”他的话语印证了你的所有猜想。`,
     options: [
+        { text: "这个秘密太沉重了，返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_behind_clock"] = {
+    desc: `描述: 你绕到了巨大的钟楼表盘后方。这里是由无数巨大黄铜齿轮组成的机械森林。在最大的中枢齿轮旁，你发现了一扇紧闭的金属小门。门上没有锁孔，只有几个可以通过按压升降的金属柱。`,
+    options: [
+        { text: "检查大门", target: "clocktower_door" },
+        { text: "检查旁边的齿轮运转轨迹", target: "clocktower_gears" },
+        { text: "回到钟楼正前方", target: "clocktower_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["side_butler_last_days"] = {
-    desc: `描述: 【系统提示】该区域（side_butler_last_days）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["clocktower_door"] = {
+    desc: `描述: 金属门上的柱子似乎需要按照某种特定的高低顺序排列。如果没有对应的线索，盲目尝试是不可能的。（假设你根据星象图或者提示强行解开）门在你的操作下缓缓升起，露出了内部维系钟楼时间流逝的核心“以太沙漏”。`,
     options: [
+        { text: "取走以太沙漏并离开", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_gears"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("钟楼齿轮密码 3-7-12")) {
+            gameState.clues.push("钟楼齿轮密码 3-7-12");
+            msg += `<div class="system-message">【获得线索】：钟楼齿轮密码 3-7-12</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 巨大的齿轮正在发出极有节奏的滴答声。你仔细观察，发现齿轮的辐条上刻着一些罗马数字：“III - VII - XII”。这可能是解开某扇门的密码或者某种提示。`,
+    options: [
+        { text: "退回表盘后方", target: "clocktower_behind_clock" },
+        { text: "回到钟楼正前方", target: "clocktower_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["side_cave_deeper"] = {
-    desc: `描述: 【系统提示】该区域（side_cave_deeper）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+// --- 自动生成的 文本/主线4_机关与结局.txt 场景 ---
+scenes["library_astrolabe_success"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("星盘钥匙")) {
+            gameState.items.push("星盘钥匙");
+            if(typeof showItemPopup === "function") showItemPopup("星盘钥匙");
+            msg += `<div class="system-message">【获得物品】：星盘钥匙</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你按照星象图的准确顺序拨动了星盘。随着“咔哒”一声脆响，星盘的核心弹出了一个隐藏小格，里面放着一枚古铜色的钥匙。`,
     options: [
+        { text: "返回图书馆中心", target: "library_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["side_cellar_key"] = {
-    desc: `描述: 【系统提示】该区域（side_cellar_key）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["library_sort_attempt"] = {
+    desc: `描述: 你尝试整理杂乱的古籍架。`,
     options: [
+        { text: "按照年代和作者标签排序", target: "library_scholar_order" },
+        { text: "随便乱排一通", target: "library_fail" },
+        { text: "回到书架前", target: "library_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["side_dig_with_hammer"] = {
-    desc: `描述: 【系统提示】该区域（side_dig_with_hammer）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["library_scholar_order"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("秘密图书馆图纸")) {
+            gameState.clues.push("秘密图书馆图纸");
+            msg += `<div class="system-message">【获得线索】：秘密图书馆图纸</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你将书籍按照《庄园学者手记》中要求的年代与作者顺序排列整齐。书架背后传来一阵机械转动的声音，一个暗格翻转了过来，里面静静地躺着一卷羊皮纸。`,
     options: [
+        { text: "拿走图纸，退回书桌", target: "library_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["side_elenor_grave"] = {
-    desc: `描述: 【系统提示】该区域（side_elenor_grave）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["library_labels"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("书架四分类")) {
+            gameState.clues.push("书架四分类");
+            msg += `<div class="system-message">【获得线索】：书架四分类</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你仔细查看了书架上模糊的标签，隐约辨认出“天文”、“炼金”、“历史”、“诗歌”四个分类。这似乎是书籍摆放的提示。`,
     options: [
+        { text: "开始整理", target: "library_sort_attempt" },
+        { text: "返回中心", target: "library_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["side_hidden_drawer"] = {
-    desc: `描述: 【系统提示】该区域（side_hidden_drawer）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["basement_activate_planets"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("翠绿徽章")) {
+            gameState.items.push("翠绿徽章");
+            if(typeof showItemPopup === "function") showItemPopup("翠绿徽章");
+            gameState.medals.push("翠绿徽章");
+            addMedal();
+            msg += `<div class="system-message">【获得物品】：翠绿徽章</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你依照着墙壁上刻画的黄道吉日图，转动了行星仪上的三个核心金属球。行星仪爆发出耀眼的蓝光，底座缓慢打开。`,
     options: [
+        { text: "收好徽章，离开行星仪", target: "basement_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["side_leave_cave"] = {
-    desc: `描述: 【系统提示】该区域（side_leave_cave）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["basement_periodic_table"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("金属合成配方")) {
+            gameState.clues.push("金属合成配方");
+            msg += `<div class="system-message">【获得线索】：金属合成配方</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 墙上挂着一张残缺的炼金元素周期表，上面圈出了“铁(Fe)、铜(Cu)、银(Ag)、金(Au)”四个符号。这绝对是某种合成公式。`,
     options: [
+        { text: "继续探索地下室", target: "basement_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["side_mirror_again"] = {
-    desc: `描述: 【系统提示】该区域（side_mirror_again）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["basement_prepare_materials"] = {
+    desc: `描述: 准备炼金材料（铁、铜、银、金）。`,
     options: [
+        { text: "寻找周围散落的金属矿石", target: "basement_search_metals" },
+        { text: "使用天平称量金属", target: "basement_weigh_metals" },
+        { text: "加入反应釜", target: "basement_put_metals" },
+        { text: "返回地下室中心", target: "basement_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["side_music_hidden"] = {
-    desc: `描述: 【系统提示】该区域（side_music_hidden）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["basement_search_metals"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("铜矿与银矿")) {
+            gameState.clues.push("铜矿与银矿");
+            msg += `<div class="system-message">【获得线索】：铜矿与银矿</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你在废弃的矿石堆里找到了几块纯度不错的铜矿与银矿。`,
     options: [
+        { text: "继续准备材料", target: "basement_prepare_materials" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["side_music_room_play"] = {
-    desc: `描述: 【系统提示】该区域（side_music_room_play）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["basement_weigh_metals"] = {
+    desc: `描述: 你将找到的金属放在天平上，按照1:2的比例配比了铜与银。`,
     options: [
+        { text: "开始加入反应釜", target: "basement_put_metals" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["side_palette_clue"] = {
-    desc: `描述: 【系统提示】该区域（side_palette_clue）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["basement_put_metals"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("紫色徽章")) {
+            gameState.items.push("紫色徽章");
+            if(typeof showItemPopup === "function") showItemPopup("紫色徽章");
+            gameState.medals.push("紫色徽章");
+            addMedal();
+            msg += `<div class="system-message">【获得物品】：紫色徽章</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你将配好的金属粉末放入反应釜，随后注入了水与催化剂。随着一阵气泡翻涌，液体变成了深紫色，并析出了一块晶体。`,
     options: [
+        { text: "拿走徽章，离开反应釜", target: "basement_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["side_play_violin"] = {
-    desc: `描述: 【系统提示】该区域（side_play_violin）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["greenhouse_clean_pipes"] = {
+    desc: `描述: 你清理了输叶管道中的堵塞物，发现了一块生锈的铭牌。上面写着“只允许纯净之水通过”。`,
     options: [
+        { text: "继续检查管道", target: "greenhouse_pipes" },
+        { text: "返回温室中心", target: "greenhouse_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["side_score_details"] = {
-    desc: `描述: 【系统提示】该区域（side_score_details）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["greenhouse_pipes"] = {
+    desc: `描述: 复杂的管道连接着温室中心的巨型培养皿。你需要正确的营养液才能让植物复苏。`,
     options: [
+        { text: "调配并注入复苏营养液", target: "greenhouse_mix_nutrient" },
+        { text: "注入剧毒除草剂", target: "greenhouse_mix_dead" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["side_search_elenor"] = {
-    desc: `描述: 【系统提示】该区域（side_search_elenor）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["greenhouse_mix_nutrient"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("橙色徽章")) {
+            gameState.items.push("橙色徽章");
+            if(typeof showItemPopup === "function") showItemPopup("橙色徽章");
+            gameState.medals.push("橙色徽章");
+            addMedal();
+            msg += `<div class="system-message">【获得物品】：橙色徽章</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你按照配方调制了翠绿色的营养液并滴入水槽。中央的枯萎巨花瞬间焕发了生机，它的花萼中央吐出了一个发光的物体。`,
     options: [
+        { text: "收好徽章，离开", target: "greenhouse_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["side_servant_room"] = {
-    desc: `描述: 【系统提示】该区域（side_servant_room）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["greenhouse_mix_dead"] = {
+    desc: `描述: 你倒入了刺鼻的除草剂。管道发出“嘶嘶”的腐蚀声，巨花瞬间化为一滩散发着恶臭及毒气的黑泥。你被毒气呛得连连后退！`,
     options: [
+        { text: "逃回大厅", target: "hall_injured" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["side_study_murals"] = {
-    desc: `描述: 【系统提示】该区域（side_study_murals）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["musicroom_autoplayer"] = {
+    desc: `描述: 自动演奏机前放置着几具木偶。似乎需要给木偶上发条，并按顺序触发。`,
     options: [
+        { text: "检查周围乐谱寻找顺序", target: "musicroom_find_score_parts" },
+        { text: "随便乱按", target: "hall_injured" },
+        { text: "离开自动演奏机", target: "musicroom_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["side_tell_butler"] = {
-    desc: `描述: 【系统提示】该区域（side_tell_butler）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["musicroom_find_score_parts"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("三重奏乐谱")) {
+            gameState.clues.push("三重奏乐谱");
+            msg += `<div class="system-message">【获得线索】：三重奏乐谱</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你在钢琴的夹缝和抽屉里找到了三张被撕裂的乐谱，上面分别写着“大号”、“小提琴”和“定音鼓”。`,
     options: [
+        { text: "按乐谱指示开始演奏", target: "musicroom_play_instruments_order" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_play_instruments_order"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("金色徽章")) {
+            gameState.items.push("金色徽章");
+            if(typeof showItemPopup === "function") showItemPopup("金色徽章");
+            gameState.medals.push("金色徽章");
+            addMedal();
+            msg += `<div class="system-message">【获得物品】：金色徽章</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你依次拉动了大号、小提琴和定音鼓前木偶的发条。随着一段激昂的交响乐响起，演奏机的暗门打开了。`,
+    options: [
+        { text: "收好徽章", target: "musicroom_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
 scenes["studio_cabinet_open"] = {
-    desc: `描述: 【系统提示】该区域（studio_cabinet_open）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("神秘溶剂")) {
+            gameState.items.push("神秘溶剂");
+            if(typeof showItemPopup === "function") showItemPopup("神秘溶剂");
+            msg += `<div class="system-message">【获得物品】：神秘溶剂</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你用暴力或找到了正确的钥匙打开了画室的带锁调色柜，里面摆满了一排排干涸的颜料瓶，并在最深处放着一小瓶清澈的溶剂。`,
     options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["studio_find_solvent"] = {
-    desc: `描述: 【系统提示】该区域（studio_find_solvent）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-
-scenes["studio_mix"] = {
-    desc: `描述: 【系统提示】该区域（studio_mix）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
-    options: [
+        { text: "返回画室中心", target: "studio_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
 scenes["studio_paint_mirror_fix"] = {
-    desc: `描述: 【系统提示】该区域（studio_paint_mirror_fix）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    desc: `描述: 镜子上的污渍被你用溶剂擦去了。镜子中倒映出的根本不是原本的房间，而是一扇虚掩着的光之门！`,
     options: [
+        { text: "穿过镜中门", target: "studio_paint_portrait" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
 scenes["studio_paint_portrait"] = {
-    desc: `描述: 【系统提示】该区域（studio_paint_portrait）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+    desc: `描述: 穿过镜子，你来到了一个只有黑白两色的异空间。中央摆放着一幅未完成的自画像（埃莉诺）。她似乎在哀求你替她补上最后的色彩。`,
     options: [
+        { text: "取出颜料与刮刀，为画作上色", target: "studio_mix" },
+        { text: "退回现实", target: "studio_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["studio_press_gems"] = {
-    desc: `描述: 【系统提示】该区域（studio_press_gems）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["studio_mix"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("彩虹徽章")) {
+            gameState.items.push("彩虹徽章");
+            if(typeof showItemPopup === "function") showItemPopup("彩虹徽章");
+            gameState.medals.push("彩虹徽章");
+            addMedal();
+            msg += `<div class="system-message">【获得物品】：彩虹徽章</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你将红、蓝、黄三种原色混合，调出了生动的色彩，涂抹在画中缺失的心脏位置。画作突然散发出炫目的光华，化作一枚徽章落入你手中。`,
     options: [
+        { text: "回到现实画室", target: "studio_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["studio_rotate_scale"] = {
-    desc: `描述: 【系统提示】该区域（studio_rotate_scale）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["bedroom_final_secret"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("管家的忏悔录")) {
+            gameState.clues.push("管家的忏悔录");
+            msg += `<div class="system-message">【获得线索】：管家的忏悔录</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 卧室衣柜背后的暗板被移开了。里面是一间隐秘的祈祷室。祭坛上放着管家奥尔德斯的忏悔录和一枚沾血的戒指。`,
     options: [
+        { text: "离开暗房", target: "bedroom_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["studio_sketches"] = {
-    desc: `描述: 【系统提示】该区域（studio_sketches）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["side_butler_last_days"] = {
+    desc: `描述: 管家倒在了壁炉前，他胸口插着一柄银质的匕首。临终前他死死抓着你的手：“阻止他们……打开那扇门……”`,
     options: [
+        { text: "沉重地返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_leave_cave"] = {
+    desc: `描述: 地下溶洞深处的阴冷让你心生退意。你果断掉头，顺着绳索爬回了安全的地下室。`,
+    options: [
+        { text: "返回地下室", target: "basement_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
-scenes["studio_water_tank"] = {
-    desc: `描述: 【系统提示】该区域（studio_water_tank）细节尚未实装，你发现前路被浓密的雾气封锁，被迫退回大厅。`,
+scenes["side_play_violin"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("安魂曲奏响")) {
+            gameState.clues.push("安魂曲奏响");
+            msg += `<div class="system-message">【获得线索】：安魂曲奏响</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你拿起了埃莉诺的琴弓，在积灰的小提琴上拉响了一段安魂曲。音乐室里的怨念似乎平息了。`,
     options: [
+        { text: "收好琴弓", target: "musicroom_entry" },
         { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["clocktower_gear_clues"] = {
+    desc: `描述: 你仔细检查了齿轮背后的油污印记。很明显有人曾经卡住过齿轮。`,
+    options: [
+        { text: "返回钟楼", target: "clocktower_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_study_murals"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("七徽章的真相")) {
+            gameState.clues.push("七徽章的真相");
+            msg += `<div class="system-message">【获得线索】：七徽章的真相</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你仔细研究了地宫墙壁上的壁画。壁画描绘了庄园地下封印着一个能实现任何愿望的恶魔，而七枚徽章正是解开封印的钥匙。`,
+    options: [
+        { text: "倒吸一口凉气，离开壁画", target: "hall_main" }
     ]
 };
 
