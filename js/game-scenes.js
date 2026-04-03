@@ -1207,6 +1207,344 @@ scenes["studio_water_tank"] = {
     ]
 };
 
+// --- 自动生成的 文本/补全占位.txt 场景 ---
+scenes["bedroom_candle_midnight"] = {
+    desc: `描述: 你点燃了子时的蜡烛，烛光摇曳，在镜中映出模糊的倒影。但似乎还缺少某种条件——也许需要七色光，或者需要先完成其他准备。你决定暂时放弃，继续探索卧室。`,
+    options: [
+        { text: "返回卧室", target: "bedroom_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["bedroom_painting_details"] = {
+    desc: `描述: 你凑近油画仔细观察，发现画中的细节异常丰富——每一个房间的窗户里似乎都藏着微小的符号。但以你现在的视角，无法看清全部。也许需要借助望远镜或其他工具。你决定先不在此处耗费时间。`,
+    options: [
+        { text: "返回卧室", target: "bedroom_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["bedroom_telescope"] = {
+    desc: `描述: 你举起望远镜望向窗外，荒芜的花园在月光下显得格外寂寥。干涸的喷泉池底的七角星图案清晰可见，但除此之外没有更多发现。也许需要等到子夜，或者需要某种镜片。`,
+    options: [
+        { text: "返回落地窗前", target: "bedroom_window" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["greenhouse_check_seeds"] = {
+    desc: `描述: 你检查了花坛中的种子，它们仍然深埋土中，没有任何发芽的迹象。也许还需要提供特定的生长条件：火、水、土、气、光、暗、生命。你决定先去准备这些条件。`,
+    options: [
+        { text: "返回温室", target: "greenhouse_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["greenhouse_nursery"] = {
+    desc: `描述: 苗圃里只有干枯的幼苗和破碎的花盆。你翻了翻，没有找到有用的东西。也许在其他地方能找到植物部位或种子。`,
+    options: [
+        { text: "返回温室", target: "greenhouse_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["greenhouse_use_fertilizer"] = {
+    desc: `描述: 你将七色花肥料撒在花坛中，但土壤毫无反应。可能肥料需要先溶解在水里，或者需要配合其他元素条件。你暂时放弃了直接施肥。`,
+    options: [
+        { text: "返回温室", target: "greenhouse_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["hall_injured"] = {
+    desc: `描述: 状态更新：你受了一点伤，行动稍有不便，但并无大碍。<br>你受了伤，一瘸一拐地回到大厅。管家奥尔德斯见状，面无表情地递给你一卷绷带和一瓶药水。你坐下休息，伤口渐渐止血，但身体仍然有些虚弱。`,
+    options: [
+        { text: "返回大厅（继续探索）", target: "hall_main" }
+    ]
+};
+
+scenes["library_fail"] = {
+    desc: `描述: 你的操作似乎没有产生任何效果，书架纹丝不动。也许需要更多线索，或者顺序不对。你放弃了当前尝试，决定先探索其他地方。`,
+    options: [
+        { text: "返回图书馆", target: "library_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["library_gaps"] = {
+    desc: `描述: 你挤进书架之间的缝隙，发现里面只有厚厚的灰尘和蛛网，没有任何隐藏的物品。你失望地退了出来。`,
+    options: [
+        { text: "返回书架前", target: "library_bookshelves" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["library_window_move"] = {
+    desc: `描述: 你试着推动彩色玻璃窗，但窗户是固定的，无法移动。也许需要某种工具或特定的顺序才能调节。你放弃了。`,
+    options: [
+        { text: "返回图书馆", target: "library_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_copy_score"] = {
+    desc: `描述: 你尝试抄写乐谱，但墨水已经干涸，纸张也脆裂了。看来需要找到原始的乐谱或使用其他方法。`,
+    options: [
+        { text: "返回音乐室", target: "musicroom_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_inside"] = {
+    desc: `描述: 你检查了管风琴内部，里面是复杂的音管和联动机构。除了积灰，没有发现任何机关或隐藏物品。`,
+    options: [
+        { text: "返回管风琴前", target: "musicroom_organ" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_inspect"] = {
+    desc: `描述: 你仔细检查了展柜里的乐器，它们都很陈旧，但似乎没有特别之处。也许需要先获得某种道具才能发现隐藏的标记。`,
+    options: [
+        { text: "返回音乐室", target: "musicroom_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_instrument_order"] = {
+    desc: `描述: 你尝试调整乐器的摆放顺序，但什么也没有发生。也许顺序不对，或者需要配合音叉使用。`,
+    options: [
+        { text: "返回音乐室", target: "musicroom_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_order_by_score"] = {
+    desc: `描述: 你按照乐谱上的顺序放置键帽，但音栓仍然锁死。需要先解锁音栓（例如嵌入机械齿轮）并产生气流。`,
+    options: [
+        { text: "返回管风琴", target: "musicroom_organ" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_play_organ"] = {
+    desc: `描述: 你试着弹奏管风琴，但由于没有气流，音管无法发声。需要先启动鼓风机或连接动力源。`,
+    options: [
+        { text: "返回管风琴", target: "musicroom_organ" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_reflector_ropes"] = {
+    desc: `描述: 你检查了反射板的拉绳，它们已经严重老化，一碰就断。看来无法通过手动调节来改变声学环境了。`,
+    options: [
+        { text: "返回音乐室", target: "musicroom_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_search_crystal"] = {
+    desc: `描述: 你在音乐室里四处寻找共鸣水晶，但只找到了普通的玻璃制品。也许水晶在其他房间（如画室）。`,
+    options: [
+        { text: "返回音乐室", target: "musicroom_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["musicroom_tune_by_ear"] = {
+    desc: `描述: 你尝试凭听觉校准钢琴，但由于缺乏绝对音感，调出的音高杂乱无章。看来需要使用音叉作为参考。`,
+    options: [
+        { text: "返回三角钢琴", target: "musicroom_piano" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_alternate_path"] = {
+    desc: `描述: 你找到了一条岔路，但走进去后发现是一条死胡同，尽头只有岩壁。没有其他出口。`,
+    options: [
+        { text: "返回洞穴", target: "side_cave_passage" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_cave_deeper"] = {
+    desc: `描述: 你继续向洞穴深处探索，但越走越狭窄，空气也越来越稀薄。你担心有塌方危险，决定返回。`,
+    options: [
+        { text: "返回石桌处", target: "side_cave_table" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_cellar_key"] = {
+    desc: `描述: 你用生锈的钥匙打开了地窖的门，但里面除了一些酒桶和旧家具，没有任何与谜题相关的东西。管家似乎不在这里。`,
+    options: [
+        { text: "返回地窖入口", target: "side_cellar" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_dig_with_hammer"] = {
+    desc: `描述: 你用地质锤奋力挖掘塌方的碎石，但效率极低，而且引发了新的落石。你不得不停止，以免被埋。`,
+    options: [
+        { text: "返回塌方处", target: "side_cave_passage" },
+        { text: "回去寻找更专业的工具", target: "side_find_tools" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_elenor_grave"] = {
+    desc: `描述: 你按照管家的提示寻找埃莉诺的安息之地，但庄园的花园里没有任何墓碑。也许她葬在别处，或者管家不愿透露。`,
+    options: [
+        { text: "返回音乐室", target: "musicroom_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_mirror_again"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("镜子中的音符顺序")) {
+            gameState.clues.push("镜子中的音符顺序");
+            msg += `<div class="system-message">【获得线索】：镜子中的音符顺序</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你再次观察肖像画中的镜子，镜中依然映出七色光斑，但这次你注意到光斑的排列顺序似乎与某个乐谱的音符顺序一致。你记下了这个线索。`,
+    options: [
+        { text: "返回画室", target: "studio_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_music_hidden"] = {
+    desc: `描述: 你在音乐室的墙壁上摸索，但没有找到明显的暗格。也许机关藏在壁炉或钢琴后面。`,
+    options: [
+        { text: "返回音乐室", target: "musicroom_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_music_room_play"] = {
+    desc: `描述: 你尝试让音乐室“自己演奏”，但什么也没有发生。也许需要先完成第七乐章，或者使用埃莉诺的琴弓。`,
+    options: [
+        { text: "返回音乐室", target: "musicroom_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_palette_clue"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("调色板上的E标记")) {
+            gameState.clues.push("调色板上的E标记");
+            msg += `<div class="system-message">【获得线索】：调色板上的E标记</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你仔细检查调色板，在中央凹槽的底部发现了一个极小的字母“E”。这应该是埃莉诺的标记。`,
+    options: [
+        { text: "返回画室", target: "studio_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_score_details"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("夜莺与第七件乐器")) {
+            gameState.clues.push("夜莺与第七件乐器");
+            msg += `<div class="system-message">【获得线索】：夜莺与第七件乐器</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你仔细研究乐谱手稿，发现空白处有一行极小的字：“夜莺的歌声，藏在第七件乐器的共鸣箱里。”`,
+    options: [
+        { text: "返回音乐室", target: "musicroom_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_search_elenor"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("伊莲娜的旧信")) {
+            gameState.items.push("伊莲娜的旧信");
+            if(typeof showItemPopup === "function") showItemPopup("伊莲娜的旧信");
+            msg += `<div class="system-message">【获得物品】：伊莲娜的旧信</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你按照画展目录的线索，在庄园里四处寻找伊莲娜的踪迹，但只找到了一些旧衣物和一封未寄出的信。她似乎早已离开。`,
+    options: [
+        { text: "返回画室", target: "studio_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_servant_room"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasClue("管家子时去地窖")) {
+            gameState.clues.push("管家子时去地窖");
+            msg += `<div class="system-message">【获得线索】：管家子时去地窖</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 仆人房间堆满了旧制服和杂物。你仔细搜索，发现一张纸条：“管家每晚子时都会去地窖。”`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_tell_butler"] = {
+    desc: `描述: 你将地下裂缝的发现告诉了管家。他脸色微变，沉默片刻后说：“那后面是古老的地质断层，我劝你不要下去。” 但他没有阻止你。`,
+    options: [
+        { text: "坚持进入裂缝", target: "side_story_3_start" },
+        { text: "听从劝告，返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["studio_find_solvent"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("松节油")) {
+            gameState.items.push("松节油");
+            if(typeof showItemPopup === "function") showItemPopup("松节油");
+            msg += `<div class="system-message">【获得物品】：松节油</div>`;
+        }
+        return msg;
+    },
+    desc: `描述: 你在颜料柜里翻找，找到了一瓶标签模糊的液体，闻起来像松节油。也许可以用来溶解干涸的颜料。`,
+    options: [
+        { text: "返回调色板", target: "studio_palette" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["studio_press_gems"] = {
+    desc: `描述: 你尝试按下肖像画镜框上的宝石，但没有反应。也许需要按照特定的顺序，或者需要先完成其他步骤。`,
+    options: [
+        { text: "返回肖像画前", target: "studio_portrait" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["studio_rotate_scale"] = {
+    desc: `描述: 你转动雕塑台的刻度盘，但没有明显的效果。也许需要先将矿石按光谱顺序排列。`,
+    options: [
+        { text: "返回雕塑台", target: "studio_sculpture" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["studio_sketches"] = {
+    desc: `描述: 画架上的草稿是一些未完成的素描，大多是人体轮廓和风景速写，没有特别的价值。`,
+    options: [
+        { text: "返回画室", target: "studio_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
 // --- 自动生成的 文本/谜题-地下室.txt 场景 ---
 scenes["basement_entry"] = {
     desc: `地下室的入口位于大厅楼梯下方，一扇沉重的铁门布满锈迹。推开铁门，一股混合着泥土、铁锈和某种古老香料的气味扑面而来。石阶向下延伸，两侧墙壁上的火把在你经过时自动燃起，发出幽蓝的火焰。

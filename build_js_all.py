@@ -43,6 +43,7 @@ EXPANSION_FILE_KEYWORDS = ("谜题-", "支线", "大结局.txt", "补充2.txt")
 FILES = [
     "文本/补充1.txt",
     "文本/补充2.txt",
+    "文本/补全占位.txt",
     "文本/谜题-地下室.txt",
     "文本/谜题-画室.txt",
     "文本/谜题-图书馆.txt",
