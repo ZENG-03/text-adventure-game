@@ -1,4 +1,4 @@
-# 最终密室：七重谜语的真相
+﻿# 最终密室：七重谜语的真相
 
 
 
@@ -89,10 +89,7 @@
 
 
 **选项：**
-
-- 按照上述对应放入物品 [前往 final_test_1_correct]
-
-- 尝试其他组合 [前往 final_test_1_wrong]
+- [选择物品] 从背包中选择要放入匣子的关键信物 [返回目标：final_chamber_entry] [正确目标：final_test_1] [完成目标：final_test_1_correct] [错误目标：final_test_1_wrong] [正确物品：星盘钥匙|机械齿轮|共鸣水晶|神秘颜料|生命之露|符文石|夜莺胸针|银手镯|主人的怀表] [目标数量：5] [正确时消耗：是] [错误时消耗：否]
 
 
 
@@ -131,8 +128,9 @@
 
 
 **选项：**
-
 - 重新整理物品再试 [前往 final_test_1]
+- 暂时放弃，去大厅寻找更多信物 [前往 hall_main]
+- 暂时放弃，去大厅寻找更多信物 [前往 hall_main]
 
 
 
@@ -352,9 +350,9 @@
 
 - 第三条路：成为守护者，封印地下的力量 [前往 ending_3] [条件：flag:side_underground_completed]
 
-- 第四条路：成为故事的讲述者（博物馆与传记） [前往 ending_4] [条件：allflags:side_painting_completed|side_clock_completed]
+- 第四条路：成为故事的讲述者（博物馆与传记） [前往 ending_4] [条件：allflags:side_painting_completed|side_music_completed|side_underground_completed]
 
-- 第五条路：传承谜语精神，并同时纪念伊莲娜与埃莉诺 [前往 ending_5_truth] [条件：allflags:side_butler_completed|side_painting_completed|side_underground_completed|side_music_completed]
+- 第五条路：传承谜语精神，并同时纪念伊莲娜与埃莉诺 [前往 ending_5_truth] [条件：js:[getFlag('side_butler_completed'), getFlag('side_painting_completed'), getFlag('side_underground_completed'), getFlag('side_music_completed')].filter(Boolean).length >= 3]
 
 - 迟疑、误解或逃避 [前往 ending_6_forgotten]
 
@@ -485,4 +483,5 @@
 
 **选项：**
 - 带着回忆返回标题界面，重温旅程 [前往 title]
+
 

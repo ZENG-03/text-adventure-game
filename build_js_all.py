@@ -63,6 +63,10 @@ FILES = [
 ]
 
 
+def js_str(value: str) -> str:
+    return value.replace("\\", "\\\\").replace('"', '\\"').replace("`", "\\`")
+
+
 def parse_txt(file_path: Path) -> dict:
     if not file_path.is_file():
         print(f"Skipping missing file: {file_path}")
@@ -71,9 +75,14 @@ def parse_txt(file_path: Path) -> dict:
 
     parts = re.split(r"场景ID:\s*([A-Za-z0-9_]+)", content)
     scenes = {}
+    local_seen: set[str] = set()
     for i in range(1, len(parts), 2):
         scene_id = parts[i].strip()
         scene_body = parts[i + 1]
+
+        if scene_id in local_seen:
+            print(f"[WARN] 文件内重复场景ID，后者将覆盖前者: {file_path.name} -> {scene_id}")
+        local_seen.add(scene_id)
 
         condition_match = re.search(r"条件：([^\n]+)", scene_body)
         _condition = condition_match.group(1).strip() if condition_match else None
@@ -133,6 +142,7 @@ def parse_txt(file_path: Path) -> dict:
         desc = "\n".join(desc_lines).strip()
 
         options = []
+        item_selection = None
         for opt in options_text.split("\n"):
             opt = opt.strip()
             if not opt.startswith("-"):
@@ -143,11 +153,75 @@ def parse_txt(file_path: Path) -> dict:
             target_match = re.search(r"\[(?:前往|返回)\s+([A-Za-z0-9_]+)\]", opt)
             target = target_match.group(1) if target_match else "hall_main"
             text_match = re.search(r"-\s*(.*?)\s*(?:\[|$)", opt)
-            text = text_match.group(1).strip() if text_match else opt[1:].strip()
-            # 去掉误解析进选项正文的括号说明
-            text = re.sub(r"\s*\[.*$", "", text).strip()
+            raw_text = text_match.group(1).strip() if text_match else opt[1:].strip()
+            text = re.sub(r"\s*\[.*$", "", raw_text).strip()
 
-            opt_cond = re.search(r"\[(?:条件|解锁条件)\s*[:：]\s*(.*?)\]", opt)
+            is_item_selector = "[选择物品]" in opt or raw_text.startswith("[选择物品]")
+            if is_item_selector:
+                prompt_match = re.search(r"\[选择物品\]\s*(.*?)(?:\s*\[[^\]]+\]\s*)*$", opt)
+                clean_text = prompt_match.group(1).strip() if prompt_match else ""
+                if not clean_text:
+                    clean_text = re.sub(r"\s*\[选择物品\]\s*", "", raw_text).strip()
+                if not clean_text:
+                    clean_text = "从背包中选择一件物品"
+
+                def tag_value(prefix: str) -> str | None:
+                    m = re.search(rf"\[{prefix}\s*[:：]\s*(.*?)\]", opt)
+                    return m.group(1).strip() if m else None
+
+                def parse_item_list(raw_value: str | None) -> list[str]:
+                    if not raw_value:
+                        return []
+                    return [x.strip() for x in re.split(r"[|、，,]", raw_value) if x.strip()]
+
+                item_selection = {
+                    "prompt": clean_text,
+                    "back_target": tag_value("返回目标") or target,
+                    "correct_target": tag_value("正确目标") or target,
+                    "wrong_target": tag_value("错误目标") or target,
+                    "completed_target": tag_value("完成目标") or tag_value("完成后") or None,
+                    "required_count": None,
+                    "fatal_target": tag_value("致命目标") or tag_value("死亡目标"),
+                    "consume_on_correct": tag_value("正确时消耗") != "否",
+                    "consume_on_wrong": tag_value("错误时消耗") == "是",
+                    "consume_on_fatal": tag_value("致命时消耗") != "否",
+                    "correct_items": parse_item_list(tag_value("正确物品") or tag_value("可用物品")),
+                    "fatal_items": parse_item_list(tag_value("致命物品")),
+                    "fatal_keywords": parse_item_list(tag_value("致命词")),
+                    "item_map": {},
+                    "validator_js": None,
+                }
+
+                map_raw = tag_value("物品映射") or tag_value("物品规则")
+                if map_raw:
+                    for pair in re.split(r"[|；;]", map_raw):
+                        pair = pair.strip()
+                        if not pair:
+                            continue
+                        if "=>" in pair:
+                            item_name, target_name = pair.split("=>", 1)
+                        elif "->" in pair:
+                            item_name, target_name = pair.split("->", 1)
+                        elif "=" in pair:
+                            item_name, target_name = pair.split("=", 1)
+                        else:
+                            continue
+                        item_selection["item_map"][item_name.strip()] = target_name.strip()
+
+                rule_js = tag_value("规则") or tag_value("validator")
+                if rule_js and rule_js.startswith("js:"):
+                    item_selection["validator_js"] = rule_js[3:].strip()
+
+                count_raw = tag_value("目标数量") or tag_value("需要数量") or tag_value("完成数量")
+                if count_raw:
+                    try:
+                        item_selection["required_count"] = max(1, int(count_raw))
+                    except ValueError:
+                        item_selection["required_count"] = None
+
+                continue
+
+            opt_cond = re.search(r"\[(?:条件|解锁条件)\s*[:：]\s*(.*)\]", opt)
             if opt_cond:
                 opt_cond_str = opt_cond.group(1)
             else:
@@ -164,6 +238,7 @@ def parse_txt(file_path: Path) -> dict:
             "options": options,
             "effs": effs,
             "mark_ending": mark_ending,
+            "item_selection": item_selection,
         }
     return scenes
 
@@ -185,12 +260,7 @@ def make_js_code(scenes: dict) -> str:
                 if "获得线索" in eff or "线索：" in eff:
                     clue = eff.split("：", 1)[1].strip() if "：" in eff else eff.replace("获得线索", "").strip()
                     clue = clue.strip("* ")
-                    js_lines.append(f'        if(!hasClue("{clue}")) {{')
-                    js_lines.append(f'            gameState.clues.push("{clue}");')
-                    js_lines.append(
-                        f'            msg += `<div class="system-message">【获得线索】：{clue}</div>`;'
-                    )
-                    js_lines.append("        }")
+                    js_lines.append(f'        msg += addClue("{clue}");')
                 elif "消耗物品" in eff or "失去物品" in eff:
                     item_part = eff.split("：", 1)[1].strip() if "：" in eff else re.sub(r"^(消耗|失去)(物品|道具)?[：:]?", "", eff).strip()
                     items = [x.strip() for x in re.split(r"[、，,]", item_part) if x.strip()]
@@ -217,11 +287,7 @@ def make_js_code(scenes: dict) -> str:
                         cond_item = items[0]
                         js_lines.append(f'        if(!hasItem("{cond_item}")) {{')
                         for item in items:
-                            js_lines.append(f'            gameState.items.push("{item}");')
-                            js_lines.append(f'            if(typeof showItemPopup === "function") showItemPopup("{item}");')
-                            if "徽章" in item:
-                                js_lines.append(f'            gameState.medals.push("{item}");')
-                                js_lines.append("            addMedal();")
+                            js_lines.append(f'            msg += addItem("{item}");')
                         js_lines.append(
                             f'            msg += `<div class="system-message">【获得物品】：{item_part}</div>`;'
                         )
@@ -253,6 +319,41 @@ def make_js_code(scenes: dict) -> str:
         desc_text = sdata["desc"].replace("$", "\\$")
         js_lines.append(f"    desc: `{desc_text}`,")
 
+        item_selection = sdata.get("item_selection")
+        if item_selection:
+            js_lines.append("    itemSelection: {")
+            js_lines.append(f'        prompt: "{js_str(item_selection["prompt"])}",')
+            js_lines.append(f'        backTarget: "{js_str(item_selection["back_target"])}",')
+            js_lines.append(f'        correctTarget: "{js_str(item_selection["correct_target"])}",')
+            js_lines.append(f'        wrongTarget: "{js_str(item_selection["wrong_target"])}",')
+            if item_selection.get("completed_target"):
+                js_lines.append(f'        completedTarget: "{js_str(item_selection["completed_target"])}",')
+            if item_selection.get("required_count"):
+                js_lines.append(f'        requiredCount: {int(item_selection["required_count"])},')
+            if item_selection.get("fatal_target"):
+                js_lines.append(f'        fatalTarget: "{js_str(item_selection["fatal_target"])}",')
+            js_lines.append(f'        consumeOnCorrect: {str(bool(item_selection.get("consume_on_correct"))).lower()},')
+            js_lines.append(f'        consumeOnWrong: {str(bool(item_selection.get("consume_on_wrong"))).lower()},')
+            js_lines.append(f'        consumeOnFatal: {str(bool(item_selection.get("consume_on_fatal"))).lower()},')
+
+            if item_selection.get("correct_items"):
+                arr = ", ".join(f'"{js_str(x)}"' for x in item_selection["correct_items"])
+                js_lines.append(f"        correctItems: [{arr}],")
+            if item_selection.get("fatal_items"):
+                arr = ", ".join(f'"{js_str(x)}"' for x in item_selection["fatal_items"])
+                js_lines.append(f"        fatalItems: [{arr}],")
+            if item_selection.get("fatal_keywords"):
+                arr = ", ".join(f'"{js_str(x)}"' for x in item_selection["fatal_keywords"])
+                js_lines.append(f"        fatalKeywords: [{arr}],")
+            if item_selection.get("item_map"):
+                js_lines.append("        itemMap: {")
+                for item_name, target_name in item_selection["item_map"].items():
+                    js_lines.append(f'            "{js_str(item_name)}": "{js_str(target_name)}",')
+                js_lines.append("        },")
+            if item_selection.get("validator_js"):
+                js_lines.append(f"        validator: (itemName) => {{ {item_selection['validator_js']} }},")
+            js_lines.append("    },")
+
         js_lines.append("    options: [")
         opts = []
         for opt in sdata["options"]:
@@ -270,6 +371,9 @@ def make_js_code(scenes: dict) -> str:
                 if cs.startswith("flag:"):
                     fk = cs[5:].strip()
                     opt_line += f', condition: () => getFlag("{fk}")'
+                elif cs.startswith("js:"):
+                    js_code = cs[3:].strip()
+                    opt_line += f', condition: () => {js_code}'
                 elif cs.startswith("allflags:"):
                     keys = [x.strip() for x in cs[9:].split("|") if x.strip()]
                     if keys:
@@ -293,7 +397,16 @@ def make_js_code(scenes: dict) -> str:
                     ).strip()
                     opt_line += f', condition: () => hasItem("{item}")'
                 elif "若有" in cond_str:
-                    opt_line += ', condition: () => hasItem("生命之露")'
+                        text_for_item = opt["text"]
+                        if "生命之露" in text_for_item: item = "生命之露"
+                        elif "机械齿轮" in text_for_item: item = "机械齿轮"
+                        elif "日记" in text_for_item: item = "克劳利的日记"
+                        elif "共鸣水晶" in text_for_item: item = "共鸣水晶"
+                        elif "神秘颜料" in text_for_item: item = "神秘颜料"
+                        elif "符文石" in text_for_item: item = "符文石"
+                        elif "星盘钥匙" in text_for_item: item = "星盘钥匙"
+                        else: item = "未知物品"
+                        opt_line += f', condition: () => hasItem("{item}")'
             opt_line += " }"
             opts.append(opt_line)
 
@@ -350,13 +463,23 @@ def main():
     full_js = ""
     total = 0
     seen_ids: set[str] = set()
+    first_owner: dict[str, str] = {}
+    cross_file_dup_count = 0
     for rel in FILES:
         fp = ROOT / rel.replace("\\", "/")
         scenes = parse_txt(fp)
+
+        for sid in scenes.keys():
+            if sid in first_owner:
+                cross_file_dup_count += 1
+                print(
+                    f"[WARN] 跨文件重复场景ID（后写覆盖前写）: {sid} | "
+                    f"first={first_owner[sid]} | now={rel}"
+                )
+            else:
+                first_owner[sid] = rel
+
         filtered = {k: v for k, v in scenes.items() if k not in skip_ids}
-        # 主线2 与「谜题/支线」大量同 ID：只补充尚未出现过的场景，避免短剧本覆盖完整谜题
-        if "主线2.txt" in rel:
-            filtered = {k: v for k, v in filtered.items() if k not in seen_ids}
         full_js += f"\n// --- 自动生成的 {rel} 场景 ---\n"
         full_js += make_js_code(filtered)
         seen_ids |= set(filtered.keys())
@@ -369,8 +492,11 @@ def main():
     new_content = prefix + full_js.rstrip() + footer
     SCENES_JS.write_text(new_content, encoding="utf-8")
     print(f"\n已写入 {SCENES_JS}，共生成约 {total} 个场景块（跨文件累计，后者覆盖同 ID）。")
+    if cross_file_dup_count:
+        print(f"检测到跨文件重复ID：{cross_file_dup_count} 处，请优先清理文本源。")
     print("请用本地服务器打开 index.html 验证。")
 
 
 if __name__ == "__main__":
     main()
+

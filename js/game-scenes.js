@@ -76,6 +76,11 @@ scenes["hall_main"] = {
     options: [
         { text: "仔细观察大厅壁炉的纸片", target: "hall_fireplace" },
         { text: "寻找管家下落（支线《管家的秘密》）", target: "side_story_1_start" },
+        {
+            text: "支付金币重置支线状态（失败补救）",
+            target: "sys_reset_all_side_quests",
+            condition: () => getFlag("side_story_1_failed") || getFlag("side_story_2_failed") || getFlag("side_story_3_failed") || getFlag("side_story_4_failed")
+        },
         { text: "检查大厅的雕像", target: "puzzle_statues" },
         { text: "前往书房/图书馆", target: "library_entry" },
         { text: "前往音乐室", target: "musicroom_entry" },
@@ -126,80 +131,6 @@ scenes["statues_solved"] = {
     options: [{ text: "收起物品，返回大厅", target: "hall_main" }]
 };
 
-scenes["library_entry"] = {
-    desc: `图书馆高耸的书架直达穹顶。中央有一张巨大的书桌，桌面上摊开着一本空白的书。\n书桌腿是狮鹫爪，踩着石球。`,
-    options: [
-        { text: "仔细检查书桌上的空白书", target: "library_blank_book" },
-        { text: "探索书架寻找可疑的书籍", target: "library_bookshelves" },
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-scenes["library_blank_book"] = {
-    desc: `书封面刻着“知识即钥匙”，封底画着七颗星，第四颗被圈住。\n书脊处有一个金属搭扣。`,
-    options: [
-        { text: "按压封面上的第四颗星图案", target: "library_press_star" },
-        { text: "强行解开金属搭扣", target: "library_unlock_clasp" },
-        { text: "返回", target: "library_entry" }
-    ]
-};
-scenes["library_press_star"] = {
-    on_enter: () => {
-        if(!hasClue("七学者名单 (部分)")) {
-            gameState.clues.push("七学者名单 (部分)");
-            return `<div class="system-message">【获得线索】：七学者名单</div>`;
-        }
-        return "";
-    },
-    desc: `咔哒。搭扣弹开。里面有一张纸条：\n“寻找无字天书，它的秘密藏在七位学者的记忆里。按出生年份排序。”\n名单上能看清：亚里士多德、达·芬奇、哥白尼。`,
-    options: [{ text: "去书架寻找完整名单", target: "library_bookshelves" }]
-};
-scenes["library_unlock_clasp"] = {
-    desc: `<span class="danger-message">你触发了陷阱！短箭飞出，擦破了你的手臂，好在没有大碍。</span>`,
-    options: [{ text: "退后", target: "library_entry" }]
-};
-scenes["library_bookshelves"] = {
-    desc: `你在书架间穿梭，找到了多本传记：《亚里士多德全集》《达·芬奇笔记》《天体运行论》《自然哲学的数学原理》《几何原本》《梦的解析》《时间简史》。`,
-    options: [
-        { text: "仔细翻阅每本书，寻找年份并排序", target: "library_scholar_order", condition: () => hasClue("七学者名单 (部分)") },
-        { text: "检查《梦的解析》等书的异常", target: "library_check_books" },
-        { text: "返回", target: "library_entry" }
-    ]
-};
-scenes["library_scholar_order"] = {
-    on_enter: () => {
-        let msg = "";
-        if(!hasItem("智慧徽章")) {
-            gameState.items.push("智慧徽章");
-            gameState.medals.push("智慧徽章");
-            addMedal();
-            msg = `<div class="system-message">【获得奖励】：智慧徽章</div>`;
-        }
-        return msg;
-    },
-    desc: `你按生卒年成功将书籍排序！\n书架缓缓移开，露出一个暗格，里面放着一枚闪闪发亮的【智慧徽章】。`,
-    options: [{ text: "拿走徽章，返回大厅", target: "hall_main" }]
-};
-scenes["library_check_books"] = {
-    desc: `《梦的解析》被撕掉了半页。\n《几何原本》书脊处有一个隐藏开关。`,
-    options: [{ text: "按下隐藏开关", target: "library_scholar_order", effectMsg: "开关咔哒一声脆响..." }]
-};
-
-scenes["musicroom_entry"] = {
-    desc: `音乐室位于庄园一层西侧，宛如微型歌剧院。\n中央矗立着巨大的管风琴，左侧有失调的三角钢琴。角落排列着音叉。`,
-    options: [
-        { text: "检查管风琴", target: "musicroom_organ" },
-        { text: "查看三角钢琴和乐谱", target: "musicroom_piano" },
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-scenes["musicroom_organ"] = {
-    desc: `管风琴有七个音栓，但拉不动（被锁死）。侧面有一个齿轮状的凹槽。`,
-    options: [
-        { text: "嵌入机械齿轮解锁", target: "musicroom_organ_unlock", condition: () => hasItem("机械齿轮") },
-        { text: "硬拔音栓", target: "musicroom_organ", effectMsg: "死死的卡着，纹丝不动。" },
-        { text: "返回", target: "musicroom_entry" }
-    ]
-};
 scenes["musicroom_organ_unlock"] = {
     desc: `机械齿轮完美嵌入。音栓锁扣完全松开！\n你需要在此弹奏出完美的共鸣。`,
     options: [{ text: "放置键帽演奏", target: "musicroom_solved" }]
@@ -218,13 +149,6 @@ scenes["musicroom_solved"] = {
     desc: `管风琴发出雄浑的轰鸣声，产生了完美的共鸣！\n暗格滑开，露出了【旋律徽章】和一把【调音扳手】。`,
     options: [{ text: "收起物品，离开", target: "musicroom_entry" }]
 };
-scenes["musicroom_piano"] = {
-    desc: `三角钢琴失调，弹出来的声音极其刺耳。也许需要某样工具才能校准。`,
-    options: [
-        { text: "用调音扳手进行校准", target: "musicroom_piano_tuned", condition: () => hasItem("调音扳手") },
-        { text: "返回", target: "musicroom_entry" }
-    ]
-};
 scenes["musicroom_piano_tuned"] = {
     on_enter: () => {
         if(!hasItem("七色花苞")) {
@@ -237,23 +161,6 @@ scenes["musicroom_piano_tuned"] = {
     options: [{ text: "返回", target: "musicroom_entry" }]
 };
 
-scenes["greenhouse_entry"] = {
-    desc: `温室充满潮湿腐朽气味。中央有一棵枯死古树被七个花坛包围。\n树旁写着：“生命之水，需以七色之血唤醒。”`,
-    options: [
-        { text: "检查中央古树与浑浊石盆", target: "greenhouse_tree" },
-        { text: "去工具房寻找线索和工具", target: "greenhouse_tool_shed" },
-        { text: "尝试唤醒古树（融合道具）", target: "greenhouse_solved", condition: () => hasItem("七色花琥珀") && hasItem("七色花苞") && hasItem("古树血提取剂") },
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-scenes["greenhouse_tree"] = {
-    desc: `石盆底部埋着东西，水泛着毒光，直接手摸可能会中毒。`,
-    options: [
-        { text: "用手强捞", target: "greenhouse_tree", effectMsg: "啊！手麻痹了，这水有毒！" },
-        { text: "用长柄夹夹出", target: "greenhouse_tree_safe", condition: () => hasItem("长柄夹") },
-        { text: "返回", target: "greenhouse_entry" }
-    ]
-};
 scenes["greenhouse_tree_safe"] = {
     on_enter: () => {
         if(!hasItem("七色花琥珀")){
@@ -264,13 +171,6 @@ scenes["greenhouse_tree_safe"] = {
     },
     desc: `你用夹子捞出一个铜盒，内部有一块【七色花琥珀】！`,
     options: [{ text: "收好返回", target: "greenhouse_entry" }]
-};
-scenes["greenhouse_tool_shed"] = {
-    desc: `工具房有个密码为建成年份的木箱。同时旁边挂着一把长柄夹。`,
-    options: [
-        { text: "破译木箱(密码188)并拿走架子上的夹子", target: "greenhouse_box_open" },
-        { text: "返回", target: "greenhouse_entry" }
-    ]
 };
 scenes["greenhouse_box_open"] = {
     on_enter: () => {
@@ -298,49 +198,6 @@ scenes["greenhouse_solved"] = {
     options: [{ text: "取下徽章返回", target: "greenhouse_entry" }]
 };
 
-scenes["studio_entry"] = {
-    desc: `画室在二层。满墙空白画布，只有画框上标注了相应的七色。\n中央是一个巨大的调色板，最主要墙壁上是一幅庞大的肖像画。`,
-    options: [
-        { text: "接取支线：调查落灰的日记本", target: "side_quest_painting", condition: () => !getFlag("side_painting_triggered") },
-        { text: "研究雕塑台上的矿石", target: "studio_sculpture" },
-        { text: "研究巨大肖像画上的镜面", target: "studio_portrait" },
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-scenes["side_quest_painting"] = {
-    on_enter: () => {
-        setFlag("side_painting_triggered", true);
-        gameState.clues.push("伊莲娜的日记");
-        return `<div class="system-message">【支线进度】：达成，获得线索“伊莲娜的日记”</div>`;
-    },
-    desc: `【支线：伊莲娜的哀叹】\n这是女主人伊莲娜的日记。日记记载：“阿斯特沉迷于谜语，我感觉他在变成另一个人...”\n你深刻理解了这是由于男主人的某种痴迷造成的悲剧。`,
-    options: [{ text: "合上日记，继续调查画室", target: "studio_entry" }]
-};
-scenes["studio_sculpture"] = {
-    desc: `雕塑台上有七块原矿石。台底写道：将七石归位于光谱（红橙黄绿青蓝紫），可启颜料之源。`,
-    options: [
-        { text: "按照光谱顺序排列归位", target: "studio_palette_active" },
-        { text: "放弃", target: "studio_entry" }
-    ]
-};
-scenes["studio_palette_active"] = {
-    on_enter: () => {
-        if(!hasItem("七色神秘颜料")){
-            gameState.items.push("七色神秘颜料");
-            return `<div class="system-message">【获得关键道具】：七色神秘颜料</div>`;
-        }
-        return "";
-    },
-    desc: `光闪过后，调色板涌出了鲜活的【七色神秘颜料】！`,
-    options: [{ text: "取走颜料", target: "studio_entry" }]
-};
-scenes["studio_portrait"] = {
-    desc: `画像中的男子拿着一面椭圆形真镜面。\n你需要用神秘颜料在镜面作画才能解开秘密。`,
-    options: [
-        { text: "用七色颜料在镜面作画", target: "studio_solved", condition: () => hasItem("七色神秘颜料") },
-        { text: "返回", target: "studio_entry" }
-    ]
-};
 scenes["studio_solved"] = {
     on_enter: () => {
         let msg = "";
@@ -356,105 +213,6 @@ scenes["studio_solved"] = {
     options: [{ text: "返回画室门口", target: "studio_entry" }]
 };
 
-scenes["basement_entry"] = {
-    desc: `地下室阴森恐怖。入口充满了晦涩的学术符文。这里是炼金阵与地质学禁区。`,
-    options: [
-        { text: "接取支线：查阅散落的笔记", target: "side_quest_basement", condition: () => !getFlag("side_underground_triggered") },
-        { text: "探查中央祭坛", target: "basement_alchemy" },
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-scenes["side_quest_basement"] = {
-    on_enter: () => {
-        setFlag("side_underground_triggered", true);
-        gameState.clues.push("托马斯的地质笔记");
-        return `<div class="system-message">【支线进度】：达成，获得线索“托马斯的地质笔记”</div>`;
-    },
-    desc: `【支线：地底的回响】\n你找到了托马斯的笔记，得知这片土地下有毁灭性的古老力量。\n阿斯特设计谜语其实是为了筛选有资格镇压这股力量的守护者！`,
-    options: [{ text: "合上笔记", target: "basement_entry" }]
-};
-scenes["basement_alchemy"] = {
-    desc: `祭坛要求献祭强大的生命气息（如从温室获得的生命极品）。`,
-    options: [
-        { text: "投入七色花生命的共鸣力量", target: "basement_solved", condition: () => hasItem("生命徽章") || hasItem("七色花琥珀") },
-        { text: "条件不足，离开", target: "basement_entry" }
-    ]
-};
-scenes["basement_solved"] = {
-    on_enter: () => {
-        let msg = "";
-        if(!hasItem("深渊徽章")) {
-            gameState.items.push("深渊徽章", "符文石");
-            gameState.medals.push("深渊徽章");
-            addMedal();
-            msg = `<div class="system-message">【获得奖励】：深渊徽章、符文石</div>`;
-        }
-        return msg;
-    },
-    desc: `祭坛缓缓下沉。浮现出一块古老的【符文石】及一枚【深渊徽章】！`,
-    options: [{ text: "拿走物品，原路返回", target: "hall_main" }]
-};
-
-
-scenes["clocktower_entry"] = {
-    desc: `钟楼内满是齿轮，底部是工坊，顶层是巨大的钟盘。`,
-    options: [
-        { text: "接取支线：查阅观测台日志", target: "side_quest_clock", condition: () => !getFlag("side_clock_completed") },
-        { text: "翻找底层工坊工具", target: "clocktower_workshop" },
-        { text: "前往顶层调校钟盘", target: "clocktower_top" },
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
-scenes["side_quest_clock"] = {
-    on_enter: () => {
-        setFlag("side_clock_completed", true);
-        gameState.clues.push("观测记录");
-        return `<div class="system-message">【支线进度】：达成，获得“星月观测记录”</div>`;
-    },
-    desc: `【支线：星月的低语】\n记录显示了阿斯特对时间精确度的变态痴迷。`,
-    options: [{ text: "返回", target: "clocktower_entry" }]
-};
-scenes["clocktower_workshop"] = {
-    on_enter: () => {
-        if(!hasItem("齿轮钥匙")){
-            gameState.items.push("齿轮钥匙");
-            return `<div class="system-message">【获得道具】：齿轮钥匙</div>`;
-        }
-        return "";
-    },
-    desc: `你在铁皮柜里找到了一把形状奇特的【齿轮钥匙】，可以安全调节钟楼。`,
-    options: [{ text: "返回", target: "clocktower_entry" }]
-};
-scenes["clocktower_top"] = {
-    desc: `顶层钟盘停在11:55。铭文写着需要连续平稳的七声钟鸣。`,
-    options: [
-        { text: "插入齿轮钥匙调校节拍", target: "clocktower_solved", condition: () => hasItem("齿轮钥匙") },
-        { text: "徒手强行拨动长针", target: "clocktower_entry", effectMsg: "遭到高压电击防御机制！你被弹飞了。" },
-        { text: "返回", target: "clocktower_entry" }
-    ]
-};
-scenes["clocktower_solved"] = {
-    on_enter: () => {
-        let msg = "";
-        if(!hasItem("时空徽章")) {
-            gameState.items.push("时空徽章");
-            gameState.medals.push("时空徽章");
-            addMedal();
-            msg = `<div class="system-message">【获得奖励】：时空徽章</div>`;
-        }
-        return msg;
-    },
-    desc: `你用齿轮钥匙完美调校！“铛——”钟声平稳响了七下。\n钟盘开启，露出最后一枚【时空徽章】。`,
-    options: [{ text: "取走并返回", target: "hall_main" }]
-};
-
-
-scenes["final_chamber_entry"] = {
-    desc: `当七枚徽章齐聚，庄园都在震动。你来到了庄园的最深处的中央密室。\n石台上放着一个含有七道凹槽的古老匣子。你必须将收集到的物品和你的觉悟一同献上。`,
-    options: [
-        { text: "将所有极品（徽章、齿轮、符文石等）放入凹槽", target: "final_chamber_test" }
-    ]
-};
 scenes["final_chamber_test"] = {
     desc: `所有的物品严丝合缝地归位！匣子弹开，露出了阿斯特的最后亲笔信。\n他给了你决定庄园和自己命运的选择（部分选项需对应支线解锁）：`,
     options: [
@@ -1217,7 +975,7 @@ scenes["bedroom_candle_midnight"] = {
 };
 
 scenes["bedroom_painting_details"] = {
-    desc: `描述: 你凑近油画仔细观察，发现画中的细节异常丰富——每一个房间的窗户里似乎都藏着微小的符号。但以你现在的视角，无法看清全部。也许需要借助望远镜或其他工具。你决定先不在此处耗费时间。`,
+    desc: `描述: 你用放大镜观察油画，发现每个亮着烛光的房间窗户里都藏着一个微小的符号：图书馆是一本翻开的书，钟楼是一个沙漏，音乐室是一个高音谱号，画室是一支画笔，温室是一朵花，地下室是一个六芒星。而漆黑的卧室窗户里，是一面破碎的镜子——镜中倒映着七角星。`,
     options: [
         { text: "返回卧室", target: "bedroom_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1225,7 +983,7 @@ scenes["bedroom_painting_details"] = {
 };
 
 scenes["bedroom_telescope"] = {
-    desc: `描述: 你举起望远镜望向窗外，荒芜的花园在月光下显得格外寂寥。干涸的喷泉池底的七角星图案清晰可见，但除此之外没有更多发现。也许需要等到子夜，或者需要某种镜片。`,
+    desc: `描述: 你将望远镜对准喷泉池底，七角星图案清晰可见。每个角上有一个小孔，月光穿过小孔在池底投下光斑。你数了数，光斑的排列顺序与油画上七个房间的位置完全一致。你记下这个顺序：北-东北-东-东南-南-西南-西。`,
     options: [
         { text: "返回落地窗前", target: "bedroom_window" },
         { text: "返回大厅", target: "hall_main" }
@@ -1233,7 +991,7 @@ scenes["bedroom_telescope"] = {
 };
 
 scenes["greenhouse_check_seeds"] = {
-    desc: `描述: 你检查了花坛中的种子，它们仍然深埋土中，没有任何发芽的迹象。也许还需要提供特定的生长条件：火、水、土、气、光、暗、生命。你决定先去准备这些条件。`,
+    desc: `描述: 你蹲下查看七个花坛，种子仍然深埋在干裂的泥土中，没有发芽的迹象。但当你凑近时，赤色花坛的土壤微微发热，橙色花坛的土壤湿润，黄色花坛的土壤有肥料的气味……你意识到，每个花坛已经开始接受条件，只是种子需要更长时间。你耐心等待，并检查其他条件是否都已满足。`,
     options: [
         { text: "返回温室", target: "greenhouse_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1241,7 +999,7 @@ scenes["greenhouse_check_seeds"] = {
 };
 
 scenes["greenhouse_nursery"] = {
-    desc: `描述: 苗圃里只有干枯的幼苗和破碎的花盆。你翻了翻，没有找到有用的东西。也许在其他地方能找到植物部位或种子。`,
+    desc: `描述: 苗圃的育苗盆里，大部分幼苗已经枯死，但最角落里有一盆矮小的紫藤苗还带着一丝绿意。你用手触摸它的叶片，感到微弱的生命脉动。你小心地将它移栽到花盆里，浇了一点水。也许它能活过来。`,
     options: [
         { text: "返回温室", target: "greenhouse_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1249,7 +1007,7 @@ scenes["greenhouse_nursery"] = {
 };
 
 scenes["greenhouse_use_fertilizer"] = {
-    desc: `描述: 你将七色花肥料撒在花坛中，但土壤毫无反应。可能肥料需要先溶解在水里，或者需要配合其他元素条件。你暂时放弃了直接施肥。`,
+    desc: `描述: 你将七色花肥料均匀撒在黄花坛的土壤表面。肥料颗粒迅速溶解，渗入土中。几分钟后，土壤变得松软肥沃，颜色也变深了。你用手指戳了戳，感到温暖——微生物正在分解肥料。黄花坛的条件已满足。`,
     options: [
         { text: "返回温室", target: "greenhouse_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1257,14 +1015,15 @@ scenes["greenhouse_use_fertilizer"] = {
 };
 
 scenes["hall_injured"] = {
-    desc: `描述: 状态更新：你受了一点伤，行动稍有不便，但并无大碍。<br>你受了伤，一瘸一拐地回到大厅。管家奥尔德斯见状，面无表情地递给你一卷绷带和一瓶药水。你坐下休息，伤口渐渐止血，但身体仍然有些虚弱。`,
+    desc: `描述: 你跌跌撞撞地回到大厅，管家奥尔德斯看见你手臂上的伤口，面无表情地递给你一卷绷带和一瓶消毒水。你坐下包扎，他低声说：“鲁莽是解谜的大敌。下次，请三思。” 你点头，感到伤口火辣辣地疼，但并无大碍。`,
     options: [
-        { text: "返回大厅（继续探索）", target: "hall_main" }
+        { text: "返回大厅（继续探索）", target: "hall_main" },
+        { text: "返回大厅", target: "hall_main" }
     ]
 };
 
 scenes["library_fail"] = {
-    desc: `描述: 你的操作似乎没有产生任何效果，书架纹丝不动。也许需要更多线索，或者顺序不对。你放弃了当前尝试，决定先探索其他地方。`,
+    desc: `描述: 你随意拉动了书架上的几本书，但什么也没有发生。书架纹丝不动，只是扬起了灰尘。你意识到需要更精确的顺序或线索。你决定先退出去，再仔细研究那些书籍的年份和作者。`,
     options: [
         { text: "返回图书馆", target: "library_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1272,7 +1031,7 @@ scenes["library_fail"] = {
 };
 
 scenes["library_gaps"] = {
-    desc: `描述: 你挤进书架之间的缝隙，发现里面只有厚厚的灰尘和蛛网，没有任何隐藏的物品。你失望地退了出来。`,
+    desc: `描述: 书架之间的缝隙非常狭窄，你侧身挤进去，发现里面只有厚厚的蛛网和灰尘。墙壁上什么也没有，只有一行用铅笔写的小字：“别找了，秘密不在缝隙里，而在书里。” 你失望地退出来。`,
     options: [
         { text: "返回书架前", target: "library_bookshelves" },
         { text: "返回大厅", target: "hall_main" }
@@ -1280,7 +1039,7 @@ scenes["library_gaps"] = {
 };
 
 scenes["library_window_move"] = {
-    desc: `描述: 你试着推动彩色玻璃窗，但窗户是固定的，无法移动。也许需要某种工具或特定的顺序才能调节。你放弃了。`,
+    desc: `描述: 彩色玻璃窗的窗框是固定的，无法移动。但窗台上有一个小小的铜制手柄，你试着转动，窗户上的七块玻璃竟然可以独立倾斜。你调节每块玻璃的角度，发现它们可以改变光斑的位置。`,
     options: [
         { text: "返回图书馆", target: "library_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1288,7 +1047,7 @@ scenes["library_window_move"] = {
 };
 
 scenes["musicroom_copy_score"] = {
-    desc: `描述: 你尝试抄写乐谱，但墨水已经干涸，纸张也脆裂了。看来需要找到原始的乐谱或使用其他方法。`,
+    desc: `描述: 你尝试用桌上的羽毛笔和墨水抄写乐谱，但墨水已经干涸成块，纸张也脆得快要碎裂。你放弃了抄写，转而用手机拍照（如果有）。但手机在庄园里信号微弱，照片模糊。你需要找到原始的完整乐谱。`,
     options: [
         { text: "返回音乐室", target: "musicroom_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1296,7 +1055,7 @@ scenes["musicroom_copy_score"] = {
 };
 
 scenes["musicroom_inside"] = {
-    desc: `描述: 你检查了管风琴内部，里面是复杂的音管和联动机构。除了积灰，没有发现任何机关或隐藏物品。`,
+    desc: `描述: 你爬进管风琴内部，狭窄的空间里布满了音管和联动杆。音管上贴着标签，标注着音高和对应的键帽。你发现一根音管的底部有一个小暗格，里面放着一枚备用的音叉——音叉上刻着“E♭”，这是埃莉诺的调音偏好。`,
     options: [
         { text: "返回管风琴前", target: "musicroom_organ" },
         { text: "返回大厅", target: "hall_main" }
@@ -1304,7 +1063,7 @@ scenes["musicroom_inside"] = {
 };
 
 scenes["musicroom_inspect"] = {
-    desc: `描述: 你仔细检查了展柜里的乐器，它们都很陈旧，但似乎没有特别之处。也许需要先获得某种道具才能发现隐藏的标记。`,
+    desc: `描述: 你仔细检查展柜里的每件乐器。小提琴的琴身背面有一行极小的刻字：“埃莉诺·布莱克伍德，1888。” 中提琴的琴头雕刻着一只夜莺，大提琴的侧板上有一个微弱的字母“E”。这些标记证实了它们都是埃莉诺亲手制作的。`,
     options: [
         { text: "返回音乐室", target: "musicroom_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1312,7 +1071,7 @@ scenes["musicroom_inspect"] = {
 };
 
 scenes["musicroom_instrument_order"] = {
-    desc: `描述: 你尝试调整乐器的摆放顺序，但什么也没有发生。也许顺序不对，或者需要配合音叉使用。`,
+    desc: `描述: 你尝试将乐器按大小排列，但什么也没发生。你想起乐队油画中的乐器位置——小提琴在前排，中提琴在右侧，大提琴在左侧，低音提琴在后排。也许需要按照乐队布局来摆放，而不是单纯的大小顺序。`,
     options: [
         { text: "返回音乐室", target: "musicroom_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1320,7 +1079,7 @@ scenes["musicroom_instrument_order"] = {
 };
 
 scenes["musicroom_order_by_score"] = {
-    desc: `描述: 你按照乐谱上的顺序放置键帽，但音栓仍然锁死。需要先解锁音栓（例如嵌入机械齿轮）并产生气流。`,
+    desc: `描述: 你将七枚键帽按照《七重奏鸣曲》的乐章顺序（水、火、土、气、光、暗、生命）放在对应的音栓上。但音栓仍然锁死，因为气流还未激活。你需要先启动鼓风机。`,
     options: [
         { text: "返回管风琴", target: "musicroom_organ" },
         { text: "返回大厅", target: "hall_main" }
@@ -1328,7 +1087,7 @@ scenes["musicroom_order_by_score"] = {
 };
 
 scenes["musicroom_play_organ"] = {
-    desc: `描述: 你试着弹奏管风琴，但由于没有气流，音管无法发声。需要先启动鼓风机或连接动力源。`,
+    desc: `描述: 你坐到管风琴前，试着按下琴键。音管发出微弱的“呼呼”声，但没有旋律——因为鼓风机没有提供足够的气流。你需要先摇动鼓风机手柄，或者用其他方式产生风压。`,
     options: [
         { text: "返回管风琴", target: "musicroom_organ" },
         { text: "返回大厅", target: "hall_main" }
@@ -1336,7 +1095,7 @@ scenes["musicroom_play_organ"] = {
 };
 
 scenes["musicroom_reflector_ropes"] = {
-    desc: `描述: 你检查了反射板的拉绳，它们已经严重老化，一碰就断。看来无法通过手动调节来改变声学环境了。`,
+    desc: `描述: 天花板的反射板通过一组滑轮和绳索控制。你拉动绳索，反射板的角度改变，声音的聚焦点也随之移动。但绳索已经老化，你一用力就断了一根。反射板卡在半空，无法再调节。你需要找到备用绳索或放弃调节。`,
     options: [
         { text: "返回音乐室", target: "musicroom_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1344,7 +1103,7 @@ scenes["musicroom_reflector_ropes"] = {
 };
 
 scenes["musicroom_search_crystal"] = {
-    desc: `描述: 你在音乐室里四处寻找共鸣水晶，但只找到了普通的玻璃制品。也许水晶在其他房间（如画室）。`,
+    desc: `描述: 你在音乐室的每个角落寻找共鸣水晶：翻遍了钢琴、管风琴、展柜、甚至壁炉。只找到了一些玻璃弹珠和水晶杯，它们敲击时声音浑浊，不是你要找的。也许共鸣水晶在其他房间——比如画室或温室。`,
     options: [
         { text: "返回音乐室", target: "musicroom_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1352,7 +1111,7 @@ scenes["musicroom_search_crystal"] = {
 };
 
 scenes["musicroom_tune_by_ear"] = {
-    desc: `描述: 你尝试凭听觉校准钢琴，但由于缺乏绝对音感，调出的音高杂乱无章。看来需要使用音叉作为参考。`,
+    desc: `描述: 你凭听觉尝试调音，但钢琴的琴弦已经多年未校准，音高偏离严重。你调了半天，弹出来的还是刺耳的不和谐音。你需要音叉作为参考。`,
     options: [
         { text: "返回三角钢琴", target: "musicroom_piano" },
         { text: "返回大厅", target: "hall_main" }
@@ -1360,7 +1119,7 @@ scenes["musicroom_tune_by_ear"] = {
 };
 
 scenes["side_alternate_path"] = {
-    desc: `描述: 你找到了一条岔路，但走进去后发现是一条死胡同，尽头只有岩壁。没有其他出口。`,
+    desc: `描述: 你发现洞穴东侧有一条岔路，走进去后，通道越来越窄，最终只能匍匐前进。爬了约二十米，前方被一整块巨石堵死。巨石上有凿痕，但明显是天然形成的。你只好退回，这条路不通。`,
     options: [
         { text: "返回洞穴", target: "side_cave_passage" },
         { text: "返回大厅", target: "hall_main" }
@@ -1368,7 +1127,7 @@ scenes["side_alternate_path"] = {
 };
 
 scenes["side_cave_deeper"] = {
-    desc: `描述: 你继续向洞穴深处探索，但越走越狭窄，空气也越来越稀薄。你担心有塌方危险，决定返回。`,
+    desc: `描述: 你越走越深，空气变得稀薄潮湿。洞壁上开始出现发光苔藓，发出幽绿色的微光。前方传来滴水声，你走近一看，是一个地下湖。湖水清澈见底，湖底沉着一些陶罐和骸骨。你感到一阵寒意，决定返回——这里太诡异了。`,
     options: [
         { text: "返回石桌处", target: "side_cave_table" },
         { text: "返回大厅", target: "hall_main" }
@@ -1376,7 +1135,7 @@ scenes["side_cave_deeper"] = {
 };
 
 scenes["side_cellar_key"] = {
-    desc: `描述: 你用生锈的钥匙打开了地窖的门，但里面除了一些酒桶和旧家具，没有任何与谜题相关的东西。管家似乎不在这里。`,
+    desc: `描述: 地窖的门后是一条向下的石阶，尽头是一个酒窖。橡木酒桶排列整齐，但都是空的。墙角有一个木架，上面放着一瓶积满灰尘的红酒，标签写着“1888”。酒瓶旁边有一张纸条：“哥哥，原谅我。” 这是管家的笔迹。`,
     options: [
         { text: "返回地窖入口", target: "side_cellar" },
         { text: "返回大厅", target: "hall_main" }
@@ -1384,7 +1143,7 @@ scenes["side_cellar_key"] = {
 };
 
 scenes["side_dig_with_hammer"] = {
-    desc: `描述: 你用地质锤奋力挖掘塌方的碎石，但效率极低，而且引发了新的落石。你不得不停止，以免被埋。`,
+    desc: `描述: 你挥舞地质锤，一下下砸向碎石。碎石松动了一些，但头顶开始掉下小石块。你听到岩层发出“吱吱”的断裂声，赶紧停手。再砸下去，可能会引发二次塌方。你需要更专业的工具。`,
     options: [
         { text: "返回塌方处", target: "side_cave_passage" },
         { text: "回去寻找更专业的工具", target: "side_find_tools" },
@@ -1393,7 +1152,7 @@ scenes["side_dig_with_hammer"] = {
 };
 
 scenes["side_elenor_grave"] = {
-    desc: `描述: 你按照管家的提示寻找埃莉诺的安息之地，但庄园的花园里没有任何墓碑。也许她葬在别处，或者管家不愿透露。`,
+    desc: `描述: 你找遍了花园的每个角落，甚至翻遍了教堂墓地，都没有找到埃莉诺的墓碑。管家后来告诉你：“她的骨灰被阿斯特撒在了音乐室的管风琴里。她说，想让自己的灵魂永远与音乐同在。”`,
     options: [
         { text: "返回音乐室", target: "musicroom_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1403,13 +1162,10 @@ scenes["side_elenor_grave"] = {
 scenes["side_mirror_again"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("镜子中的音符顺序")) {
-            gameState.clues.push("镜子中的音符顺序");
-            msg += `<div class="system-message">【获得线索】：镜子中的音符顺序</div>`;
-        }
+        msg += addClue("镜子中的音符顺序");
         return msg;
     },
-    desc: `描述: 你再次观察肖像画中的镜子，镜中依然映出七色光斑，但这次你注意到光斑的排列顺序似乎与某个乐谱的音符顺序一致。你记下了这个线索。`,
+    desc: `描述: 镜中的光斑排列顺序与乐谱的音符顺序一致：红-Do、橙-Re、黄-Mi、绿-Fa、青-Sol、蓝-La、紫-Si。你记下了这个对应关系——也许可以用来补全第七乐章的旋律。`,
     options: [
         { text: "返回画室", target: "studio_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1417,7 +1173,7 @@ scenes["side_mirror_again"] = {
 };
 
 scenes["side_music_hidden"] = {
-    desc: `描述: 你在音乐室的墙壁上摸索，但没有找到明显的暗格。也许机关藏在壁炉或钢琴后面。`,
+    desc: `描述: 你敲击音乐室的墙壁，发现壁炉右侧有一块空心的砖。你用刀撬开，里面是一个小铁盒，盒子里放着一枚夜莺徽章（不是主线徽章）和一张纸条：“若你听到音乐，请戴上它。” 你戴上徽章，感到一股暖流涌入心间。`,
     options: [
         { text: "返回音乐室", target: "musicroom_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1425,7 +1181,7 @@ scenes["side_music_hidden"] = {
 };
 
 scenes["side_music_room_play"] = {
-    desc: `描述: 你尝试让音乐室“自己演奏”，但什么也没有发生。也许需要先完成第七乐章，或者使用埃莉诺的琴弓。`,
+    desc: `描述: 你拉响埃莉诺的小提琴，主题旋律在房间回荡。突然，管风琴、钢琴、竖琴同时自动奏响，合奏出完整的第七乐章。音乐结束后，管风琴的暗门弹开，里面是一本完整的交响曲总谱。原来，埃莉诺把第七乐章藏在了乐器的共鸣里。`,
     options: [
         { text: "返回音乐室", target: "musicroom_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1435,13 +1191,10 @@ scenes["side_music_room_play"] = {
 scenes["side_palette_clue"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("调色板上的E标记")) {
-            gameState.clues.push("调色板上的E标记");
-            msg += `<div class="system-message">【获得线索】：调色板上的E标记</div>`;
-        }
+        msg += addClue("调色板上的E标记");
         return msg;
     },
-    desc: `描述: 你仔细检查调色板，在中央凹槽的底部发现了一个极小的字母“E”。这应该是埃莉诺的标记。`,
+    desc: `描述: 调色板中央的凹陷处有一个极小的字母“E”，旁边还有一行几乎看不见的字：“用银手镯唤醒我。” 你想起在画室支线中获得的银手镯，也许它才是真正的钥匙。`,
     options: [
         { text: "返回画室", target: "studio_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1451,13 +1204,10 @@ scenes["side_palette_clue"] = {
 scenes["side_score_details"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("夜莺与第七件乐器")) {
-            gameState.clues.push("夜莺与第七件乐器");
-            msg += `<div class="system-message">【获得线索】：夜莺与第七件乐器</div>`;
-        }
+        msg += addClue("夜莺与第七件乐器");
         return msg;
     },
-    desc: `描述: 你仔细研究乐谱手稿，发现空白处有一行极小的字：“夜莺的歌声，藏在第七件乐器的共鸣箱里。”`,
+    desc: `描述: 乐谱空白处的红墨水字迹是：“夜莺的歌声，藏在第七件乐器的共鸣箱里。” 你检查了七件有夜莺标记的乐器，发现单簧管的管身内部有一个小纸卷，展开后是第七乐章缺失的四个小节。补全后，旋律终于完整。`,
     options: [
         { text: "返回音乐室", target: "musicroom_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1468,13 +1218,12 @@ scenes["side_search_elenor"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("伊莲娜的旧信")) {
-            gameState.items.push("伊莲娜的旧信");
-            if(typeof showItemPopup === "function") showItemPopup("伊莲娜的旧信");
+            msg += addItem("伊莲娜的旧信");
             msg += `<div class="system-message">【获得物品】：伊莲娜的旧信</div>`;
         }
         return msg;
     },
-    desc: `描述: 你按照画展目录的线索，在庄园里四处寻找伊莲娜的踪迹，但只找到了一些旧衣物和一封未寄出的信。她似乎早已离开。`,
+    desc: `描述: 你根据画展目录的备注，在伦敦的旧档案中找到了伊莲娜的死亡记录：1890年11月15日，死于贫民窟，死因是肺炎。记录旁还有一行铅笔字：“她的遗物中有一幅未完成的自画像，画中她手里拿着一封信。” 那封信后来被阿斯特找到，就是你在画室密室里看到的那封。`,
     options: [
         { text: "返回画室", target: "studio_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1484,23 +1233,21 @@ scenes["side_search_elenor"] = {
 scenes["side_servant_room"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("管家子时去地窖")) {
-            gameState.clues.push("管家子时去地窖");
-            msg += `<div class="system-message">【获得线索】：管家子时去地窖</div>`;
-        }
+        msg += addClue("管家子时去地窖");
         return msg;
     },
-    desc: `描述: 仆人房间堆满了旧制服和杂物。你仔细搜索，发现一张纸条：“管家每晚子时都会去地窖。”`,
+    desc: `描述: 仆人房间的衣柜里有一件旧制服，口袋里有一张值班表。值班表上，管家的名字在最近一个月里频繁出现在午夜时分的“地窖巡逻”一栏。旁边还有一行小字：“他每晚都去那里，像是在等什么人。”`,
     options: [
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
 scenes["side_tell_butler"] = {
-    desc: `描述: 你将地下裂缝的发现告诉了管家。他脸色微变，沉默片刻后说：“那后面是古老的地质断层，我劝你不要下去。” 但他没有阻止你。`,
+    desc: `描述: 管家听后脸色苍白，沉默了很久。最后他说：“那是哥哥的秘密实验室，我劝你不要下去。里面有些东西……不该被看到。” 但他的语气并不坚决，似乎在给你选择的机会。`,
     options: [
         { text: "坚持进入裂缝", target: "side_story_3_start" },
-        { text: "听从劝告，返回大厅", target: "hall_main" }
+        { text: "听从劝告，返回大厅", target: "hall_main" },
+        { text: "返回大厅", target: "hall_main" }
     ]
 };
 
@@ -1508,13 +1255,12 @@ scenes["studio_find_solvent"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("松节油")) {
-            gameState.items.push("松节油");
-            if(typeof showItemPopup === "function") showItemPopup("松节油");
+            msg += addItem("松节油");
             msg += `<div class="system-message">【获得物品】：松节油</div>`;
         }
         return msg;
     },
-    desc: `描述: 你在颜料柜里翻找，找到了一瓶标签模糊的液体，闻起来像松节油。也许可以用来溶解干涸的颜料。`,
+    desc: `描述: 你在颜料柜的最底层找到了一瓶标签模糊的液体，闻起来像松节油。你倒出几滴在干涸的颜料槽里，颜料立刻变得湿润，恢复了色泽。看来这就是溶剂。`,
     options: [
         { text: "返回调色板", target: "studio_palette" },
         { text: "返回大厅", target: "hall_main" }
@@ -1522,7 +1268,7 @@ scenes["studio_find_solvent"] = {
 };
 
 scenes["studio_press_gems"] = {
-    desc: `描述: 你尝试按下肖像画镜框上的宝石，但没有反应。也许需要按照特定的顺序，或者需要先完成其他步骤。`,
+    desc: `描述: 你按顺序按下宝石：红、橙、黄、绿、青、蓝、紫。每按一颗，对应的颜料槽就亮起。按完第七颗，调色板中央浮现出伊莲娜的侧影，她轻声说：“谢谢你完成了我的画。” 然后消散。镜框后弹出一个暗格，里面是橙色徽章。`,
     options: [
         { text: "返回肖像画前", target: "studio_portrait" },
         { text: "返回大厅", target: "hall_main" }
@@ -1530,7 +1276,7 @@ scenes["studio_press_gems"] = {
 };
 
 scenes["studio_rotate_scale"] = {
-    desc: `描述: 你转动雕塑台的刻度盘，但没有明显的效果。也许需要先将矿石按光谱顺序排列。`,
+    desc: `描述: 你旋转雕塑台的刻度盘，每转一个刻度，台面上的矿石就会移动位置。当刻度指向“光谱”时，矿石自动按颜色顺序排列。台面中央升起一个按钮，按下后，调色板上的颜料槽开始渗出颜料。`,
     options: [
         { text: "返回雕塑台", target: "studio_sculpture" },
         { text: "返回大厅", target: "hall_main" }
@@ -1538,7 +1284,7 @@ scenes["studio_rotate_scale"] = {
 };
 
 scenes["studio_sketches"] = {
-    desc: `描述: 画架上的草稿是一些未完成的素描，大多是人体轮廓和风景速写，没有特别的价值。`,
+    desc: `描述: 画架上的素描大多是伊莲娜的肖像——微笑的、沉思的、哭泣的。最上面一张是阿斯特的自画像，他手里拿着一面镜子，镜中映出伊莲娜的背影。素描背面写着：“我画了无数个她，却永远画不出她的灵魂。”`,
     options: [
         { text: "返回画室", target: "studio_entry" },
         { text: "返回大厅", target: "hall_main" }
@@ -1564,8 +1310,20 @@ scenes["basement_entry"] = {
 scenes["basement_altar"] = {
     desc: `祭坛由一整块黑色花岗岩雕成，表面被打磨得光滑如镜。中央的泪滴形凹槽深约两指，底部有一个极小的孔洞。祭坛的四个侧面分别刻着四种元素的符号：火、水、土、气，以及一段铭文：“万物皆由四元生，七金乃天地之精。欲启真门，需以生命之露灌之，以七金之魂合之。”
 你用手指触摸凹槽，感到一丝温热。凹槽的底部似乎有某种吸力，像是在等待某种液体。你想起之前在其他房间可能获得过“生命之露”（温室谜题的奖励）。如果你已经拥有生命之露，可以直接使用。`,
+    itemSelection: {
+        prompt: "从背包中选择要倒入凹槽的物品",
+        backTarget: "basement_altar",
+        correctTarget: "basement_use_dew",
+        wrongTarget: "basement_altar_bottom",
+        completedTarget: "basement_use_dew",
+        fatalTarget: "basement_blood_attempt",
+        consumeOnCorrect: true,
+        consumeOnWrong: false,
+        consumeOnFatal: true,
+        correctItems: ["生命之露"],
+        fatalKeywords: ["血", "毒", "除草剂"],
+    },
     options: [
-        { text: "将生命之露倒入凹槽（若有）", target: "basement_use_dew", condition: () => hasItem("生命之露") },
         { text: "检查祭坛底部", target: "basement_altar_bottom" },
         { text: "尝试用自己的血液代替", target: "basement_blood_attempt" },
         { text: "返回大厅", target: "hall_main" }
@@ -1575,10 +1333,7 @@ scenes["basement_altar"] = {
 scenes["basement_use_dew"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("需要七种金属对应的物品（七金之魂）来激活全部符文")) {
-            gameState.clues.push("需要七种金属对应的物品（七金之魂）来激活全部符文");
-            msg += `<div class="system-message">【获得线索】：需要七种金属对应的物品（七金之魂）来激活全部符文</div>`;
-        }
+        msg += addClue("需要七种金属对应的物品（七金之魂）来激活全部符文");
         return msg;
     },
     desc: `你将生命之露缓缓倒入凹槽。液体没有溢出，而是迅速被吸入，凹槽周围亮起柔和的绿光。光芒沿着祭坛表面的纹路扩散，点亮了所有符文，然后流入地面上的七块符文石板。石板依次亮起，但只亮到第五块就停了，第六、第七块依然暗淡。祭坛中央浮现出一行字：“七金之魂缺失，转化无法完成。”`,
@@ -1592,10 +1347,7 @@ scenes["basement_use_dew"] = {
 scenes["basement_altar_bottom"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("七金对应位置")) {
-            gameState.clues.push("七金对应位置");
-            msg += `<div class="system-message">【获得线索】：七金对应位置</div>`;
-        }
+        msg += addClue("七金对应位置");
         return msg;
     },
     desc: `你趴下检查祭坛底部。在底座内侧，你发现了一行极小的刻字：“金、银、铜、铁、锡、铅、汞，七金之序，对应七曜。以火锻之，以水淬之，以气凝之，以土固之。” 下面还有一个简图，显示七种金属在祭坛周围的对应位置：金（东）、银（西）、铜（南）、铁（北）、锡（东南）、铅（西北）、汞（中央？但中央是凹槽）。实际上，简图显示祭坛周围的七个符文石板各对应一种金属，需要将相应的金属物品放在石板上。`,
@@ -1640,14 +1392,8 @@ scenes["basement_alchemy_table"] = {
 scenes["basement_read_notes"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("元素调和配方")) {
-            gameState.clues.push("元素调和配方");
-            msg += `<div class="system-message">【获得线索】：元素调和配方</div>`;
-        }
-        if(!hasClue("七金之魂需要熔炉炼制")) {
-            gameState.clues.push("七金之魂需要熔炉炼制");
-            msg += `<div class="system-message">【获得线索】：七金之魂需要熔炉炼制</div>`;
-        }
+        msg += addClue("元素调和配方");
+        msg += addClue("七金之魂需要熔炉炼制");
         return msg;
     },
     desc: `笔记的前半部分是炼金术记录，后半部分是日记。你快速翻阅，找到几页关键内容：
@@ -1667,8 +1413,7 @@ scenes["basement_distillation"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("熔炉钥匙")) {
-            gameState.items.push("熔炉钥匙");
-            if(typeof showItemPopup === "function") showItemPopup("熔炉钥匙");
+            msg += addItem("熔炉钥匙");
             msg += `<div class="system-message">【获得物品】：熔炉钥匙</div>`;
         }
         return msg;
@@ -1694,10 +1439,7 @@ scenes["basement_balance"] = {
 scenes["basement_vials"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("需要获得七种金属的材料")) {
-            gameState.clues.push("需要获得七种金属的材料");
-            msg += `<div class="system-message">【获得线索】：需要获得七种金属的材料</div>`;
-        }
+        msg += addClue("需要获得七种金属的材料");
         return msg;
     },
     desc: `七个小瓶子按照炼金术的七金顺序排列：金（☉）、银（☽）、铜（♀）、铁（♂）、锡（♃）、铅（♄）、汞（☿）。只有金瓶里有一小块金箔，汞瓶里有几滴银色液体（水银）。其他瓶子都是空的。
@@ -1723,10 +1465,7 @@ scenes["basement_furnace"] = {
 scenes["basement_open_furnace"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("需要先调和四元素产生火焰，再将金属材料放入坩埚炼制")) {
-            gameState.clues.push("需要先调和四元素产生火焰，再将金属材料放入坩埚炼制");
-            msg += `<div class="system-message">【获得线索】：需要先调和四元素产生火焰，再将金属材料放入坩埚炼制</div>`;
-        }
+        msg += addClue("需要先调和四元素产生火焰，再将金属材料放入坩埚炼制");
         return msg;
     },
     desc: `钥匙插入锁孔，转动后炉门弹开。炉膛内部有七个凹槽，每个凹槽里有一个小坩埚，坩埚上分别刻着七金的符号。坩埚底部有管道连接到一个中央收集器。炉膛的底部有燃烧室，里面残留着一些灰烬。
@@ -1815,8 +1554,7 @@ scenes["basement_find_metals"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("七种金属材料（每种一份）")) {
-            gameState.items.push("七种金属材料（每种一份）");
-            if(typeof showItemPopup === "function") showItemPopup("七种金属材料（每种一份）");
+            msg += addItem("七种金属材料（每种一份）");
             msg += `<div class="system-message">【获得物品】：七种金属材料（每种一份）</div>`;
         }
         return msg;
@@ -1839,8 +1577,7 @@ scenes["basement_smelt_essence"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("七金精粹（七瓶）")) {
-            gameState.items.push("七金精粹（七瓶）");
-            if(typeof showItemPopup === "function") showItemPopup("七金精粹（七瓶）");
+            msg += addItem("七金精粹（七瓶）");
             msg += `<div class="system-message">【获得物品】：七金精粹（七瓶）</div>`;
         }
         return msg;
@@ -1861,15 +1598,11 @@ scenes["basement_place_essence"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("紫色徽章")) {
-            gameState.items.push("紫色徽章");
-            if(typeof showItemPopup === "function") showItemPopup("紫色徽章");
-            gameState.medals.push("紫色徽章");
-            addMedal();
+            msg += addItem("紫色徽章");
             msg += `<div class="system-message">【获得物品】：紫色徽章</div>`;
         }
         if(!hasItem("符文石")) {
-            gameState.items.push("符文石");
-            if(typeof showItemPopup === "function") showItemPopup("符文石");
+            msg += addItem("符文石");
             msg += `<div class="system-message">【获得物品】：符文石</div>`;
         }
         return msg;
@@ -1902,8 +1635,7 @@ scenes["basement_elemental_activation"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("符文石碎片（可在后续与其他碎片组合）")) {
-            gameState.items.push("符文石碎片（可在后续与其他碎片组合）");
-            if(typeof showItemPopup === "function") showItemPopup("符文石碎片（可在后续与其他碎片组合）");
+            msg += addItem("符文石碎片（可在后续与其他碎片组合）");
             msg += `<div class="system-message">【获得物品】：符文石碎片（可在后续与其他碎片组合）</div>`;
         }
         return msg;
@@ -2019,10 +1751,7 @@ scenes["studio_add_water"] = {
 scenes["studio_palette_pipes"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("颜料来自管道，可能从别处输送")) {
-            gameState.clues.push("颜料来自管道，可能从别处输送");
-            msg += `<div class="system-message">【获得线索】：颜料来自管道，可能从别处输送</div>`;
-        }
+        msg += addClue("颜料来自管道，可能从别处输送");
         return msg;
     },
     desc: `你趴下检查调色板底部，发现每个颜料槽下方都连接着一根细铜管，七根铜管汇聚到一根总管，通向墙壁。铜管上附着一些干涸的颜料结晶，但管道似乎畅通。管道的入口处有一个旋塞，目前处于关闭状态。你试着打开旋塞，没有反应——可能需要先提供某种流体（比如油或水）才能将颜料输送到调色板。`,
@@ -2035,14 +1764,8 @@ scenes["studio_palette_pipes"] = {
 scenes["studio_cabinet"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("七种矿石与颜色的对应关系")) {
-            gameState.clues.push("七种矿石与颜色的对应关系");
-            msg += `<div class="system-message">【获得线索】：七种矿石与颜色的对应关系</div>`;
-        }
-        if(!hasClue("颜料配方手册")) {
-            gameState.clues.push("颜料配方手册");
-            msg += `<div class="system-message">【获得线索】：颜料配方手册</div>`;
-        }
+        msg += addClue("七种矿石与颜色的对应关系");
+        msg += addClue("颜料配方手册");
         return msg;
     },
     desc: `颜料柜是一排深色木柜，有数十个小抽屉，每个抽屉上贴着标签：朱砂、雌黄、石绿、石青、铅白、藤黄……但许多抽屉是空的。你逐一拉开，发现几个抽屉里有残留的粉末，但量很少。
@@ -2073,8 +1796,7 @@ scenes["studio_sculpture"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("七色矿石")) {
-            gameState.items.push("七色矿石");
-            if(typeof showItemPopup === "function") showItemPopup("七色矿石");
+            msg += addItem("七色矿石");
             msg += `<div class="system-message">【获得物品】：七色矿石</div>`;
         }
         return msg;
@@ -2131,10 +1853,7 @@ scenes["studio_stained_glass"] = {
 scenes["studio_light_palette"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("需要用调色板上的颜料在肖像画的镜子上作画")) {
-            gameState.clues.push("需要用调色板上的颜料在肖像画的镜子上作画");
-            msg += `<div class="system-message">【获得线索】：需要用调色板上的颜料在肖像画的镜子上作画</div>`;
-        }
+        msg += addClue("需要用调色板上的颜料在肖像画的镜子上作画");
         return msg;
     },
     desc: `你将七色光斑依次对准调色板的七个颜料槽。每对准一个，该颜料槽就发出更亮的光，颜料变得活跃。当七个光斑都对准后，调色板中央浮现出一行字：“光已备，色已活。请绘真形于镜中。”`,
@@ -2147,10 +1866,7 @@ scenes["studio_light_palette"] = {
 scenes["studio_light_mirror"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("需要在镜子中央作画")) {
-            gameState.clues.push("需要在镜子中央作画");
-            msg += `<div class="system-message">【获得线索】：需要在镜子中央作画</div>`;
-        }
+        msg += addClue("需要在镜子中央作画");
         return msg;
     },
     desc: `你将七色光斑汇聚到肖像画中那面镜子的位置。镜子表面突然变得像真实的镜面一样反射光芒，镜中的颜色开始流动，原本混乱的顺序逐渐重组，最终形成一个标准的色轮（红、橙、黄、绿、青、蓝、紫顺时针排列）。色轮中心出现一个空白的圆形区域，仿佛等待填充。`,
@@ -2175,15 +1891,11 @@ scenes["studio_gem_correct"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("橙色徽章")) {
-            gameState.items.push("橙色徽章");
-            if(typeof showItemPopup === "function") showItemPopup("橙色徽章");
-            gameState.medals.push("橙色徽章");
-            addMedal();
+            msg += addItem("橙色徽章");
             msg += `<div class="system-message">【获得物品】：橙色徽章</div>`;
         }
         if(!hasItem("神秘颜料")) {
-            gameState.items.push("神秘颜料");
-            if(typeof showItemPopup === "function") showItemPopup("神秘颜料");
+            msg += addItem("神秘颜料");
             msg += `<div class="system-message">【获得物品】：神秘颜料</div>`;
         }
         return msg;
@@ -2215,15 +1927,11 @@ scenes["studio_paint_mirror"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("橙色徽章")) {
-            gameState.items.push("橙色徽章");
-            if(typeof showItemPopup === "function") showItemPopup("橙色徽章");
-            gameState.medals.push("橙色徽章");
-            addMedal();
+            msg += addItem("橙色徽章");
             msg += `<div class="system-message">【获得物品】：橙色徽章</div>`;
         }
         if(!hasItem("神秘颜料")) {
-            gameState.items.push("神秘颜料");
-            if(typeof showItemPopup === "function") showItemPopup("神秘颜料");
+            msg += addItem("神秘颜料");
             msg += `<div class="system-message">【获得物品】：神秘颜料</div>`;
         }
         return msg;
@@ -2258,8 +1966,7 @@ scenes["studio_grind_stones"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("新鲜颜料（与光线激活效果相同）")) {
-            gameState.items.push("新鲜颜料（与光线激活效果相同）");
-            if(typeof showItemPopup === "function") showItemPopup("新鲜颜料（与光线激活效果相同）");
+            msg += addItem("新鲜颜料（与光线激活效果相同）");
             msg += `<div class="system-message">【获得物品】：新鲜颜料（与光线激活效果相同）</div>`;
         }
         return msg;
@@ -2337,10 +2044,7 @@ scenes["library_blank_book"] = {
 scenes["library_press_star"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("七学者名单（部分）")) {
-            gameState.clues.push("七学者名单（部分）");
-            msg += `<div class="system-message">【获得线索】：七学者名单（部分）</div>`;
-        }
+        msg += addClue("七学者名单（部分）");
         return msg;
     },
     desc: `你按照封底简图的提示，按压北斗七星中被圈出的第四颗星。一声轻微的咔哒，书脊处的金属搭扣自动弹开。你小心地翻开封面，发现扉页上夹着一张泛黄的纸条，上面用工整的手写体写着：
@@ -2518,8 +2222,7 @@ scenes["library_hidden_niche"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("星盘钥匙")) {
-            gameState.items.push("星盘钥匙");
-            if(typeof showItemPopup === "function") showItemPopup("星盘钥匙");
+            msg += addItem("星盘钥匙");
             msg += `<div class="system-message">【获得物品】：星盘钥匙</div>`;
         }
         return msg;
@@ -2538,8 +2241,18 @@ scenes["library_use_disk"] = {
 但勿触及其他，
 否则你将面对时间的审判。”
 获得完整线索：拉动哪本书`,
+    itemSelection: {
+        prompt: "从背包中选择要嵌入书桌凹槽的圆盘",
+        backTarget: "library_use_disk",
+        correctTarget: "library_pull_wisdom",
+        wrongTarget: "library_use_disk",
+        completedTarget: "library_pull_wisdom",
+        consumeOnCorrect: true,
+        consumeOnWrong: false,
+        consumeOnFatal: true,
+        correctItems: ["星盘钥匙"],
+    },
     options: [
-        { text: "去书架拉动智慧之书", target: "library_pull_wisdom" },
         { text: "先解除石球锁定（若锁定）", target: "library_unlock_stones" },
         { text: "返回大厅", target: "hall_main" }
     ]
@@ -2549,15 +2262,11 @@ scenes["library_pull_wisdom"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("蓝宝石徽章")) {
-            gameState.items.push("蓝宝石徽章");
-            if(typeof showItemPopup === "function") showItemPopup("蓝宝石徽章");
-            gameState.medals.push("蓝宝石徽章");
-            addMedal();
+            msg += addItem("蓝宝石徽章");
             msg += `<div class="system-message">【获得物品】：蓝宝石徽章</div>`;
         }
         if(!hasItem("克劳利的日记")) {
-            gameState.items.push("克劳利的日记");
-            if(typeof showItemPopup === "function") showItemPopup("克劳利的日记");
+            msg += addItem("克劳利的日记");
             msg += `<div class="system-message">【获得物品】：克劳利的日记</div>`;
         }
         return msg;
@@ -2648,7 +2357,7 @@ scenes["library_astrolabe"] = {
     options: [
         { text: "尝试调整星盘至当前时间", target: "library_astrolabe_fail" },
         { text: "检查天球仪的空白区域", target: "library_globe_gap" },
-        { text: "使用星盘钥匙（若有）", target: "library_astrolabe_success", condition: () => hasItem("生命之露") },
+        { text: "使用星盘钥匙（若有）", target: "library_astrolabe_success", condition: () => hasItem("星盘钥匙") },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
@@ -2672,10 +2381,7 @@ scenes["library_astrolabe_fail"] = {
 scenes["library_globe_gap"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("星盘刻度（可用于校准）")) {
-            gameState.clues.push("星盘刻度（可用于校准）");
-            msg += `<div class="system-message">【获得线索】：星盘刻度（可用于校准）</div>`;
-        }
+        msg += addClue("星盘刻度（可用于校准）");
         return msg;
     },
     desc: `你注意到天球仪上天蝎座的位置确实有一个小凹槽，形状与你之前发现的铜质圆盘（星盘钥匙）相似？实际上，那个圆盘是用于空白书的。但这里是否也有类似的设计？你仔细搜索，在天球仪的底部发现一个抽屉，里面有一块天蝎座的小金属片，可以嵌入空白处。你嵌入后，天球仪开始缓慢自转，最终停止时，一根指针指向了星盘上的某个刻度。你记下这个刻度。`,
@@ -2689,12 +2395,8 @@ scenes["library_astrolabe_calibrate"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("银质徽章（非七枚之一")) {
-            gameState.items.push("银质徽章（非七枚之一");
-            if(typeof showItemPopup === "function") showItemPopup("银质徽章（非七枚之一");
-            gameState.medals.push("银质徽章（非七枚之一");
-            addMedal();
-            gameState.items.push("但可能有用）");
-            if(typeof showItemPopup === "function") showItemPopup("但可能有用）");
+            msg += addItem("银质徽章（非七枚之一");
+            msg += addItem("但可能有用）");
             msg += `<div class="system-message">【获得物品】：银质徽章（非七枚之一，但可能有用）</div>`;
         }
         return msg;
@@ -2718,10 +2420,7 @@ scenes["library_window"] = {
 scenes["library_light_tracking"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("颜色数字对应关系")) {
-            gameState.clues.push("颜色数字对应关系");
-            msg += `<div class="system-message">【获得线索】：颜色数字对应关系</div>`;
-        }
+        msg += addClue("颜色数字对应关系");
         return msg;
     },
     desc: `你耐心观察光斑的移动。当红色光斑落在一本《红字》上时，书脊发光；橙色光斑落在《柑橘与柠檬啊》上；黄色落在《黄衣王》上；绿色落在《绿野仙踪》上；蓝色落在《蓝宝石》上；靛色落在一本没有标题的靛蓝色书上；紫色落在《紫罗兰》上。你发现这些书恰好对应七种颜色，而且它们的书脊上都标有一个数字：红-1，橙-2，黄-3，绿-4，蓝-5，靛-6，紫-7。`,
@@ -2743,15 +2442,11 @@ scenes["library_blank_book_reveal"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("蓝宝石徽章")) {
-            gameState.items.push("蓝宝石徽章");
-            if(typeof showItemPopup === "function") showItemPopup("蓝宝石徽章");
-            gameState.medals.push("蓝宝石徽章");
-            addMedal();
+            msg += addItem("蓝宝石徽章");
             msg += `<div class="system-message">【获得物品】：蓝宝石徽章</div>`;
         }
         if(!hasItem("克劳利的日记")) {
-            gameState.items.push("克劳利的日记");
-            if(typeof showItemPopup === "function") showItemPopup("克劳利的日记");
+            msg += addItem("克劳利的日记");
             msg += `<div class="system-message">【获得物品】：克劳利的日记</div>`;
         }
         return msg;
@@ -2854,10 +2549,7 @@ scenes["greenhouse_pond_dip"] = {
             setFlag("中毒（轻微，影响部分操作）", true);
             msg += `<div class="system-message">【状态】：中毒（轻微，影响部分操作）</div>`;
         }
-        if(!hasClue("石盆中有危险生物，需要用工具取物")) {
-            gameState.clues.push("石盆中有危险生物，需要用工具取物");
-            msg += `<div class="system-message">【获得线索】：石盆中有危险生物，需要用工具取物</div>`;
-        }
+        msg += addClue("石盆中有危险生物，需要用工具取物");
         return msg;
     },
     desc: `你将手伸入盆中，淤泥冰凉滑腻。你摸到一个硬物，正要取出，手指突然被什么东西刺了一下。你猛地抽手，发现指尖有一个细小的伤口，渗出黑色的血珠。淤泥中有什么活物！你的手开始发麻，视野模糊。你踉跄后退，靠在古树上，过了好一会儿才恢复。手臂依然有些僵硬。`,
@@ -2872,14 +2564,10 @@ scenes["greenhouse_pond_tool"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("七色花琥珀")) {
-            gameState.items.push("七色花琥珀");
-            if(typeof showItemPopup === "function") showItemPopup("七色花琥珀");
+            msg += addItem("七色花琥珀");
             msg += `<div class="system-message">【获得物品】：七色花琥珀</div>`;
         }
-        if(!hasClue("需要七种植物部位（根、茎、叶、花、果、种、苗）来激活七色花种")) {
-            gameState.clues.push("需要七种植物部位（根、茎、叶、花、果、种、苗）来激活七色花种");
-            msg += `<div class="system-message">【获得线索】：需要七种植物部位（根、茎、叶、花、果、种、苗）来激活七色花种</div>`;
-        }
+        msg += addClue("需要七种植物部位（根、茎、叶、花、果、种、苗）来激活七色花种");
         return msg;
     },
     desc: `你用长柄夹深入石盆，夹出一个巴掌大的铜盒。盒子锈迹斑斑，但锁扣完好。打开后，里面是一块琥珀，琥珀中封存着一朵七色花的花瓣——七片花瓣，每片颜色不同。琥珀背面刻着：“七色花种，唯此一株。以七血滋养，可复生机。”`,
@@ -2894,8 +2582,7 @@ scenes["greenhouse_tree_hole"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("古树血粉（七血之一：木血）")) {
-            gameState.items.push("古树血粉（七血之一：木血）");
-            if(typeof showItemPopup === "function") showItemPopup("古树血粉（七血之一：木血）");
+            msg += addItem("古树血粉（七血之一：木血）");
             msg += `<div class="system-message">【获得物品】：古树血粉（七血之一：木血）</div>`;
         }
         return msg;
@@ -2929,10 +2616,7 @@ scenes["greenhouse_flower_beds"] = {
 scenes["greenhouse_plant_seeds"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("需要为每个花坛提供对应的元素条件")) {
-            gameState.clues.push("需要为每个花坛提供对应的元素条件");
-            msg += `<div class="system-message">【获得线索】：需要为每个花坛提供对应的元素条件</div>`;
-        }
+        msg += addClue("需要为每个花坛提供对应的元素条件");
         return msg;
     },
     desc: `你将琥珀放在古树下的石台上。琥珀中的七色花微微发光，随即碎裂，七颗颜色各异的种子滚落出来，分别滚向对应颜色的花坛，自行埋入土中。每个花坛的泥土表面浮现出对应颜色的微光，但很快暗淡下去——种子需要特定的生长条件才能发芽。`,
@@ -2956,10 +2640,7 @@ scenes["greenhouse_tool_shed"] = {
 scenes["greenhouse_manual"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("七血配方、灌溉系统、温度控制、风力控制")) {
-            gameState.clues.push("七血配方、灌溉系统、温度控制、风力控制");
-            msg += `<div class="system-message">【获得线索】：七血配方、灌溉系统、温度控制、风力控制</div>`;
-        }
+        msg += addClue("七血配方、灌溉系统、温度控制、风力控制");
         return msg;
     },
     desc: `手册是一本手写笔记，记录着温室的设计和维护方法。你快速翻阅，找到几页关键内容：
@@ -2980,14 +2661,10 @@ scenes["greenhouse_wooden_box"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("七色花肥料")) {
-            gameState.items.push("七色花肥料");
-            if(typeof showItemPopup === "function") showItemPopup("七色花肥料");
-            gameState.items.push("生长激素");
-            if(typeof showItemPopup === "function") showItemPopup("生长激素");
-            gameState.items.push("园艺剪");
-            if(typeof showItemPopup === "function") showItemPopup("园艺剪");
-            gameState.items.push("管道地图");
-            if(typeof showItemPopup === "function") showItemPopup("管道地图");
+            msg += addItem("七色花肥料");
+            msg += addItem("生长激素");
+            msg += addItem("园艺剪");
+            msg += addItem("管道地图");
             msg += `<div class="system-message">【获得物品】：七色花肥料、生长激素、园艺剪、管道地图</div>`;
         }
         return msg;
@@ -3004,14 +2681,10 @@ scenes["greenhouse_take_tools"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("长柄夹")) {
-            gameState.items.push("长柄夹");
-            if(typeof showItemPopup === "function") showItemPopup("长柄夹");
-            gameState.items.push("喷壶");
-            if(typeof showItemPopup === "function") showItemPopup("喷壶");
-            gameState.items.push("温度计");
-            if(typeof showItemPopup === "function") showItemPopup("温度计");
-            gameState.items.push("湿度计");
-            if(typeof showItemPopup === "function") showItemPopup("湿度计");
+            msg += addItem("长柄夹");
+            msg += addItem("喷壶");
+            msg += addItem("温度计");
+            msg += addItem("湿度计");
             msg += `<div class="system-message">【获得物品】：长柄夹、喷壶、温度计、湿度计</div>`;
         }
         return msg;
@@ -3045,8 +2718,7 @@ scenes["greenhouse_revive_parts"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("七血（七个小瓶）")) {
-            gameState.items.push("七血（七个小瓶）");
-            if(typeof showItemPopup === "function") showItemPopup("七血（七个小瓶）");
+            msg += addItem("七血（七个小瓶）");
             msg += `<div class="system-message">【获得物品】：七血（七个小瓶）</div>`;
         }
         return msg;
@@ -3062,14 +2734,14 @@ scenes["greenhouse_mix_blood"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("古树复苏（七色花生长条件之一：生命元素充足）")) {
-            gameState.items.push("古树复苏（七色花生长条件之一：生命元素充足）");
-            if(typeof showItemPopup === "function") showItemPopup("古树复苏（七色花生长条件之一：生命元素充足）");
+            msg += addItem("古树复苏（七色花生长条件之一：生命元素充足）");
             msg += `<div class="system-message">【获得物品】：古树复苏（七色花生长条件之一：生命元素充足）</div>`;
         }
         return msg;
     },
-    desc: `你将七瓶血液倒入石盆（先清理掉原来的脏水）。溶液在盆中旋转，逐渐变成透明的液体，散发出清新的草木香气。古树的树根开始微微颤动，树干上的铭文发出绿光。你将溶液浇在古树根部，古树以肉眼可见的速度复苏：树皮重新变得湿润，枝头冒出嫩芽，枯叶脱落，新叶展开。古树活了！
-古树复苏后，树冠中垂下七根藤蔓，每根藤蔓的末端有一朵发光的花苞，分别对应七种颜色。花苞朝向七个花坛，似乎要将花粉传递给七色花种子。`,
+    desc: `你将七瓶血液倒入石盆。这是配制“古树血提取剂”的第一步。溶液在盆中旋转，逐渐变成透明的液体，散发出清新的草木香气。古树的树根开始微微颤动，树干上的铭文发出绿光。你将溶液浇在古树根部，古树以肉眼可见的速度复苏：树皮重新变得湿润，枝头冒出嫩芽，枯叶脱落，新叶展开。古树活了！
+古树复苏后，树冠中垂下七根藤蔓，每根藤蔓的末端有一朵发光的花苞，分别对应七种颜色。花苞朝向七个花坛，似乎要将花粉传递给七色花种子。
+你成功调配出了一瓶暗红色的液体——“古树血提取剂”。你将它浇在树根上，提取剂被瞬间吸收，古树的生机被唤醒了。`,
     options: [
         { text: "检查花坛中的种子是否发芽", target: "greenhouse_check_seeds" },
         { text: "返回大厅", target: "hall_main" }
@@ -3175,15 +2847,11 @@ scenes["greenhouse_check_conditions"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("金色徽章")) {
-            gameState.items.push("金色徽章");
-            if(typeof showItemPopup === "function") showItemPopup("金色徽章");
-            gameState.medals.push("金色徽章");
-            addMedal();
+            msg += addItem("金色徽章");
             msg += `<div class="system-message">【获得物品】：金色徽章</div>`;
         }
         if(!hasItem("生命之露")) {
-            gameState.items.push("生命之露");
-            if(typeof showItemPopup === "function") showItemPopup("生命之露");
+            msg += addItem("生命之露");
             msg += `<div class="system-message">【获得物品】：生命之露</div>`;
         }
         return msg;
@@ -3266,21 +2934,18 @@ scenes["bedroom_entry"] = {
         { text: "仔细观察庄园油画", target: "bedroom_painting" },
         { text: "检查落地窗和窗帘", target: "bedroom_window" },
         { text: "查看床底", target: "bedroom_under_bed" },
-        { text: "返回大厅", target: "hall_main" }
+        { text: "毫无头绪，返回大厅寻找其他线索", target: "hall_main" },
+        { text: "凝望油画中唯一漆黑的窗户（直觉解法）", target: "bedroom_direct_painting" },
+        { text: "毫无头绪，返回大厅寻找其他线索", target: "hall_main" },
+        { text: "凝望油画中唯一漆黑的窗户（直觉解法）", target: "bedroom_direct_painting" }
     ]
 };
 
 scenes["bedroom_diary"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("主人建造谜语馆的动机——传承谜语精神")) {
-            gameState.clues.push("主人建造谜语馆的动机——传承谜语精神");
-            msg += `<div class="system-message">【获得线索】：主人建造谜语馆的动机——传承谜语精神</div>`;
-        }
-        if(!hasClue("窗外可能有提示")) {
-            gameState.clues.push("窗外可能有提示");
-            msg += `<div class="system-message">【获得线索】：窗外可能有提示</div>`;
-        }
+        msg += addClue("主人建造谜语馆的动机——传承谜语精神");
+        msg += addClue("窗外可能有提示");
         return msg;
     },
     desc: `日记本封面是深棕色皮革，烫金标题《谜语馆纪事》。翻开扉页，是一段手写体：
@@ -3313,10 +2978,7 @@ scenes["bedroom_dressing_table"] = {
 scenes["bedroom_find_key"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("克劳利家训，强调谜语精神的传承")) {
-            gameState.clues.push("克劳利家训，强调谜语精神的传承");
-            msg += `<div class="system-message">【获得线索】：克劳利家训，强调谜语精神的传承</div>`;
-        }
+        msg += addClue("克劳利家训，强调谜语精神的传承");
         return msg;
     },
     desc: `你在房间里寻找钥匙。检查床头柜、枕头下、床底、衣柜，都没有。最终你注意到梳妆台背面有一个隐蔽的磁铁吸附的小铁盒，里面是一把铜钥匙。打开第四个抽屉，里面是一本皮革封面的小册子，标题是《克劳利家训》。翻开第一页：“谜语是连接过去与未来的桥梁。建造谜语馆，是为让后人永葆好奇之心。” 后面记录了家族几代人设计谜题的故事。`,
@@ -3329,14 +2991,8 @@ scenes["bedroom_find_key"] = {
 scenes["bedroom_mirror_delay"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("镜子投射对应房间顺序，将七枚徽章按解谜顺序依次映出")) {
-            gameState.clues.push("镜子投射对应房间顺序，将七枚徽章按解谜顺序依次映出");
-            msg += `<div class="system-message">【获得线索】：镜子投射对应房间顺序，将七枚徽章按解谜顺序依次映出</div>`;
-        }
-        if(!hasClue("镜子可以投射影像")) {
-            gameState.clues.push("镜子可以投射影像");
-            msg += `<div class="system-message">【获得线索】：镜子可以投射影像</div>`;
-        }
+        msg += addClue("镜子投射对应房间顺序，将七枚徽章按解谜顺序依次映出");
+        msg += addClue("镜子可以投射影像");
         return msg;
     },
     desc: `你反复在梳妆镜前移动，发现延迟的时间大约是七秒。你试着做出一个动作，七秒后镜像才跟上。你突发奇想，从口袋里拿出一枚徽章（比如蓝宝石徽章）举在镜前，七秒后镜像中的徽章竟然发出了蓝光，然后镜像中的你转身，走到油画前，将徽章嵌入了某个位置——但这个动作你并没有做。镜像似乎有独立意志。随后镜像消失，镜子恢复正常。
@@ -3350,15 +3006,12 @@ scenes["bedroom_mirror_delay"] = {
 scenes["bedroom_mirror_projection"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("顺序很重要，可能需按房间解谜的顺序或某种逻辑顺序")) {
-            gameState.clues.push("顺序很重要，可能需按房间解谜的顺序或某种逻辑顺序");
-            msg += `<div class="system-message">【获得线索】：顺序很重要，可能需按房间解谜的顺序或某种逻辑顺序</div>`;
-        }
+        msg += addClue("顺序很重要，可能需按房间解谜的顺序或某种逻辑顺序");
         return msg;
     },
     desc: `你依次将七枚徽章举到镜前。每举一枚，镜中就会延迟七秒后出现该徽章嵌入油画画框对应凹槽的影像。当七枚全部映完，油画中的卧室窗户突然亮起微弱的烛光，但很快又熄灭了——似乎还不够。你需要按照正确的顺序投射，并且可能需要在子时进行。`,
     options: [
-        { text: "根据七秒延迟的提示重新按解谜顺序排列尝试", target: "bedroom_mirror_success", condition: () => hasClue("镜子投射对应房间顺序，将七枚徽章按解谜顺序依次映出") },
+        { text: "根据七秒延迟的提示重新按解谜顺序排列尝试", target: "bedroom_mirror_success", condition: () => hasClue("镜子投射对应房间顺序，将七枚徽章按解谜顺序依次映出] [前往 bedroom_mirror_success") },
         { text: "带着镜中倒影的提示离开", target: "bedroom_dressing_table" },
         { text: "返回大厅", target: "hall_main" }
     ]
@@ -3368,13 +3021,11 @@ scenes["bedroom_bed"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("衣柜钥匙")) {
-            gameState.items.push("衣柜钥匙");
-            if(typeof showItemPopup === "function") showItemPopup("衣柜钥匙");
+            msg += addItem("衣柜钥匙");
             msg += `<div class="system-message">【获得物品】：衣柜钥匙</div>`;
         }
         if(!hasItem("停止的怀表")) {
-            gameState.items.push("停止的怀表");
-            if(typeof showItemPopup === "function") showItemPopup("停止的怀表");
+            msg += addItem("停止的怀表");
             msg += `<div class="system-message">【获得物品】：停止的怀表</div>`;
         }
         return msg;
@@ -3392,14 +3043,8 @@ scenes["bedroom_bed"] = {
 scenes["bedroom_closet"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("密码锁需要颜色顺序")) {
-            gameState.clues.push("密码锁需要颜色顺序");
-            msg += `<div class="system-message">【获得线索】：密码锁需要颜色顺序</div>`;
-        }
-        if(!hasClue("时间线索（子夜、七年前）")) {
-            gameState.clues.push("时间线索（子夜、七年前）");
-            msg += `<div class="system-message">【获得线索】：时间线索（子夜、七年前）</div>`;
-        }
+        msg += addClue("密码锁需要颜色顺序");
+        msg += addClue("时间线索（子夜、七年前）");
         return msg;
     },
     desc: `衣柜门半开，里面挂着几件旧式礼服和睡袍。你推开门，内部空间比预想的大。衣柜深处挂着主人的衣物，衣架上挂着一条围巾，围巾口袋里有一张纸条：“我最后的秘密，藏在镜中世界的七步之遥。”
@@ -3415,10 +3060,7 @@ scenes["bedroom_closet"] = {
 scenes["bedroom_closet_key"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("徽章不在衣柜，需要通过理解庄园的意义获得")) {
-            gameState.clues.push("徽章不在衣柜，需要通过理解庄园的意义获得");
-            msg += `<div class="system-message">【获得线索】：徽章不在衣柜，需要通过理解庄园的意义获得</div>`;
-        }
+        msg += addClue("徽章不在衣柜，需要通过理解庄园的意义获得");
         return msg;
     },
     desc: `你用钥匙打开衣柜的锁（原来半开的门只是虚掩，但还有一个上锁的内层）。内层衣柜里挂着一件华丽的深紫色礼服，礼服胸针上镶嵌着一颗彩虹色宝石——但你摘下宝石，它只是一颗普通玻璃。礼服口袋里有一张纸条：“彩虹徽章不在衣柜里，而在你的理解中。”`,
@@ -3430,9 +3072,9 @@ scenes["bedroom_closet_key"] = {
 scenes["bedroom_closet_lock"] = {
     desc: `密码锁需要七位颜色顺序。通过探索庄园并获得各个房间的线索，你可以组合出几种可能的密码。从衣柜内层的小孔里可以窥见一个机械装置，需要你输入一段顺序光束。`,
     options: [
-        { text: "尝试输入画室七幅画的颜色顺序", target: "bedroom_lock_fail", condition: () => hasClue("七幅画的排序") },
+        { text: "尝试输入画室七幅画的颜色顺序", target: "bedroom_lock_fail", condition: () => hasClue("七幅画的排序] [前往 bedroom_lock_fail") },
         { text: "尝试输入光谱顺序", target: "bedroom_lock_fail" },
-        { text: "根据镜子投射组合七个房间的徽章顺序", target: "bedroom_lock_success", condition: () => hasClue("镜子可以投射影像") },
+        { text: "根据镜子投射组合七个房间的徽章顺序", target: "bedroom_lock_success", condition: () => hasClue("镜子可以投射影像] [前往 bedroom_lock_success") },
         { text: "离开衣柜", target: "bedroom_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
@@ -3442,13 +3084,11 @@ scenes["bedroom_lock_success"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("水晶镜片")) {
-            gameState.items.push("水晶镜片");
-            if(typeof showItemPopup === "function") showItemPopup("水晶镜片");
+            msg += addItem("水晶镜片");
             msg += `<div class="system-message">【获得物品】：水晶镜片</div>`;
         }
         if(!hasItem("主人的怀表")) {
-            gameState.items.push("主人的怀表");
-            if(typeof showItemPopup === "function") showItemPopup("主人的怀表");
+            msg += addItem("主人的怀表");
             msg += `<div class="system-message">【获得物品】：主人的怀表</div>`;
         }
         return msg;
@@ -3481,14 +3121,8 @@ scenes["bedroom_lock_fail"] = {
 scenes["bedroom_window"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("喷泉池底的七角星图案")) {
-            gameState.clues.push("喷泉池底的七角星图案");
-            msg += `<div class="system-message">【获得线索】：喷泉池底的七角星图案</div>`;
-        }
-        if(!hasClue("子夜时喷泉倒影可能揭示答案")) {
-            gameState.clues.push("子夜时喷泉倒影可能揭示答案");
-            msg += `<div class="system-message">【获得线索】：子夜时喷泉倒影可能揭示答案</div>`;
-        }
+        msg += addClue("喷泉池底的七角星图案");
+        msg += addClue("子夜时喷泉倒影可能揭示答案");
         return msg;
     },
     desc: `落地窗正对庄园花园，窗外是一片月光下的荒芜。窗帘是厚重的丝绒，你拉开窗帘，月光倾泻而入。玻璃窗上有一层薄霜，你用手擦去，发现窗玻璃上刻着几行细小的字：“站在此处，望向花园中央的喷泉，子夜时分，倒影会揭示答案。”
@@ -3503,10 +3137,7 @@ scenes["bedroom_window"] = {
 scenes["bedroom_midnight_fountain"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("需要回答主人的问题")) {
-            gameState.clues.push("需要回答主人的问题");
-            msg += `<div class="system-message">【获得线索】：需要回答主人的问题</div>`;
-        }
+        msg += addClue("需要回答主人的问题");
         return msg;
     },
     desc: `子夜时分，月光直射喷泉池底，水面虽然干涸，但月光在池底马赛克上形成反射，将七角星的投影投射到卧室的墙壁上。投影中，七角星的每个角都指向油画上的一个房间。你根据投影，将七枚徽章按照投影指向的顺序重新排列在画框凹槽中。当最后一枚徽章放入，油画中的卧室窗户终于亮起稳定的烛光。
@@ -3539,10 +3170,7 @@ scenes["bedroom_painting"] = {
 scenes["bedroom_mirror_reflection"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("需要七色光")) {
-            gameState.clues.push("需要七色光");
-            msg += `<div class="system-message">【获得线索】：需要七色光</div>`;
-        }
+        msg += addClue("需要七色光");
         return msg;
     },
     desc: `你取下梳妆台上的银镜，走到油画前。月光从窗户射入，你调整镜子的角度，将月光反射到油画上卧室窗口的位置。当光斑落在窗口时，画面中卧室的烛火微微闪烁，但没有完全点亮。你需要更多的光——或许需要同时反射七种颜色的光，或者需要子时的特殊光线。`,
@@ -3555,10 +3183,7 @@ scenes["bedroom_mirror_reflection"] = {
 scenes["bedroom_color_light"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("衣柜背后有机关")) {
-            gameState.clues.push("衣柜背后有机关");
-            msg += `<div class="system-message">【获得线索】：衣柜背后有机关</div>`;
-        }
+        msg += addClue("衣柜背后有机关");
         return msg;
     },
     desc: `你想起音乐室的彩色玻璃窗或画室的调色板，但那些在别的房间。卧室里有没有彩色光源？你检查台灯、窗帘，发现窗帘的材质在月光下会透出淡淡的彩虹色（其实是灰尘和霉菌造成的衍射）。但效果太微弱。你想起梳妆台上的粉盒镜片，它可能是一个棱镜，可以将白光分解成七色。你取下粉盒盖上的小镜片，对着月光调整角度，果然在天花板上投射出七色光斑。你将这些光斑逐一引导到油画上卧室窗口，每引导一个颜色，画面中卧室的烛火就亮一分。当七色光斑全部汇聚，卧室窗口终于完全点亮。
@@ -3573,10 +3198,7 @@ scenes["bedroom_closet_back"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("彩虹徽章")) {
-            gameState.items.push("彩虹徽章");
-            if(typeof showItemPopup === "function") showItemPopup("彩虹徽章");
-            gameState.medals.push("彩虹徽章");
-            addMedal();
+            msg += addItem("彩虹徽章");
             msg += `<div class="system-message">【获得物品】：彩虹徽章</div>`;
         }
         return msg;
@@ -3593,10 +3215,7 @@ scenes["bedroom_rune_solution"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("彩虹徽章")) {
-            gameState.items.push("彩虹徽章");
-            if(typeof showItemPopup === "function") showItemPopup("彩虹徽章");
-            gameState.medals.push("彩虹徽章");
-            addMedal();
+            msg += addItem("彩虹徽章");
             msg += `<div class="system-message">【获得物品】：彩虹徽章</div>`;
         }
         return msg;
@@ -3612,10 +3231,7 @@ scenes["bedroom_answer_correct"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("彩虹徽章")) {
-            gameState.items.push("彩虹徽章");
-            if(typeof showItemPopup === "function") showItemPopup("彩虹徽章");
-            gameState.medals.push("彩虹徽章");
-            addMedal();
+            msg += addItem("彩虹徽章");
             msg += `<div class="system-message">【获得物品】：彩虹徽章</div>`;
         }
         return msg;
@@ -3640,8 +3256,7 @@ scenes["bedroom_pocket_watch"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("棱镜铜片（可用于彩色光反射）")) {
-            gameState.items.push("棱镜铜片（可用于彩色光反射）");
-            if(typeof showItemPopup === "function") showItemPopup("棱镜铜片（可用于彩色光反射）");
+            msg += addItem("棱镜铜片（可用于彩色光反射）");
             msg += `<div class="system-message">【获得物品】：棱镜铜片（可用于彩色光反射）</div>`;
         }
         return msg;
@@ -3665,10 +3280,7 @@ scenes["bedroom_under_bed"] = {
 scenes["bedroom_box_correct"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("镜子反射月光")) {
-            gameState.clues.push("镜子反射月光");
-            msg += `<div class="system-message">【获得线索】：镜子反射月光</div>`;
-        }
+        msg += addClue("镜子反射月光");
         return msg;
     },
     desc: `你按照自己解谜的顺序（图书馆→钟楼→音乐室→画室→温室→地下室→卧室）按下按钮。盒子咔哒一声打开，里面是一张纸条：“你已经证明了你的智慧，但最后一枚徽章不在盒子里。它在你心中。” 纸条背面有一幅简图，显示如何通过镜子反射月光点亮油画。`,
@@ -3719,14 +3331,8 @@ scenes["hall"] = {
 scenes["bedroom_window_telescope_fix"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("喷泉池底的七角星图案（已看清）")) {
-            gameState.clues.push("喷泉池底的七角星图案（已看清）");
-            msg += `<div class="system-message">【获得线索】：喷泉池底的七角星图案（已看清）</div>`;
-        }
-        if(!hasClue("子夜时喷泉倒影揭示答案")) {
-            gameState.clues.push("子夜时喷泉倒影揭示答案");
-            msg += `<div class="system-message">【获得线索】：子夜时喷泉倒影揭示答案</div>`;
-        }
+        msg += addClue("喷泉池底的七角星图案（已看清）");
+        msg += addClue("子夜时喷泉倒影揭示答案");
         return msg;
     },
     desc: `你将水晶镜片安装在旧望远镜上。透过这片特殊的镜片，花园中央干涸的喷泉池底的七角星符号变得异常清晰，你发现这些符号正是七枚徽章的纹路，并且它们指向中央的某个位置。
@@ -3741,16 +3347,32 @@ scenes["bedroom_window_telescope_fix"] = {
 scenes["bedroom_mirror_success"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("证实了解谜顺序蓝红翠绿橙金紫是开启机制的关键")) {
-            gameState.clues.push("证实了解谜顺序蓝红翠绿橙金紫是开启机制的关键");
-            msg += `<div class="system-message">【获得线索】：证实了解谜顺序蓝红翠绿橙金紫是开启机制的关键</div>`;
-        }
+        msg += addClue("证实了解谜顺序蓝红翠绿橙金紫是开启机制的关键");
         return msg;
     },
     desc: `你将蓝宝石（图书馆）、红宝石（钟楼）、翠绿（音乐室）、橙色（画室）、金色（温室）、紫色（地下室）依次映入镜子，最后将你的真面目（你的意志与理解）映出。最后第七道光汇聚，油画中的卧室窗户长明不灭，发出一阵柔和的共鸣声。
 这证明七个房间的轨迹才是正确的密码，这一线索能用来解开衣柜里的那把难以琢磨的颜色密码锁。`,
     options: [
         { text: "获取线索后回到梳妆台前", target: "bedroom_dressing_table" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["bedroom_direct_painting"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("彩虹徽章")) {
+            msg += addItem("彩虹徽章");
+            msg += `<div class="system-message">【获得物品】：彩虹徽章</div>`;
+        }
+        return msg;
+    },
+    desc: `你凝视着庄园油画中唯一漆黑的卧室窗口。如果没有其余线索，你决定凭直觉伸手触摸那片漆黑。
+就在你指尖触及画布的瞬间，画框发出咔哒一声轻响——这幅画本身就是一扇暗门，只有在不去思考复杂逻辑时才会为你敞开。
+门后藏着一只精致的木盒，里面是一枚散发着七彩光芒的徽章。
+这是给陷入迷局者的最后馈赠。`,
+    options: [
+        { text: "拿走最后的主线拼图", target: "final_chamber_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
@@ -3779,7 +3401,7 @@ scenes["musicroom_organ"] = {
 管风琴的背面有一个手摇鼓风机，用于产生气流。鼓风机的手柄很沉，需要用力摇动才能产生足够的风压。`,
     options: [
         { text: "尝试将金属键帽放到音栓上", target: "musicroom_place_keycaps" },
-        { text: "嵌入机械齿轮（若有）", target: "musicroom_use_gear", condition: () => hasItem("生命之露") },
+        { text: "嵌入机械齿轮（若有）", target: "musicroom_use_gear", condition: () => hasItem("机械齿轮") },
         { text: "摇动鼓风机", target: "musicroom_bellows" },
         { text: "检查管风琴内部", target: "musicroom_inside" },
         { text: "返回大厅", target: "hall_main" }
@@ -3789,10 +3411,7 @@ scenes["musicroom_organ"] = {
 scenes["musicroom_place_keycaps"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("可能需要先启动鼓风机或按正确顺序")) {
-            gameState.clues.push("可能需要先启动鼓风机或按正确顺序");
-            msg += `<div class="system-message">【获得线索】：可能需要先启动鼓风机或按正确顺序</div>`;
-        }
+        msg += addClue("可能需要先启动鼓风机或按正确顺序");
         return msg;
     },
     desc: `你将七枚键帽分别放到对应音符的音栓上（Do、Re、Mi、Fa、Sol、La、Si）。但键帽放上去后没有反应，音栓仍然拉不动。也许需要按特定的顺序放置，或者需要先激活气流。`,
@@ -3829,7 +3448,7 @@ scenes["musicroom_place_keycaps_unlocked"] = {
 但是如果没有稳定的气流，无论你怎么操作键盘，管风琴都不会发声。
 如果没有完整的乐谱，你也无从下手。`,
     options: [
-        { text: "在管风琴上演奏完整乐谱", target: "musicroom_play_full_score", condition: () => getFlag("气流稳定") },
+        { text: "在管风琴上演奏完整乐谱", target: "musicroom_play_full_score", condition: () => getFlag("气流稳定] [条件2获得完整乐谱") },
         { text: "尝试摇动鼓风机", target: "musicroom_bellows" },
         { text: "返回操作管风琴", target: "musicroom_organ" },
         { text: "返回大厅", target: "hall_main" }
@@ -3894,10 +3513,7 @@ scenes["musicroom_piano"] = {
 scenes["musicroom_play_piano"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("需要补全乐谱")) {
-            gameState.clues.push("需要补全乐谱");
-            msg += `<div class="system-message">【获得线索】：需要补全乐谱</div>`;
-        }
+        msg += addClue("需要补全乐谱");
         return msg;
     },
     desc: `你试着按乐谱弹奏，但由于缺少几个小节，旋律不完整。弹到空缺处时，钢琴发出刺耳的不和谐音，整个房间的乐器都跟着共鸣，震得你耳膜发疼。你必须停下来。`,
@@ -3911,8 +3527,7 @@ scenes["musicroom_tuning_pins"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("调音扳手")) {
-            gameState.items.push("调音扳手");
-            if(typeof showItemPopup === "function") showItemPopup("调音扳手");
+            msg += addItem("调音扳手");
             msg += `<div class="system-message">【获得物品】：调音扳手</div>`;
         }
         return msg;
@@ -3936,10 +3551,7 @@ scenes["musicroom_tune_piano"] = {
 scenes["musicroom_tune_with_forks"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("乐谱空缺处需要根据其他乐器的共鸣来补全")) {
-            gameState.clues.push("乐谱空缺处需要根据其他乐器的共鸣来补全");
-            msg += `<div class="system-message">【获得线索】：乐谱空缺处需要根据其他乐器的共鸣来补全</div>`;
-        }
+        msg += addClue("乐谱空缺处需要根据其他乐器的共鸣来补全");
         return msg;
     },
     desc: `你利用音叉架上的七枚音叉（对应Do、Re、Mi、Fa、Sol、La、Si）将钢琴的七个基本音校准。校准后，钢琴的音色变得纯净。你再弹奏乐谱，空缺处仍然不和谐，但整体比之前好多了。乐谱上涂黑的地方似乎随着正确的音高而显现出淡淡的音符——原来，被涂黑的音符需要根据“共鸣”原理来补全，而不仅仅是音高正确。`,
@@ -3977,10 +3589,7 @@ scenes["musicroom_violin"] = {
 scenes["musicroom_tuning_forks"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("音叉与乐器的对应关系（音叉1→小提琴，音叉2→中提琴，等等）")) {
-            gameState.clues.push("音叉与乐器的对应关系（音叉1→小提琴，音叉2→中提琴，等等）");
-            msg += `<div class="system-message">【获得线索】：音叉与乐器的对应关系（音叉1→小提琴，音叉2→中提琴，等等）</div>`;
-        }
+        msg += addClue("音叉与乐器的对应关系（音叉1→小提琴，音叉2→中提琴，等等）");
         return msg;
     },
     desc: `音叉架是一个木制支架，上面有七个凹槽，每个凹槽里放着一枚音叉。音叉的叉股上刻着音符符号，底座上还刻有一个数字（1-7）。你拿起一枚音叉，轻轻敲击，它发出纯净的乐音，余音在房间里回荡很久，说明房间的声学设计极佳。
@@ -3994,10 +3603,7 @@ scenes["musicroom_tuning_forks"] = {
 scenes["musicroom_resonance"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("用音叉激发对应乐器，可补全乐谱空缺")) {
-            gameState.clues.push("用音叉激发对应乐器，可补全乐谱空缺");
-            msg += `<div class="system-message">【获得线索】：用音叉激发对应乐器，可补全乐谱空缺</div>`;
-        }
+        msg += addClue("用音叉激发对应乐器，可补全乐谱空缺");
         return msg;
     },
     desc: `你拿起音叉1，敲击后靠近小提琴（即使没有演奏），小提琴的琴身开始微微振动，发出同样的音高，而且音量被放大。这验证了图表的内容。如果你同时让多个音叉激发多个乐器，可能会产生复杂的和声。
@@ -4035,10 +3641,7 @@ scenes["musicroom_adjust_reflectors"] = {
 scenes["musicroom_painting"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("奏响乐器的顺序（对应七元素）")) {
-            gameState.clues.push("奏响乐器的顺序（对应七元素）");
-            msg += `<div class="system-message">【获得线索】：奏响乐器的顺序（对应七元素）</div>`;
-        }
+        msg += addClue("奏响乐器的顺序（对应七元素）");
         return msg;
     },
     desc: `巨大的油画描绘了一支管弦乐队，指挥家站在中央，指挥棒指向一个空白的乐谱架。乐谱架上有一行字：“当七种声音合一，指挥家将为你指引。” 画中乐手的乐器位置与展柜中乐器的编号顺序一致。
@@ -4053,8 +3656,7 @@ scenes["musicroom_fill_score"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("完整乐谱")) {
-            gameState.items.push("完整乐谱");
-            if(typeof showItemPopup === "function") showItemPopup("完整乐谱");
+            msg += addItem("完整乐谱");
             msg += `<div class="system-message">【获得物品】：完整乐谱</div>`;
         }
         return msg;
@@ -4072,15 +3674,11 @@ scenes["musicroom_play_full_score"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("翠绿徽章")) {
-            gameState.items.push("翠绿徽章");
-            if(typeof showItemPopup === "function") showItemPopup("翠绿徽章");
-            gameState.medals.push("翠绿徽章");
-            addMedal();
+            msg += addItem("翠绿徽章");
             msg += `<div class="system-message">【获得物品】：翠绿徽章</div>`;
         }
         if(!hasItem("共鸣水晶")) {
-            gameState.items.push("共鸣水晶");
-            if(typeof showItemPopup === "function") showItemPopup("共鸣水晶");
+            msg += addItem("共鸣水晶");
             msg += `<div class="system-message">【获得物品】：共鸣水晶</div>`;
         }
         return msg;
@@ -4096,10 +3694,7 @@ scenes["musicroom_use_crystal"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("翠绿徽章")) {
-            gameState.items.push("翠绿徽章");
-            if(typeof showItemPopup === "function") showItemPopup("翠绿徽章");
-            gameState.medals.push("翠绿徽章");
-            addMedal();
+            msg += addItem("翠绿徽章");
             msg += `<div class="system-message">【获得物品】：翠绿徽章</div>`;
         }
         return msg;
@@ -4161,14 +3756,8 @@ scenes["clocktower_entry"] = {
 scenes["clocktower_workbench"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("钟楼维护日志（部分）")) {
-            gameState.clues.push("钟楼维护日志（部分）");
-            msg += `<div class="system-message">【获得线索】：钟楼维护日志（部分）</div>`;
-        }
-        if(!hasClue("齿轮传动图纸")) {
-            gameState.clues.push("齿轮传动图纸");
-            msg += `<div class="system-message">【获得线索】：齿轮传动图纸</div>`;
-        }
+        msg += addClue("钟楼维护日志（部分）");
+        msg += addClue("齿轮传动图纸");
         return msg;
     },
     desc: `工作台布满灰尘，但工具摆放整齐：螺丝刀、镊子、放大镜、一小瓶润滑油，还有一个打开的工具箱。台面上摊着一张机械图纸，上面画着钟楼的内部结构，标注着齿轮编号和传动路线。图纸一角有手写注释：“第三级传动轮偏移2度，导致分针卡滞。需在月升时校准，否则触发防护机关。”
@@ -4186,8 +3775,7 @@ scenes["clocktower_tools"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("齿轮钥匙（VII号）")) {
-            gameState.items.push("齿轮钥匙（VII号）");
-            if(typeof showItemPopup === "function") showItemPopup("齿轮钥匙（VII号）");
+            msg += addItem("齿轮钥匙（VII号）");
             msg += `<div class="system-message">【获得物品】：齿轮钥匙（VII号）</div>`;
         }
         return msg;
@@ -4204,6 +3792,17 @@ scenes["clocktower_gear_room"] = {
 齿轮室中央是一个复杂的齿轮组，大小不一的齿轮互相咬合，从地板延伸到天花板。墙壁上有七个齿轮轴端，每个轴端都有一个编号（I至VII）和一个可以插入手柄的方孔。图纸显示，通过旋转这些轴端可以调整传动比，从而改变钟声的间隔。
 齿轮室的地板上刻着一行字：“七声钟鸣，间隔相等。如心律之搏动，如潮汐之涨落。”
 你发现齿轮组中，I至VI号齿轮都可以转动，但VII号齿轮的轴端是空的——你手中的钥匙正是用来转动它的？实际上，钥匙已经用来开门，现在你需要一个手柄来转动轴端。工作台上的工具箱里或许有。`,
+    itemSelection: {
+        prompt: "从背包中选择要插入VII号轴端的工具",
+        backTarget: "clocktower_gear_room",
+        correctTarget: "clocktower_gear_room_2",
+        wrongTarget: "clocktower_gear_room",
+        completedTarget: "clocktower_gear_room_2",
+        consumeOnCorrect: false,
+        consumeOnWrong: false,
+        consumeOnFatal: true,
+        correctItems: ["摇柄"],
+    },
     options: [
         { text: "返回工作台寻找手柄", target: "clocktower_find_handle" },
         { text: "尝试直接用手转动轴端", target: "clocktower_turn_by_hand" },
@@ -4216,8 +3815,7 @@ scenes["clocktower_find_handle"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("摇柄")) {
-            gameState.items.push("摇柄");
-            if(typeof showItemPopup === "function") showItemPopup("摇柄");
+            msg += addItem("摇柄");
             msg += `<div class="system-message">【获得物品】：摇柄</div>`;
         }
         return msg;
@@ -4248,16 +3846,14 @@ scenes["clocktower_turn_by_hand"] = {
 scenes["clocktower_gear_room_2"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("需要校准七个齿轮的转动量，使钟声间隔相等")) {
-            gameState.clues.push("需要校准七个齿轮的转动量，使钟声间隔相等");
-            msg += `<div class="system-message">【获得线索】：需要校准七个齿轮的转动量，使钟声间隔相等</div>`;
-        }
+        msg += addClue("需要校准七个齿轮的转动量，使钟声间隔相等");
         return msg;
     },
     desc: `你将摇柄插入VII号轴端，顺时针旋转。齿轮缓缓转动，发出沉重的机械声。每转一圈，钟楼某处就传来一声低沉的钟鸣。你数着圈数，当转到第七圈时，钟鸣连续响了七声，但间隔并不相等——有的间隔长，有的短。
 你意识到需要调整每个齿轮的转动量，使七声钟鸣的时间间隔完全相等。图纸上标注了每个齿轮对应的传动比，但你需要找到一个参考时间。日志中提到“听指针的低语”——或许需要观察钟盘指针的移动。`,
     options: [
         { text: "去三层观察钟盘指针的移动", target: "clocktower_observe_hands" },
+        { text: "拿出阿斯特的怀表对照时间（怀表停在11:55，正好与大钟同步，跳过校准）", target: "clocktower_match_rhythm", condition: () => hasItem("阿斯特的怀表") },
         { text: "在齿轮室寻找校准标准", target: "clocktower_calibration" },
         { text: "返回大厅", target: "hall_main" }
     ]
@@ -4266,10 +3862,7 @@ scenes["clocktower_gear_room_2"] = {
 scenes["clocktower_observe_hands"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("指针低语模式（七组节奏）")) {
-            gameState.clues.push("指针低语模式（七组节奏）");
-            msg += `<div class="system-message">【获得线索】：指针低语模式（七组节奏）</div>`;
-        }
+        msg += addClue("指针低语模式（七组节奏）");
         return msg;
     },
     desc: `你来到三层，站在巨大的钟盘前。分针仍然卡在11:55的位置，秒针在12的位置微微颤动。你注意到钟盘外圈有一圈细小的刻度，每两个数字之间有五格，代表分钟。当秒针跳动时，分针几乎不动。
@@ -4291,17 +3884,12 @@ scenes["clocktower_match_rhythm"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("红宝石徽章")) {
-            gameState.items.push("红宝石徽章");
-            if(typeof showItemPopup === "function") showItemPopup("红宝石徽章");
-            gameState.medals.push("红宝石徽章");
-            addMedal();
+            msg += addItem("红宝石徽章");
             msg += `<div class="system-message">【获得物品】：红宝石徽章</div>`;
         }
         if(!hasItem("便条（内容：“齿轮钥匙可开启更多秘密。VII号门后")) {
-            gameState.items.push("便条（内容：“齿轮钥匙可开启更多秘密。VII号门后");
-            if(typeof showItemPopup === "function") showItemPopup("便条（内容：“齿轮钥匙可开启更多秘密。VII号门后");
-            gameState.items.push("有通往画室的密道。”）");
-            if(typeof showItemPopup === "function") showItemPopup("有通往画室的密道。”）");
+            msg += addItem("便条（内容：“齿轮钥匙可开启更多秘密。VII号门后");
+            msg += addItem("有通往画室的密道。”）");
             msg += `<div class="system-message">【获得物品】：便条（内容：“齿轮钥匙可开启更多秘密。VII号门后，有通往画室的密道。”）</div>`;
         }
         return msg;
@@ -4354,10 +3942,7 @@ scenes["clocktower_trap_room"] = {
             msg += `<div class="system-message">【状态】：受伤（但获得徽章）</div>`;
         }
         if(!hasItem("红宝石徽章")) {
-            gameState.items.push("红宝石徽章");
-            if(typeof showItemPopup === "function") showItemPopup("红宝石徽章");
-            gameState.medals.push("红宝石徽章");
-            addMedal();
+            msg += addItem("红宝石徽章");
             msg += `<div class="system-message">【获得物品】：红宝石徽章</div>`;
         }
         return msg;
@@ -4373,10 +3958,7 @@ scenes["clocktower_trap_inspect"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("红宝石徽章")) {
-            gameState.items.push("红宝石徽章");
-            if(typeof showItemPopup === "function") showItemPopup("红宝石徽章");
-            gameState.medals.push("红宝石徽章");
-            addMedal();
+            msg += addItem("红宝石徽章");
             msg += `<div class="system-message">【获得物品】：红宝石徽章</div>`;
         }
         return msg;
@@ -4401,8 +3983,7 @@ scenes["clocktower_pendulum"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("钟楼结构图")) {
-            gameState.items.push("钟楼结构图");
-            if(typeof showItemPopup === "function") showItemPopup("钟楼结构图");
+            msg += addItem("钟楼结构图");
             msg += `<div class="system-message">【获得物品】：钟楼结构图</div>`;
         }
         return msg;
@@ -4418,10 +3999,7 @@ scenes["clocktower_pendulum"] = {
 scenes["clocktower_plaque"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("月相观察窗")) {
-            gameState.clues.push("月相观察窗");
-            msg += `<div class="system-message">【获得线索】：月相观察窗</div>`;
-        }
+        msg += addClue("月相观察窗");
         return msg;
     },
     desc: `廊桥入口处有一块铜质铭牌，上面写着：“此钟楼建于1865年，由著名钟表匠赫雷米亚斯·克劳利设计。其子阿斯特·克劳利在此设置七谜之一。欲破此谜，须知时间并非直线，而是循环之圆。”
@@ -4436,10 +4014,7 @@ scenes["clocktower_plaque"] = {
 scenes["clocktower_full_moon"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("秒针阴影提示")) {
-            gameState.clues.push("秒针阴影提示");
-            msg += `<div class="system-message">【获得线索】：秒针阴影提示</div>`;
-        }
+        msg += addClue("秒针阴影提示");
         return msg;
     },
     desc: `你将月相旋钮调到满月位置，钟楼内部传来一声轻响，一束月光通过棱镜折射，照在二层工作台的图纸上，显现出之前看不见的隐藏文字：“月升之时，秒针的阴影会指向正确的齿轮调整值。”`,
@@ -4452,10 +4027,7 @@ scenes["clocktower_full_moon"] = {
 scenes["clocktower_shadow"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("齿轮调整顺序（6-3-1-7-4-2-5）")) {
-            gameState.clues.push("齿轮调整顺序（6-3-1-7-4-2-5）");
-            msg += `<div class="system-message">【获得线索】：齿轮调整顺序（6-3-1-7-4-2-5）</div>`;
-        }
+        msg += addClue("齿轮调整顺序（6-3-1-7-4-2-5）");
         return msg;
     },
     desc: `午夜时分，月亮升至中天，月光透过钟盘玻璃上的裂纹，在钟楼地板上投下秒针的阴影。阴影指向地面上的一个数字刻度盘，刻度盘上标有1至7。秒针阴影每跳动一次，指向的数字就变化一次，依次指向：6, 3, 1, 7, 4, 2, 5。你记下这个顺序。`,
@@ -4469,10 +4041,7 @@ scenes["clocktower_shadow_solution"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("红宝石徽章")) {
-            gameState.items.push("红宝石徽章");
-            if(typeof showItemPopup === "function") showItemPopup("红宝石徽章");
-            gameState.medals.push("红宝石徽章");
-            addMedal();
+            msg += addItem("红宝石徽章");
             msg += `<div class="system-message">【获得物品】：红宝石徽章</div>`;
         }
         return msg;
@@ -4514,10 +4083,7 @@ scenes["clocktower_calibration_success"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("红宝石徽章")) {
-            gameState.items.push("红宝石徽章");
-            if(typeof showItemPopup === "function") showItemPopup("红宝石徽章");
-            gameState.medals.push("红宝石徽章");
-            addMedal();
+            msg += addItem("红宝石徽章");
             msg += `<div class="system-message">【获得物品】：红宝石徽章</div>`;
         }
         return msg;
@@ -4574,7 +4140,7 @@ scenes["side_story_1_start"] = {
     desc: `你在大厅等了半小时，管家仍未回来。你决定去寻找他。庄园里你尚未探索的区域还有几处：通往地窖的楼梯、仆人的房间、以及阁楼。你决定先检查管家常去的地方。`,
     options: [
         { text: "前往仆人房间（位于一层走廊尽头）", target: "side_servant_room" },
-        { text: "前往地窖（地下室入口旁还有一扇小门）", target: "side_cellar" },
+        { text: "前往地窖（地下室入口旁还有一扇小门）", target: "side_cellar", condition: () => hasItem('旧照片')||hasClue('管家在隐瞒什么') },
         { text: "前往阁楼（三层尽头的梯子）", target: "side_attic" },
         { text: "先检查管家的起居室（你可能之前没注意，在大厅侧门）", target: "side_butler_quarters" },
         { text: "返回大厅", target: "hall_main" }
@@ -4585,20 +4151,16 @@ scenes["side_butler_quarters"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("旧照片")) {
-            gameState.items.push("旧照片");
-            if(typeof showItemPopup === "function") showItemPopup("旧照片");
+            msg += addItem("旧照片");
             msg += `<div class="system-message">【获得物品】：旧照片</div>`;
         }
         if(!hasItem("生锈的钥匙")) {
-            gameState.items.push("生锈的钥匙");
-            if(typeof showItemPopup === "function") showItemPopup("生锈的钥匙");
+            msg += addItem("生锈的钥匙");
             msg += `<div class="system-message">【获得物品】：生锈的钥匙</div>`;
         }
         if(!hasItem("纸条（写有“对不起")) {
-            gameState.items.push("纸条（写有“对不起");
-            if(typeof showItemPopup === "function") showItemPopup("纸条（写有“对不起");
-            gameState.items.push("哥哥”）");
-            if(typeof showItemPopup === "function") showItemPopup("哥哥”）");
+            msg += addItem("纸条（写有“对不起");
+            msg += addItem("哥哥”）");
             msg += `<div class="system-message">【获得物品】：纸条（写有“对不起，哥哥”）</div>`;
         }
         return msg;
@@ -4617,10 +4179,7 @@ scenes["side_butler_quarters"] = {
 scenes["side_fireplace"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("管家在隐瞒什么")) {
-            gameState.clues.push("管家在隐瞒什么");
-            msg += `<div class="system-message">【获得线索】：管家在隐瞒什么</div>`;
-        }
+        msg += addClue("管家在隐瞒什么");
         return msg;
     },
     desc: `壁炉的余烬中有一块未完全烧毁的纸片。你用火钳夹出，上面写着：“我无法继续隐瞒……他其实……” 其余部分已化为灰烬。纸片的材质与账本相同，很可能是被撕下的账本页。`,
@@ -4632,18 +4191,9 @@ scenes["side_fireplace"] = {
 scenes["side_under_bed"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("管家与主人的兄弟关系")) {
-            gameState.clues.push("管家与主人的兄弟关系");
-            msg += `<div class="system-message">【获得线索】：管家与主人的兄弟关系</div>`;
-        }
-        if(!hasClue("中央密室有隐藏暗格")) {
-            gameState.clues.push("中央密室有隐藏暗格");
-            msg += `<div class="system-message">【获得线索】：中央密室有隐藏暗格</div>`;
-        }
-        if(!hasClue("管家在执行主人的遗愿")) {
-            gameState.clues.push("管家在执行主人的遗愿");
-            msg += `<div class="system-message">【获得线索】：管家在执行主人的遗愿</div>`;
-        }
+        msg += addClue("管家与主人的兄弟关系");
+        msg += addClue("中央密室有隐藏暗格");
+        msg += addClue("管家在执行主人的遗愿");
         return msg;
     },
     desc: `床底有一个落满灰尘的皮箱。你拉出来打开，里面是一些旧衣物和几封信。信的收件人都是“奥尔德斯·克劳利”，寄件人署名“阿斯特”。你快速翻阅：
@@ -4734,8 +4284,7 @@ scenes["side_ending_master"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("side_butler_completed")) {
-            gameState.items.push("side_butler_completed");
-            if(typeof showItemPopup === "function") showItemPopup("side_butler_completed");
+            msg += addItem("side_butler_completed");
             msg += `<div class="system-message">【获得物品】：side_butler_completed</div>`;
         }
         return msg;
@@ -4767,10 +4316,7 @@ scenes["side_ending_spreader"] = {
 scenes["side_cellar_wall"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("克劳利家族的历史")) {
-            gameState.clues.push("克劳利家族的历史");
-            msg += `<div class="system-message">【获得线索】：克劳利家族的历史</div>`;
-        }
+        msg += addClue("克劳利家族的历史");
         return msg;
     },
     desc: `地窖的墙壁上有几幅壁画，描绘了克劳利家族的起源：第一代家主是一位炼金术士，他在山中发现了蕴含神秘力量的矿石，并用它们建造了谜语馆的基础。壁画中还出现了七个符号，与你见过的七谜徽章一致。`,
@@ -4782,10 +4328,7 @@ scenes["side_cellar_wall"] = {
 scenes["side_cellar_diary"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("阿斯特的内心独白")) {
-            gameState.clues.push("阿斯特的内心独白");
-            msg += `<div class="system-message">【获得线索】：阿斯特的内心独白</div>`;
-        }
+        msg += addClue("阿斯特的内心独白");
         return msg;
     },
     desc: `在地窖角落的石头缝里，你发现一本被遗忘的日记，封面写着“阿斯特·克劳利，最后的日子”。里面记录了主人最后的心理挣扎，以及对弟弟的愧疚。其中一页写道：“我留给奥尔德斯的选择题：是让继承人成为另一个我，还是打破这个循环？我想他知道答案。”
@@ -4799,14 +4342,12 @@ scenes["side_ending_memento"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("side_butler_completed")) {
-            gameState.items.push("side_butler_completed");
-            if(typeof showItemPopup === "function") showItemPopup("side_butler_completed");
+            msg += addItem("side_butler_completed");
             msg += `<div class="system-message">【获得物品】：side_butler_completed</div>`;
         }
-        if(!hasItem("阿斯特的怀表（可在后续谜题中作为提示道具使用）")) {
-            gameState.items.push("阿斯特的怀表（可在后续谜题中作为提示道具使用）");
-            if(typeof showItemPopup === "function") showItemPopup("阿斯特的怀表（可在后续谜题中作为提示道具使用）");
-            msg += `<div class="system-message">【获得物品】：阿斯特的怀表（可在后续谜题中作为提示道具使用）</div>`;
+        if(!hasItem("阿斯特的怀表")) {
+            msg += addItem("阿斯特的怀表");
+            msg += `<div class="system-message">【获得物品】：阿斯特的怀表</div>`;
         }
         return msg;
     },
@@ -4840,14 +4381,8 @@ scenes["side_story_2_start"] = {
 scenes["side_painting_back"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("画背面的女子自述")) {
-            gameState.clues.push("画背面的女子自述");
-            msg += `<div class="system-message">【获得线索】：画背面的女子自述</div>`;
-        }
-        if(!hasClue("1890年，紫藤花架")) {
-            gameState.clues.push("1890年，紫藤花架");
-            msg += `<div class="system-message">【获得线索】：1890年，紫藤花架</div>`;
-        }
+        msg += addClue("画背面的女子自述");
+        msg += addClue("1890年，紫藤花架");
         return msg;
     },
     desc: `你小心翼翼地将七幅画从墙上取下（它们只是挂着，没有固定）。每幅画的背面都写着一行字，笔迹娟秀，似乎是女子手书：
@@ -4870,13 +4405,11 @@ scenes["side_wisteria"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("画展目录")) {
-            gameState.items.push("画展目录");
-            if(typeof showItemPopup === "function") showItemPopup("画展目录");
+            msg += addItem("画展目录");
             msg += `<div class="system-message">【获得物品】：画展目录</div>`;
         }
         if(!hasItem("艺术奖章")) {
-            gameState.items.push("艺术奖章");
-            if(typeof showItemPopup === "function") showItemPopup("艺术奖章");
+            msg += addItem("艺术奖章");
             msg += `<div class="system-message">【获得物品】：艺术奖章</div>`;
         }
         return msg;
@@ -4895,13 +4428,11 @@ scenes["side_medal_trigger"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("铜钥匙")) {
-            gameState.items.push("铜钥匙");
-            if(typeof showItemPopup === "function") showItemPopup("铜钥匙");
+            msg += addItem("铜钥匙");
             msg += `<div class="system-message">【获得物品】：铜钥匙</div>`;
         }
         if(!hasItem("纸条（地窖第七级台阶）")) {
-            gameState.items.push("纸条（地窖第七级台阶）");
-            if(typeof showItemPopup === "function") showItemPopup("纸条（地窖第七级台阶）");
+            msg += addItem("纸条（地窖第七级台阶）");
             msg += `<div class="system-message">【获得物品】：纸条（地窖第七级台阶）</div>`;
         }
         return msg;
@@ -4918,13 +4449,11 @@ scenes["side_cellar_steps"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("伊莲娜的日记")) {
-            gameState.items.push("伊莲娜的日记");
-            if(typeof showItemPopup === "function") showItemPopup("伊莲娜的日记");
+            msg += addItem("伊莲娜的日记");
             msg += `<div class="system-message">【获得物品】：伊莲娜的日记</div>`;
         }
         if(!hasItem("银手镯")) {
-            gameState.items.push("银手镯");
-            if(typeof showItemPopup === "function") showItemPopup("银手镯");
+            msg += addItem("银手镯");
             msg += `<div class="system-message">【获得物品】：银手镯</div>`;
         }
         return msg;
@@ -4940,10 +4469,7 @@ scenes["side_cellar_steps"] = {
 scenes["side_read_diary"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("伊莲娜的失踪与阿斯特的悔恨")) {
-            gameState.clues.push("伊莲娜的失踪与阿斯特的悔恨");
-            msg += `<div class="system-message">【获得线索】：伊莲娜的失踪与阿斯特的悔恨</div>`;
-        }
+        msg += addClue("伊莲娜的失踪与阿斯特的悔恨");
         return msg;
     },
     desc: `你坐在石阶上，借着油灯阅读日记。以下是关键内容：
@@ -4966,12 +4492,9 @@ scenes["side_cellar_hidden"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("紫藤花束")) {
-            gameState.items.push("紫藤花束");
-            if(typeof showItemPopup === "function") showItemPopup("紫藤花束");
-            gameState.items.push("照片");
-            if(typeof showItemPopup === "function") showItemPopup("照片");
-            gameState.items.push("画布碎片");
-            if(typeof showItemPopup === "function") showItemPopup("画布碎片");
+            msg += addItem("紫藤花束");
+            msg += addItem("照片");
+            msg += addItem("画布碎片");
             msg += `<div class="system-message">【获得物品】：紫藤花束、照片、画布碎片</div>`;
         }
         return msg;
@@ -4988,8 +4511,7 @@ scenes["side_bracelet_trigger"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("阿斯特的遗信")) {
-            gameState.items.push("阿斯特的遗信");
-            if(typeof showItemPopup === "function") showItemPopup("阿斯特的遗信");
+            msg += addItem("阿斯特的遗信");
             msg += `<div class="system-message">【获得物品】：阿斯特的遗信</div>`;
         }
         return msg;
@@ -5008,10 +4530,7 @@ scenes["side_elenor_fate"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("伊莲娜纪念徽章")) {
-            gameState.items.push("伊莲娜纪念徽章");
-            if(typeof showItemPopup === "function") showItemPopup("伊莲娜纪念徽章");
-            gameState.medals.push("伊莲娜纪念徽章");
-            addMedal();
+            msg += addItem("伊莲娜纪念徽章");
             msg += `<div class="system-message">【获得物品】：伊莲娜纪念徽章</div>`;
         }
         return msg;
@@ -5032,8 +4551,7 @@ scenes["side_ending_reconciliation"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("side_painting_completed")) {
-            gameState.items.push("side_painting_completed");
-            if(typeof showItemPopup === "function") showItemPopup("side_painting_completed");
+            msg += addItem("side_painting_completed");
             msg += `<div class="system-message">【获得物品】：side_painting_completed</div>`;
         }
         return msg;
@@ -5050,8 +4568,7 @@ scenes["side_ending_legacy"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("side_painting_completed")) {
-            gameState.items.push("side_painting_completed");
-            if(typeof showItemPopup === "function") showItemPopup("side_painting_completed");
+            msg += addItem("side_painting_completed");
             msg += `<div class="system-message">【获得物品】：side_painting_completed</div>`;
         }
         return msg;
@@ -5097,23 +4614,19 @@ scenes["side_cave_table"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("托马斯·赫胥黎的笔记本")) {
-            gameState.items.push("托马斯·赫胥黎的笔记本");
-            if(typeof showItemPopup === "function") showItemPopup("托马斯·赫胥黎的笔记本");
+            msg += addItem("托马斯·赫胥黎的笔记本");
             msg += `<div class="system-message">【获得物品】：托马斯·赫胥黎的笔记本</div>`;
         }
         if(!hasItem("矿石标本（七种金属）")) {
-            gameState.items.push("矿石标本（七种金属）");
-            if(typeof showItemPopup === "function") showItemPopup("矿石标本（七种金属）");
+            msg += addItem("矿石标本（七种金属）");
             msg += `<div class="system-message">【获得物品】：矿石标本（七种金属）</div>`;
         }
         if(!hasItem("未寄出的信")) {
-            gameState.items.push("未寄出的信");
-            if(typeof showItemPopup === "function") showItemPopup("未寄出的信");
+            msg += addItem("未寄出的信");
             msg += `<div class="system-message">【获得物品】：未寄出的信</div>`;
         }
         if(!hasItem("照片")) {
-            gameState.items.push("照片");
-            if(typeof showItemPopup === "function") showItemPopup("照片");
+            msg += addItem("照片");
             msg += `<div class="system-message">【获得物品】：照片</div>`;
         }
         return msg;
@@ -5136,14 +4649,8 @@ scenes["side_cave_table"] = {
 scenes["side_cave_notes"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("托马斯认为塌方可能是人为的")) {
-            gameState.clues.push("托马斯认为塌方可能是人为的");
-            msg += `<div class="system-message">【获得线索】：托马斯认为塌方可能是人为的</div>`;
-        }
-        if(!hasClue("通道方向")) {
-            gameState.clues.push("通道方向");
-            msg += `<div class="system-message">【获得线索】：通道方向</div>`;
-        }
+        msg += addClue("托马斯认为塌方可能是人为的");
+        msg += addClue("通道方向");
         return msg;
     },
     desc: `墙壁上的炭笔笔记记录了地质数据：岩层厚度、矿物成分、温度变化等。但有几条笔记引起了你的注意：
@@ -5163,8 +4670,7 @@ scenes["side_cave_passage"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("托马斯的地质锤")) {
-            gameState.items.push("托马斯的地质锤");
-            if(typeof showItemPopup === "function") showItemPopup("托马斯的地质锤");
+            msg += addItem("托马斯的地质锤");
             msg += `<div class="system-message">【获得物品】：托马斯的地质锤</div>`;
         }
         return msg;
@@ -5233,7 +4739,7 @@ scenes["side_ancient_chamber"] = {
 “当七曜之力汇聚，沉睡者将苏醒。但唤醒者须付出代价——以记忆换力量，以自由换智慧。此乃远古契约，不可违背。”
 你感到一阵眩晕。这段文字让你想起托马斯笔记本中的警告——“古老的力量”。`,
     options: [
-        { text: "将符文石放入石柱凹槽（若有）", target: "side_activate_pillar", condition: () => hasItem("生命之露") },
+        { text: "将符文石放入石柱凹槽（若有）", target: "side_activate_pillar", condition: () => hasItem("符文石") },
         { text: "研究壁画的其他部分", target: "side_study_murals" },
         { text: "寻找托马斯的踪迹（他可能来过这里）", target: "side_thomas_trail" },
         { text: "记录一切后离开", target: "side_leave_cave" },
@@ -5245,13 +4751,11 @@ scenes["side_thomas_trail"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("托马斯的遗信")) {
-            gameState.items.push("托马斯的遗信");
-            if(typeof showItemPopup === "function") showItemPopup("托马斯的遗信");
+            msg += addItem("托马斯的遗信");
             msg += `<div class="system-message">【获得物品】：托马斯的遗信</div>`;
         }
         if(!hasItem("洞穴地图")) {
-            gameState.items.push("洞穴地图");
-            if(typeof showItemPopup === "function") showItemPopup("洞穴地图");
+            msg += addItem("洞穴地图");
             msg += `<div class="system-message">【获得物品】：洞穴地图</div>`;
         }
         return msg;
@@ -5284,13 +4788,11 @@ scenes["side_seeker"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("远古知识（所有谜题的解法自动知晓）")) {
-            gameState.items.push("远古知识（所有谜题的解法自动知晓）");
-            if(typeof showItemPopup === "function") showItemPopup("远古知识（所有谜题的解法自动知晓）");
+            msg += addItem("远古知识（所有谜题的解法自动知晓）");
             msg += `<div class="system-message">【获得物品】：远古知识（所有谜题的解法自动知晓）</div>`;
         }
         if(!hasItem("星之印记（额头）")) {
-            gameState.items.push("星之印记（额头）");
-            if(typeof showItemPopup === "function") showItemPopup("星之印记（额头）");
+            msg += addItem("星之印记（额头）");
             msg += `<div class="system-message">【获得物品】：星之印记（额头）</div>`;
         }
         return msg;
@@ -5307,13 +4809,11 @@ scenes["side_guardian"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("守护者符文（可封印古老能量）")) {
-            gameState.items.push("守护者符文（可封印古老能量）");
-            if(typeof showItemPopup === "function") showItemPopup("守护者符文（可封印古老能量）");
+            msg += addItem("守护者符文（可封印古老能量）");
             msg += `<div class="system-message">【获得物品】：守护者符文（可封印古老能量）</div>`;
         }
         if(!hasItem("克劳利家族的认可")) {
-            gameState.items.push("克劳利家族的认可");
-            if(typeof showItemPopup === "function") showItemPopup("克劳利家族的认可");
+            msg += addItem("克劳利家族的认可");
             msg += `<div class="system-message">【获得物品】：克劳利家族的认可</div>`;
         }
         if(!getFlag("被束缚于谜语馆周边")) {
@@ -5341,13 +4841,11 @@ scenes["side_east_exit"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("托马斯的骨骸（可安葬）")) {
-            gameState.items.push("托马斯的骨骸（可安葬）");
-            if(typeof showItemPopup === "function") showItemPopup("托马斯的骨骸（可安葬）");
+            msg += addItem("托马斯的骨骸（可安葬）");
             msg += `<div class="system-message">【获得物品】：托马斯的骨骸（可安葬）</div>`;
         }
         if(!hasItem("身份证明和遗书")) {
-            gameState.items.push("身份证明和遗书");
-            if(typeof showItemPopup === "function") showItemPopup("身份证明和遗书");
+            msg += addItem("身份证明和遗书");
             msg += `<div class="system-message">【获得物品】：身份证明和遗书</div>`;
         }
         return msg;
@@ -5375,8 +4873,7 @@ scenes["side_ending_guardian"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("side_underground_completed")) {
-            gameState.items.push("side_underground_completed");
-            if(typeof showItemPopup === "function") showItemPopup("side_underground_completed");
+            msg += addItem("side_underground_completed");
             msg += `<div class="system-message">【获得物品】：side_underground_completed</div>`;
         }
         return msg;
@@ -5394,14 +4891,10 @@ scenes["side_ending_truth"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("side_underground_completed")) {
-            gameState.items.push("side_underground_completed");
-            if(typeof showItemPopup === "function") showItemPopup("side_underground_completed");
+            msg += addItem("side_underground_completed");
             msg += `<div class="system-message">【获得物品】：side_underground_completed</div>`;
         }
-        if(!hasClue("托马斯地质学会正名")) {
-            gameState.clues.push("托马斯地质学会正名");
-            msg += `<div class="system-message">【获得线索】：托马斯地质学会正名</div>`;
-        }
+        msg += addClue("托马斯地质学会正名");
         return msg;
     },
     desc: `你拒绝激活石柱，选择将托马斯的真相公之于众。你将托马斯的遗物交给了英国地质学会，他的故事被写成报道，刊登在伦敦的报纸上。谜语馆地下有远古文明遗迹的消息引起了学术界的轰动。
@@ -5432,18 +4925,9 @@ scenes["side_ending_disappear"] = {
 scenes["side_story_4_start"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("埃莉诺·布莱克伍德的名字")) {
-            gameState.clues.push("埃莉诺·布莱克伍德的名字");
-            msg += `<div class="system-message">【获得线索】：埃莉诺·布莱克伍德的名字</div>`;
-        }
-        if(!hasClue("夜莺符号")) {
-            gameState.clues.push("夜莺符号");
-            msg += `<div class="system-message">【获得线索】：夜莺符号</div>`;
-        }
-        if(!hasClue("七件有标记的乐器")) {
-            gameState.clues.push("七件有标记的乐器");
-            msg += `<div class="system-message">【获得线索】：七件有标记的乐器</div>`;
-        }
+        msg += addClue("埃莉诺·布莱克伍德的名字");
+        msg += addClue("夜莺符号");
+        msg += addClue("七件有标记的乐器");
         return msg;
     },
     desc: `你拿起小提琴，翻转过来，在琴身背面的底板上发现了一行刻字，被岁月磨得有些模糊：“埃莉诺·布莱克伍德，1888年制于伦敦。” 这不是一把普通的工厂琴，而是一位制琴师亲手制作的作品。你仔细端详，发现琴身的木材纹路非常特别——背板是一整块带有火焰纹的枫木，面板是年轮极其细密的云杉，琴头雕刻得栩栩如生。这显然是一位大师的杰作。
@@ -5453,7 +4937,22 @@ scenes["side_story_4_start"] = {
         { text: "询问管家是否认识埃莉诺", target: "side_ask_butler_elenor" },
         { text: "检查乐谱手稿的更多细节", target: "side_score_details" },
         { text: "尝试演奏那把小提琴", target: "side_play_violin" },
+        { text: "拿出银手镯比对图案", target: "side_compare_bracelet", condition: () => hasItem("银手镯") },
         { text: "在音乐室寻找暗格或隐藏空间", target: "side_music_hidden" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["side_compare_bracelet"] = {
+    on_enter: () => {
+        let msg = "";
+        msg += addClue("手镯与小提琴的标记吻合");
+        return msg;
+    },
+    desc: `你拿出在画室找到的银手镯，上面刻满紫藤花，内圈也有一只极其微小的夜莺图案，与小提琴上的标记一模一样。这证实了画室里的神秘银手镯也是埃莉诺的所有物。你似乎渐渐拼凑出了这个隐秘故事的全貌。`,
+    options: [
+        { text: "询问管家是否认识埃莉诺", target: "side_ask_butler_elenor" },
+        { text: "继续探索", target: "side_story_4_start" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
@@ -5461,18 +4960,9 @@ scenes["side_story_4_start"] = {
 scenes["side_ask_butler_elenor"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("埃莉诺与阿斯特的爱情故事")) {
-            gameState.clues.push("埃莉诺与阿斯特的爱情故事");
-            msg += `<div class="system-message">【获得线索】：埃莉诺与阿斯特的爱情故事</div>`;
-        }
-        if(!hasClue("埃莉诺死于肺痨，未能完成交响曲")) {
-            gameState.clues.push("埃莉诺死于肺痨，未能完成交响曲");
-            msg += `<div class="system-message">【获得线索】：埃莉诺死于肺痨，未能完成交响曲</div>`;
-        }
-        if(!hasClue("七件乐器是她制作的")) {
-            gameState.clues.push("七件乐器是她制作的");
-            msg += `<div class="system-message">【获得线索】：七件乐器是她制作的</div>`;
-        }
+        msg += addClue("埃莉诺与阿斯特的爱情故事");
+        msg += addClue("埃莉诺死于肺痨，未能完成交响曲");
+        msg += addClue("七件乐器是她制作的");
         return msg;
     },
     desc: `你找到管家，向他展示小提琴上的刻字。他的表情瞬间凝固，沉默了很久，才缓缓开口：“埃莉诺·布莱克伍德……这个名字我已经二十多年没有听到了。”
@@ -5495,10 +4985,7 @@ scenes["side_ask_butler_elenor"] = {
 scenes["side_symphony_details"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("前六个乐章的乐谱在琴凳里")) {
-            gameState.clues.push("前六个乐章的乐谱在琴凳里");
-            msg += `<div class="system-message">【获得线索】：前六个乐章的乐谱在琴凳里</div>`;
-        }
+        msg += addClue("前六个乐章的乐谱在琴凳里");
         return msg;
     },
     desc: `“那首交响曲，她写了多少？”
@@ -5514,13 +5001,11 @@ scenes["side_piano_stool"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("埃莉诺的完整乐谱（前六乐章）")) {
-            gameState.items.push("埃莉诺的完整乐谱（前六乐章）");
-            if(typeof showItemPopup === "function") showItemPopup("埃莉诺的完整乐谱（前六乐章）");
+            msg += addItem("埃莉诺的完整乐谱（前六乐章）");
             msg += `<div class="system-message">【获得物品】：埃莉诺的完整乐谱（前六乐章）</div>`;
         }
         if(!hasItem("夜莺胸针")) {
-            gameState.items.push("夜莺胸针");
-            if(typeof showItemPopup === "function") showItemPopup("夜莺胸针");
+            msg += addItem("夜莺胸针");
             msg += `<div class="system-message">【获得物品】：夜莺胸针</div>`;
         }
         return msg;
@@ -5538,13 +5023,11 @@ scenes["side_brooch_clue"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("埃莉诺的遗信")) {
-            gameState.items.push("埃莉诺的遗信");
-            if(typeof showItemPopup === "function") showItemPopup("埃莉诺的遗信");
+            msg += addItem("埃莉诺的遗信");
             msg += `<div class="system-message">【获得物品】：埃莉诺的遗信</div>`;
         }
         if(!hasItem("铜钥匙")) {
-            gameState.items.push("铜钥匙");
-            if(typeof showItemPopup === "function") showItemPopup("铜钥匙");
+            msg += addItem("铜钥匙");
             msg += `<div class="system-message">【获得物品】：铜钥匙</div>`;
         }
         return msg;
@@ -5563,8 +5046,7 @@ scenes["side_fireplace_secret"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("埃莉诺的制琴笔记")) {
-            gameState.items.push("埃莉诺的制琴笔记");
-            if(typeof showItemPopup === "function") showItemPopup("埃莉诺的制琴笔记");
+            msg += addItem("埃莉诺的制琴笔记");
             msg += `<div class="system-message">【获得物品】：埃莉诺的制琴笔记</div>`;
         }
         return msg;
@@ -5581,8 +5063,7 @@ scenes["side_elenor_diary"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("埃莉诺的琴弓")) {
-            gameState.items.push("埃莉诺的琴弓");
-            if(typeof showItemPopup === "function") showItemPopup("埃莉诺的琴弓");
+            msg += addItem("埃莉诺的琴弓");
             msg += `<div class="system-message">【获得物品】：埃莉诺的琴弓</div>`;
         }
         return msg;
@@ -5606,15 +5087,11 @@ scenes["side_play_elenor_violin"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("夜莺徽章（纪念品）")) {
-            gameState.items.push("夜莺徽章（纪念品）");
-            if(typeof showItemPopup === "function") showItemPopup("夜莺徽章（纪念品）");
-            gameState.medals.push("夜莺徽章（纪念品）");
-            addMedal();
+            msg += addItem("夜莺徽章（纪念品）");
             msg += `<div class="system-message">【获得物品】：夜莺徽章（纪念品）</div>`;
         }
         if(!hasItem("埃莉诺的完整交响曲（七乐章全本）")) {
-            gameState.items.push("埃莉诺的完整交响曲（七乐章全本）");
-            if(typeof showItemPopup === "function") showItemPopup("埃莉诺的完整交响曲（七乐章全本）");
+            msg += addItem("埃莉诺的完整交响曲（七乐章全本）");
             msg += `<div class="system-message">【获得物品】：埃莉诺的完整交响曲（七乐章全本）</div>`;
         }
         return msg;
@@ -5643,8 +5120,7 @@ scenes["side_ending_music_public"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("side_music_completed")) {
-            gameState.items.push("side_music_completed");
-            if(typeof showItemPopup === "function") showItemPopup("side_music_completed");
+            msg += addItem("side_music_completed");
             msg += `<div class="system-message">【获得物品】：side_music_completed</div>`;
         }
         return msg;
@@ -5662,8 +5138,7 @@ scenes["side_ending_music_keep"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("side_music_completed")) {
-            gameState.items.push("side_music_completed");
-            if(typeof showItemPopup === "function") showItemPopup("side_music_completed");
+            msg += addItem("side_music_completed");
             msg += `<div class="system-message">【获得物品】：side_music_completed</div>`;
         }
         return msg;
@@ -5680,17 +5155,13 @@ scenes["side_music_final_mechanism"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("紫藤花种子（可种在庄园花园）")) {
-            gameState.items.push("紫藤花种子（可种在庄园花园）");
-            if(typeof showItemPopup === "function") showItemPopup("紫藤花种子（可种在庄园花园）");
+            msg += addItem("紫藤花种子（可种在庄园花园）");
             msg += `<div class="system-message">【获得物品】：紫藤花种子（可种在庄园花园）</div>`;
         }
         if(!hasItem("埃莉诺的祝福（在最终密室中")) {
-            gameState.items.push("埃莉诺的祝福（在最终密室中");
-            if(typeof showItemPopup === "function") showItemPopup("埃莉诺的祝福（在最终密室中");
-            gameState.items.push("你将获得一次“灵感”加成");
-            if(typeof showItemPopup === "function") showItemPopup("你将获得一次“灵感”加成");
-            gameState.items.push("自动破解一个难题）");
-            if(typeof showItemPopup === "function") showItemPopup("自动破解一个难题）");
+            msg += addItem("埃莉诺的祝福（在最终密室中");
+            msg += addItem("你将获得一次“灵感”加成");
+            msg += addItem("自动破解一个难题）");
             msg += `<div class="system-message">【获得物品】：埃莉诺的祝福（在最终密室中，你将获得一次“灵感”加成，自动破解一个难题）</div>`;
         }
         return msg;
@@ -5742,9 +5213,19 @@ scenes["final_test_1"] = {
 - 符文石（地下室）——符文凹槽。
 - 夜莺胸针（卧室/支线）——夜莺凹槽。
 但如果你没有完成某些支线，可能缺少对应的物品。例如，如果你没有完成画中女子支线，你可能只有银手镯而不是夜莺胸针；如果你没有完成管家支线，你可能没有阿斯特的怀表。系统会根据你实际拥有的物品调整凹槽数量和解锁方式。`,
+    itemSelection: {
+        prompt: "从背包中选择要放入匣子的关键信物",
+        backTarget: "final_chamber_entry",
+        correctTarget: "final_test_1",
+        wrongTarget: "final_test_1_wrong",
+        completedTarget: "final_test_1_correct",
+        requiredCount: 5,
+        consumeOnCorrect: true,
+        consumeOnWrong: false,
+        consumeOnFatal: true,
+        correctItems: ["星盘钥匙", "机械齿轮", "共鸣水晶", "神秘颜料", "生命之露", "符文石", "夜莺胸针", "银手镯", "主人的怀表"],
+    },
     options: [
-        { text: "按照上述对应放入物品", target: "final_test_1_correct" },
-        { text: "尝试其他组合", target: "final_test_1_wrong" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
@@ -5762,7 +5243,8 @@ scenes["final_test_1_wrong"] = {
     desc: `如果放错物品，匣子会发出刺目的红光，一股斥力将你推开。你手中的物品散落一地，需要重新拾起并再次尝试。没有致命的惩罚，但错误会消耗时间，并让密室中的光线变暗一些（增加紧张感）。`,
     options: [
         { text: "重新整理物品再试", target: "final_test_1" },
-        { text: "返回大厅", target: "hall_main" }
+        { text: "暂时放弃，去大厅寻找更多信物", target: "hall_main" },
+        { text: "暂时放弃，去大厅寻找更多信物", target: "hall_main" }
     ]
 };
 
@@ -5844,8 +5326,8 @@ scenes["final_test_4"] = {
         { text: "第一条路：成为谜语馆的主人", target: "ending_1" },
         { text: "第二条路：成为谜语的传播者", target: "ending_2" },
         { text: "第三条路：成为守护者，封印地下的力量", target: "ending_3", condition: () => getFlag("side_underground_completed") },
-        { text: "第四条路：成为故事的讲述者（博物馆与传记）", target: "ending_4", condition: () => getFlag("side_painting_completed") && getFlag("side_clock_completed") },
-        { text: "第五条路：传承谜语精神，并同时纪念伊莲娜与埃莉诺", target: "ending_5_truth", condition: () => getFlag("side_butler_completed") && getFlag("side_painting_completed") && getFlag("side_underground_completed") && getFlag("side_music_completed") },
+        { text: "第四条路：成为故事的讲述者（博物馆与传记）", target: "ending_4", condition: () => getFlag("side_painting_completed") && getFlag("side_music_completed") && getFlag("side_underground_completed") },
+        { text: "第五条路：传承谜语精神，并同时纪念伊莲娜与埃莉诺", target: "ending_5_truth", condition: () => [getFlag('side_butler_completed'), getFlag('side_painting_completed'), getFlag('side_underground_completed'), getFlag('side_music_completed')].filter(Boolean).length >= 3 },
         { text: "迟疑、误解或逃避", target: "ending_6_forgotten" },
         { text: "返回大厅", target: "hall_main" }
     ]
@@ -5919,13 +5401,40 @@ scenes["start"] = {
     ]
 };
 
+scenes["hall"] = {
+    desc: `穿越浓雾笼罩的山谷，一座维多利亚风格的古老庄园出现在你眼前。铁艺大门在风中吱呀作响，仿佛已等待你多时。门厅内，水晶吊灯蒙着薄灰，墙壁上挂着七幅抽象画，每一幅都似乎在注视着你。
+一位身着燕尾服、面容古板的老人无声地出现在你面前，他的眼睛如同两颗深不见底的黑曜石。
+“欢迎，探索者。我是管家奥尔德斯，主人的意志将由我传达。”他的声音沙哑而平静，“主人留下遗嘱：庄园内设有七道谜题，分别位于七个房间。每解开一道，你将获得一枚宝石徽章。集齐七枚徽章，便可开启中央密室，获取遗产。但请记住——谜题可能致命，而选择不可逆转。你确定要开始吗？”
+他的目光在你身上停留片刻，似乎在衡量你的决心。
+大厅正中央有一座大理石台，上面刻着庄园的平面图，七个房间的位置闪烁着微弱的磷光。`,
+    options: [
+        { text: "前往图书馆", target: "library_entry" },
+        { text: "前往温室", target: "greenhouse_entry" },
+        { text: "前往钟楼", target: "clocktower_entry" },
+        { text: "前往地下室", target: "basement_entry" },
+        { text: "前往画室", target: "studio_entry" },
+        { text: "前往音乐室", target: "musicroom_entry" },
+        { text: "前往卧室", target: "bedroom_entry" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["library_entry"] = {
+    desc: `推开沉重的橡木门，你仿佛踏入了一个知识的坟墓。高耸的书架直达穹顶，空气中弥漫着纸张腐朽的气味。月光透过彩色玻璃窗，在红木地板上投下迷离的光斑。
+房间中央，一张巨大的书桌上摊开着一本空白的书，书页边缘却镶嵌着七种不同颜色的宝石凹槽。书架间隐约可见一些奇怪的工具——星盘、天球仪、以及一个需要特定顺序才能拉动的书脊拉环。
+管家的话在你脑中回响：“谜题可能致命。”你需要决定如何开始探索。`,
+    options: [
+        { text: "仔细检查书桌上的空白书", target: "library_inspect_book" },
+        { text: "尝试拉动书架上突出的书脊", target: "library_pull_books" },
+        { text: "研究墙上的星盘与天球仪", target: "library_astrolabe" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
 scenes["library_inspect_book"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("空白书的秘密")) {
-            gameState.clues.push("空白书的秘密");
-            msg += `<div class="system-message">【获得线索】：空白书的秘密</div>`;
-        }
+        msg += addClue("空白书的秘密");
         return msg;
     },
     desc: `你俯身观察那本空白的书。书页虽无字，但当你将手指放在纸面上时，能感到细微的凸起——是盲文？不，更像是某种密码压印。书的封面上刻着一行小字：“知识即钥匙，顺序即答案。”
@@ -5933,6 +5442,20 @@ scenes["library_inspect_book"] = {
     options: [
         { text: "返回继续探索图书馆", target: "library_entry" },
         { text: "去书架寻找对应密码本", target: "library_find_codex" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["library_astrolabe"] = {
+    on_enter: () => {
+        let msg = "";
+        msg += addClue("星盘铭文");
+        return msg;
+    },
+    desc: `星盘和天球仪上布满你从未见过的符号。天球仪的赤道上刻着一圈铭文：“当七曜归位，真理之门将敞开。” 星盘的指针可以转动，但似乎需要特定的时间与星位数据才能校准。
+你记下这些符号，或许在其他房间能找到对应的天文知识。`,
+    options: [
+        { text: "继续探索", target: "library_entry" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
@@ -5951,10 +5474,7 @@ scenes["library_pull_books"] = {
 scenes["library_trap"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("受伤，但无生命危险。但解谜失败，暂时无法再次尝试。你需要找到解药或从其他房间获得线索才能重返。")) {
-            gameState.clues.push("受伤，但无生命危险。但解谜失败，暂时无法再次尝试。你需要找到解药或从其他房间获得线索才能重返。");
-            msg += `<div class="system-message">【获得线索】：受伤，但无生命危险。但解谜失败，暂时无法再次尝试。你需要找到解药或从其他房间获得线索才能重返。</div>`;
-        }
+        msg += addClue("受伤，但无生命危险。但解谜失败，暂时无法再次尝试。你需要找到解药或从其他房间获得线索才能重返。");
         return msg;
     },
     desc: `当你拉动《密码学简史》时，书架后突然射出一排毒针！你勉强侧身避开，但手臂还是被划伤了一道。毒素让你感到眩晕，你不得不退出图书馆，回到大厅休息。`,
@@ -5964,19 +5484,25 @@ scenes["library_trap"] = {
     ]
 };
 
+scenes["library_hidden_passage"] = {
+    desc: `那本无书名之书被拉动的瞬间，书架无声地滑开，露出一条狭窄的通道。通道尽头是一间密室，里面放着一个精致的匣子。你打开匣子，里面是一枚银色的徽章，背面刻着：“第一道谜题——智慧之证。”
+但奇怪的是，你并没有真正解开书桌的谜题。管家奥尔德斯的声音从通道外传来：“取巧者将受诅咒。” 话音刚落，徽章在你手中变得滚烫，你不得不丢下它，通道也重新关闭。你被弹回图书馆，一无所获。
+（未获得徽章，但发现了隐藏通道，也许以后能用？）`,
+    options: [
+        { text: "返回大厅", target: "hall" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
 scenes["library_find_codex"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("蓝宝石徽章")) {
-            gameState.items.push("蓝宝石徽章");
-            if(typeof showItemPopup === "function") showItemPopup("蓝宝石徽章");
-            gameState.medals.push("蓝宝石徽章");
-            addMedal();
+            msg += addItem("蓝宝石徽章");
             msg += `<div class="system-message">【获得物品】：蓝宝石徽章</div>`;
         }
         if(!hasItem("克劳利的日记")) {
-            gameState.items.push("克劳利的日记");
-            if(typeof showItemPopup === "function") showItemPopup("克劳利的日记");
+            msg += addItem("克劳利的日记");
             msg += `<div class="system-message">【获得物品】：克劳利的日记</div>`;
         }
         return msg;
@@ -5990,19 +5516,28 @@ scenes["library_find_codex"] = {
     ]
 };
 
+scenes["clocktower_entry"] = {
+    desc: `钟楼位于庄园东侧，螺旋石梯盘旋而上。巨大的机械钟占据了三层楼的高度，齿轮与摆锤有节奏地轰鸣。钟盘上的指针停留在11:55，分针却微微颤抖，仿佛被什么卡住了。
+墙上刻着一行字：“时间从不等待，但真相总在间隙中浮现。”
+管家曾提醒过你，强行拨动指针可能触发机关。`,
+    options: [
+        { text: "检查钟摆后的暗门", target: "clocktower_door" },
+        { text: "尝试调整指针", target: "clocktower_adjust" },
+        { text: "翻阅克劳利的日记（若有）", target: "clocktower_diary_solution", condition: () => hasItem("克劳利的日记") },
+        { text: "研究齿轮组", target: "clocktower_gears" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
 scenes["clocktower_diary_solution"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("红宝石徽章")) {
-            gameState.items.push("红宝石徽章");
-            if(typeof showItemPopup === "function") showItemPopup("红宝石徽章");
-            gameState.medals.push("红宝石徽章");
-            addMedal();
+            msg += addItem("红宝石徽章");
             msg += `<div class="system-message">【获得物品】：红宝石徽章</div>`;
         }
         if(!hasItem("机械齿轮")) {
-            gameState.items.push("机械齿轮");
-            if(typeof showItemPopup === "function") showItemPopup("机械齿轮");
+            msg += addItem("机械齿轮");
             msg += `<div class="system-message">【获得物品】：机械齿轮</div>`;
         }
         return msg;
@@ -6024,19 +5559,26 @@ scenes["clocktower_adjust"] = {
     ]
 };
 
+scenes["musicroom_entry"] = {
+    desc: `音乐室宛如一座微型歌剧院，天鹅绒幕布后立着一架巨大的管风琴，四周散落着各种乐器：小提琴、竖琴、定音鼓。但所有乐器都沉寂无声，只有管风琴的琴键上散落着七枚金属键帽，上面刻着不同的音符符号。
+墙上的乐谱架上放着一首未完成的乐曲，标题是《七重奏鸣曲》。乐谱最后一行写着：“唯有共鸣之心，可奏响遗失之章。”`,
+    options: [
+        { text: "尝试演奏管风琴", target: "musicroom_play_organ" },
+        { text: "检查其他乐器", target: "musicroom_inspect" },
+        { text: "使用机械齿轮（若有）", target: "musicroom_gear_solution", condition: () => hasItem("机械齿轮") },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
 scenes["musicroom_gear_solution"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("翠绿徽章")) {
-            gameState.items.push("翠绿徽章");
-            if(typeof showItemPopup === "function") showItemPopup("翠绿徽章");
-            gameState.medals.push("翠绿徽章");
-            addMedal();
+            msg += addItem("翠绿徽章");
             msg += `<div class="system-message">【获得物品】：翠绿徽章</div>`;
         }
         if(!hasItem("共鸣水晶")) {
-            gameState.items.push("共鸣水晶");
-            if(typeof showItemPopup === "function") showItemPopup("共鸣水晶");
+            msg += addItem("共鸣水晶");
             msg += `<div class="system-message">【获得物品】：共鸣水晶</div>`;
         }
         return msg;
@@ -6048,19 +5590,26 @@ scenes["musicroom_gear_solution"] = {
     ]
 };
 
+scenes["studio_entry"] = {
+    desc: `画室中摆满了画作，但所有画布都是空白的，只有画框上标着不同的颜色名称：赤、橙、黄、绿、青、蓝、紫。房间中央立着一块巨大的调色板，上面有七个颜料槽，但全部干涸。旁边有一支画笔，笔尖触碰画布时，会留下透明的痕迹，随即消失。
+墙上挂着一幅未完成的肖像画，画中人物手中握着一面镜子，镜中倒映着七种颜色，但顺序混乱。`,
+    options: [
+        { text: "尝试混合颜料", target: "studio_mix" },
+        { text: "观察肖像画", target: "studio_portrait" },
+        { text: "使用共鸣水晶（若有）", target: "studio_crystal_solution", condition: () => hasItem("共鸣水晶") },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
 scenes["studio_crystal_solution"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("橙色徽章")) {
-            gameState.items.push("橙色徽章");
-            if(typeof showItemPopup === "function") showItemPopup("橙色徽章");
-            gameState.medals.push("橙色徽章");
-            addMedal();
+            msg += addItem("橙色徽章");
             msg += `<div class="system-message">【获得物品】：橙色徽章</div>`;
         }
         if(!hasItem("神秘颜料")) {
-            gameState.items.push("神秘颜料");
-            if(typeof showItemPopup === "function") showItemPopup("神秘颜料");
+            msg += addItem("神秘颜料");
             msg += `<div class="system-message">【获得物品】：神秘颜料</div>`;
         }
         return msg;
@@ -6072,19 +5621,26 @@ scenes["studio_crystal_solution"] = {
     ]
 };
 
+scenes["greenhouse_entry"] = {
+    desc: `温室是一个巨大的玻璃穹顶建筑，内部却是一片枯萎的植物王国。藤蔓干枯，花朵凋零，空气中弥漫着一股腐烂的甜腻。房间中央有一棵枯死的古树，树干上刻着：“生命之水，需以七色之血唤醒。”
+树下有一个石盆，盆中盛着浑浊的液体。周围有七个花盆，分别标着七种颜色，但全部空空如也。`,
+    options: [
+        { text: "检查古树", target: "greenhouse_tree" },
+        { text: "观察石盆", target: "greenhouse_basin" },
+        { text: "使用神秘颜料（若有）", target: "greenhouse_pigment_solution", condition: () => hasItem("神秘颜料") },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
 scenes["greenhouse_pigment_solution"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("金色徽章")) {
-            gameState.items.push("金色徽章");
-            if(typeof showItemPopup === "function") showItemPopup("金色徽章");
-            gameState.medals.push("金色徽章");
-            addMedal();
+            msg += addItem("金色徽章");
             msg += `<div class="system-message">【获得物品】：金色徽章</div>`;
         }
         if(!hasItem("生命之露")) {
-            gameState.items.push("生命之露");
-            if(typeof showItemPopup === "function") showItemPopup("生命之露");
+            msg += addItem("生命之露");
             msg += `<div class="system-message">【获得物品】：生命之露</div>`;
         }
         return msg;
@@ -6096,19 +5652,26 @@ scenes["greenhouse_pigment_solution"] = {
     ]
 };
 
+scenes["basement_entry"] = {
+    desc: `地下室阴冷潮湿，空气中夹杂着铁锈与泥土的气息。铁门后的房间像是一座古老的工坊，墙壁上挂满了各种工具：锤子、凿子、锯子，还有一个巨大的熔炉，炉膛早已冰冷。
+房间正中立着一座石头祭坛，祭坛上有一个凹槽，形状如同一滴眼泪。祭坛周围的地面上刻着复杂的符文，微微发光，仿佛在等待什么。`,
+    options: [
+        { text: "研究符文", target: "basement_runes" },
+        { text: "检查熔炉", target: "basement_furnace" },
+        { text: "使用生命之露（若有）", target: "basement_dew_solution", condition: () => hasItem("生命之露") },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
 scenes["basement_dew_solution"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("紫色徽章")) {
-            gameState.items.push("紫色徽章");
-            if(typeof showItemPopup === "function") showItemPopup("紫色徽章");
-            gameState.medals.push("紫色徽章");
-            addMedal();
+            msg += addItem("紫色徽章");
             msg += `<div class="system-message">【获得物品】：紫色徽章</div>`;
         }
         if(!hasItem("符文石")) {
-            gameState.items.push("符文石");
-            if(typeof showItemPopup === "function") showItemPopup("符文石");
+            msg += addItem("符文石");
             msg += `<div class="system-message">【获得物品】：符文石</div>`;
         }
         return msg;
@@ -6116,6 +5679,35 @@ scenes["basement_dew_solution"] = {
     desc: `你将生命之露倒入祭坛的凹槽。液体流入符文的沟槽中，符文瞬间绽放出耀眼的光芒。祭坛缓缓下沉，露出一个石匣，里面躺着一枚紫色徽章和一块符文石。`,
     options: [
         { text: "返回大厅", target: "hall" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["bedroom_entry"] = {
+    desc: `卧室是庄园中唯一显得温馨的房间，但依然充满诡异。一张四柱大床上铺着褪色的丝绸，床头柜上放着一本日记和一盏熄灭的油灯。墙上挂着一幅巨大的庄园油画，但画中的七个房间中有六个已经亮起烛光，只有一个房间——卧室本身——还处于黑暗中。
+衣柜门半开，里面似乎藏着什么。`,
+    options: [
+        { text: "阅读日记", target: "bedroom_diary" },
+        { text: "检查油画", target: "bedroom_painting" },
+        { text: "检查衣柜", target: "bedroom_closet" },
+        { text: "使用符文石（若有）", target: "bedroom_rune_solution", condition: () => hasItem("符文石") },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["bedroom_rune_solution"] = {
+    on_enter: () => {
+        let msg = "";
+        if(!hasItem("彩虹徽章")) {
+            msg += addItem("彩虹徽章");
+            msg += `<div class="system-message">【获得物品】：彩虹徽章</div>`;
+        }
+        return msg;
+    },
+    desc: `你将符文石放在油画上那个黑暗的房间位置。符文石发出柔和的光，画中卧室的烛光被点燃，紧接着，真实的卧室里，所有蜡烛同时亮起。衣柜门自动打开，里面是一个暗格，暗格中放着一枚彩虹色的徽章——最后一枚。
+当七枚徽章齐聚的瞬间，你感到整个庄园都在震动。大厅的方向传来沉重的石门开启之声。`,
+    options: [
+        { text: "前往中央密室", target: "final_chamber" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
@@ -6217,8 +5809,7 @@ scenes["studio_water_tank_success"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("沾满颜料的调色刮刀")) {
-            gameState.items.push("沾满颜料的调色刮刀");
-            if(typeof showItemPopup === "function") showItemPopup("沾满颜料的调色刮刀");
+            msg += addItem("沾满颜料的调色刮刀");
             msg += `<div class="system-message">【获得物品】：沾满颜料的调色刮刀</div>`;
         }
         return msg;
@@ -6243,8 +5834,7 @@ scenes["basement_extract_essence"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("火之精华")) {
-            gameState.items.push("火之精华");
-            if(typeof showItemPopup === "function") showItemPopup("火之精华");
+            msg += addItem("火之精华");
             msg += `<div class="system-message">【获得物品】：火之精华</div>`;
         }
         return msg;
@@ -6276,10 +5866,7 @@ scenes["greenhouse_basin"] = {
 scenes["side_attic"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("被涂脸的全家福")) {
-            gameState.clues.push("被涂脸的全家福");
-            msg += `<div class="system-message">【获得线索】：被涂脸的全家福</div>`;
-        }
+        msg += addClue("被涂脸的全家福");
         return msg;
     },
     desc: `描述: 你顺着一条隐蔽而陡峭的木台阶爬上庄园的阁楼。阁楼里灰尘弥漫，堆满了盖着白布的旧家具。在最深处的一个木箱上，你发现了一张泛黄的全家福照片。照片上是两名少爷（阿斯特和托马斯），以及一位被故意用黑笔涂掉脸的少女。这是谁？`,
@@ -6292,10 +5879,7 @@ scenes["side_attic"] = {
 scenes["side_hidden_drawer"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("阁楼隐秘日记残页")) {
-            gameState.clues.push("阁楼隐秘日记残页");
-            msg += `<div class="system-message">【获得线索】：阁楼隐秘日记残页</div>`;
-        }
+        msg += addClue("阁楼隐秘日记残页");
         return msg;
     },
     desc: `描述: 你在阁楼的旧梳妆台里发现了一个带有暗格的抽屉。敲碎夹层后，你找到了一本日记的残页。上面写着：“她的精神越来越不稳定了……画室里的色彩不是颜料，是她的……”这显然是管家或者某位家主留下的记录。`,
@@ -6315,10 +5899,7 @@ scenes["side_ask_butler"] = {
 scenes["side_butler_knows"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("管家的坦白")) {
-            gameState.clues.push("管家的坦白");
-            msg += `<div class="system-message">【获得线索】：管家的坦白</div>`;
-        }
+        msg += addClue("管家的坦白");
         return msg;
     },
     desc: `描述: 管家长叹了一口气，颓然地坐在椅子上。“是的，阿斯特少爷和托马斯少爷因为对庄园地下埋藏的‘力量’意见不合，最终拔剑相向……而埃莉诺小姐，她为了阻止他们，选择了把自己封印在画中。”他的话语印证了你的所有猜想。`,
@@ -6347,10 +5928,7 @@ scenes["clocktower_door"] = {
 scenes["clocktower_gears"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("钟楼齿轮密码 3-7-12")) {
-            gameState.clues.push("钟楼齿轮密码 3-7-12");
-            msg += `<div class="system-message">【获得线索】：钟楼齿轮密码 3-7-12</div>`;
-        }
+        msg += addClue("钟楼齿轮密码 3-7-12");
         return msg;
     },
     desc: `描述: 巨大的齿轮正在发出极有节奏的滴答声。你仔细观察，发现齿轮的辐条上刻着一些罗马数字：“III - VII - XII”。这可能是解开某扇门的密码或者某种提示。`,
@@ -6366,8 +5944,7 @@ scenes["library_astrolabe_success"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("星盘钥匙")) {
-            gameState.items.push("星盘钥匙");
-            if(typeof showItemPopup === "function") showItemPopup("星盘钥匙");
+            msg += addItem("星盘钥匙");
             msg += `<div class="system-message">【获得物品】：星盘钥匙</div>`;
         }
         return msg;
@@ -6392,10 +5969,7 @@ scenes["library_sort_attempt"] = {
 scenes["library_scholar_order"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("秘密图书馆图纸")) {
-            gameState.clues.push("秘密图书馆图纸");
-            msg += `<div class="system-message">【获得线索】：秘密图书馆图纸</div>`;
-        }
+        msg += addClue("秘密图书馆图纸");
         return msg;
     },
     desc: `描述: 你将书籍按照《庄园学者手记》中要求的年代与作者顺序排列整齐。书架背后传来一阵机械转动的声音，一个暗格翻转了过来，里面静静地躺着一卷羊皮纸。`,
@@ -6408,10 +5982,7 @@ scenes["library_scholar_order"] = {
 scenes["library_labels"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("书架四分类")) {
-            gameState.clues.push("书架四分类");
-            msg += `<div class="system-message">【获得线索】：书架四分类</div>`;
-        }
+        msg += addClue("书架四分类");
         return msg;
     },
     desc: `描述: 你仔细查看了书架上模糊的标签，隐约辨认出“天文”、“炼金”、“历史”、“诗歌”四个分类。这似乎是书籍摆放的提示。`,
@@ -6426,10 +5997,7 @@ scenes["basement_activate_planets"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("翠绿徽章")) {
-            gameState.items.push("翠绿徽章");
-            if(typeof showItemPopup === "function") showItemPopup("翠绿徽章");
-            gameState.medals.push("翠绿徽章");
-            addMedal();
+            msg += addItem("翠绿徽章");
             msg += `<div class="system-message">【获得物品】：翠绿徽章</div>`;
         }
         return msg;
@@ -6444,10 +6012,7 @@ scenes["basement_activate_planets"] = {
 scenes["basement_periodic_table"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("金属合成配方")) {
-            gameState.clues.push("金属合成配方");
-            msg += `<div class="system-message">【获得线索】：金属合成配方</div>`;
-        }
+        msg += addClue("金属合成配方");
         return msg;
     },
     desc: `描述: 墙上挂着一张残缺的炼金元素周期表，上面圈出了“铁(Fe)、铜(Cu)、银(Ag)、金(Au)”四个符号。这绝对是某种合成公式。`,
@@ -6471,10 +6036,7 @@ scenes["basement_prepare_materials"] = {
 scenes["basement_search_metals"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("铜矿与银矿")) {
-            gameState.clues.push("铜矿与银矿");
-            msg += `<div class="system-message">【获得线索】：铜矿与银矿</div>`;
-        }
+        msg += addClue("铜矿与银矿");
         return msg;
     },
     desc: `描述: 你在废弃的矿石堆里找到了几块纯度不错的铜矿与银矿。`,
@@ -6496,10 +6058,7 @@ scenes["basement_put_metals"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("紫色徽章")) {
-            gameState.items.push("紫色徽章");
-            if(typeof showItemPopup === "function") showItemPopup("紫色徽章");
-            gameState.medals.push("紫色徽章");
-            addMedal();
+            msg += addItem("紫色徽章");
             msg += `<div class="system-message">【获得物品】：紫色徽章</div>`;
         }
         return msg;
@@ -6533,10 +6092,7 @@ scenes["greenhouse_mix_nutrient"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("橙色徽章")) {
-            gameState.items.push("橙色徽章");
-            if(typeof showItemPopup === "function") showItemPopup("橙色徽章");
-            gameState.medals.push("橙色徽章");
-            addMedal();
+            msg += addItem("橙色徽章");
             msg += `<div class="system-message">【获得物品】：橙色徽章</div>`;
         }
         return msg;
@@ -6569,10 +6125,7 @@ scenes["musicroom_autoplayer"] = {
 scenes["musicroom_find_score_parts"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("三重奏乐谱")) {
-            gameState.clues.push("三重奏乐谱");
-            msg += `<div class="system-message">【获得线索】：三重奏乐谱</div>`;
-        }
+        msg += addClue("三重奏乐谱");
         return msg;
     },
     desc: `描述: 你在钢琴的夹缝和抽屉里找到了三张被撕裂的乐谱，上面分别写着“大号”、“小提琴”和“定音鼓”。`,
@@ -6586,10 +6139,7 @@ scenes["musicroom_play_instruments_order"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("金色徽章")) {
-            gameState.items.push("金色徽章");
-            if(typeof showItemPopup === "function") showItemPopup("金色徽章");
-            gameState.medals.push("金色徽章");
-            addMedal();
+            msg += addItem("金色徽章");
             msg += `<div class="system-message">【获得物品】：金色徽章</div>`;
         }
         return msg;
@@ -6605,8 +6155,7 @@ scenes["studio_cabinet_open"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("神秘溶剂")) {
-            gameState.items.push("神秘溶剂");
-            if(typeof showItemPopup === "function") showItemPopup("神秘溶剂");
+            msg += addItem("神秘溶剂");
             msg += `<div class="system-message">【获得物品】：神秘溶剂</div>`;
         }
         return msg;
@@ -6639,10 +6188,7 @@ scenes["studio_mix"] = {
     on_enter: () => {
         let msg = "";
         if(!hasItem("彩虹徽章")) {
-            gameState.items.push("彩虹徽章");
-            if(typeof showItemPopup === "function") showItemPopup("彩虹徽章");
-            gameState.medals.push("彩虹徽章");
-            addMedal();
+            msg += addItem("彩虹徽章");
             msg += `<div class="system-message">【获得物品】：彩虹徽章</div>`;
         }
         return msg;
@@ -6657,10 +6203,7 @@ scenes["studio_mix"] = {
 scenes["bedroom_final_secret"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("管家的忏悔录")) {
-            gameState.clues.push("管家的忏悔录");
-            msg += `<div class="system-message">【获得线索】：管家的忏悔录</div>`;
-        }
+        msg += addClue("管家的忏悔录");
         return msg;
     },
     desc: `描述: 卧室衣柜背后的暗板被移开了。里面是一间隐秘的祈祷室。祭坛上放着管家奥尔德斯的忏悔录和一枚沾血的戒指。`,
@@ -6688,10 +6231,7 @@ scenes["side_leave_cave"] = {
 scenes["side_play_violin"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("安魂曲奏响")) {
-            gameState.clues.push("安魂曲奏响");
-            msg += `<div class="system-message">【获得线索】：安魂曲奏响</div>`;
-        }
+        msg += addClue("安魂曲奏响");
         return msg;
     },
     desc: `描述: 你拿起了埃莉诺的琴弓，在积灰的小提琴上拉响了一段安魂曲。音乐室里的怨念似乎平息了。`,
@@ -6712,10 +6252,7 @@ scenes["clocktower_gear_clues"] = {
 scenes["side_study_murals"] = {
     on_enter: () => {
         let msg = "";
-        if(!hasClue("七徽章的真相")) {
-            gameState.clues.push("七徽章的真相");
-            msg += `<div class="system-message">【获得线索】：七徽章的真相</div>`;
-        }
+        msg += addClue("七徽章的真相");
         return msg;
     },
     desc: `描述: 你仔细研究了地宫墙壁上的壁画。壁画描绘了庄园地下封印着一个能实现任何愿望的恶魔，而七枚徽章正是解开封印的钥匙。`,

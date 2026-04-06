@@ -254,7 +254,7 @@
 **获得完整线索：拉动哪本书**
 
 **选项：**
-- 去书架拉动智慧之书 [前往 library_pull_wisdom]
+- [选择物品] 从背包中选择要嵌入书桌凹槽的圆盘 [前往 library_use_disk] [正确目标：library_pull_wisdom] [完成目标：library_pull_wisdom] [错误目标：library_use_disk] [正确物品：星盘钥匙] [正确时消耗：是]
 - 先解除石球锁定（若锁定） [前往 library_unlock_stones]
 - 返回大厅 [前往 hall_main]
 

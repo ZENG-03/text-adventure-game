@@ -166,6 +166,21 @@ class SceneRegressionTests(unittest.TestCase):
         state.set("side_butler_completed", True)
         state.set("side_underground_completed", True)
         state.set("side_painting_completed", True)
+        state.set("side_music_completed", True)
+        self.assertFalse(
+            truth_cond(state),
+            msg="ending_5_truth should stay locked when side_clock_completed is missing",
+        )
+        state.set("side_clock_completed", True)
+        self.assertTrue(
+            truth_cond(state),
+            msg="ending_5_truth should unlock after side_clock_completed is also set",
+        )
+
+        state = GameState()
+        state.set("side_butler_completed", True)
+        state.set("side_underground_completed", True)
+        state.set("side_painting_completed", True)
         state.set("side_clock_completed", True)
         state.set("side_music_completed", True)
         self.assertTrue(

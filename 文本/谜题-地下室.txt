@@ -28,7 +28,7 @@
 你用手指触摸凹槽，感到一丝温热。凹槽的底部似乎有某种吸力，像是在等待某种液体。你想起之前在其他房间可能获得过“生命之露”（温室谜题的奖励）。如果你已经拥有生命之露，可以直接使用。
 
 **选项：**
-- 将生命之露倒入凹槽（若有） [前往 basement_use_dew]
+- [选择物品] 从背包中选择要倒入凹槽的物品 [前往 basement_altar] [正确目标：basement_use_dew] [完成目标：basement_use_dew] [错误目标：basement_altar_bottom] [致命目标：basement_blood_attempt] [正确物品：生命之露] [致命词：血|毒|除草剂] [正确时消耗：是] [错误时消耗：否] [致命时消耗：是]
 - 检查祭坛底部 [前往 basement_altar_bottom]
 - 尝试用自己的血液代替 [前往 basement_blood_attempt]
 

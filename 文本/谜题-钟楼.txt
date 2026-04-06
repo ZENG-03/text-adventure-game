@@ -61,6 +61,7 @@
 你发现齿轮组中，I至VI号齿轮都可以转动，但VII号齿轮的轴端是空的——你手中的钥匙正是用来转动它的？实际上，钥匙已经用来开门，现在你需要一个手柄来转动轴端。工作台上的工具箱里或许有。
 
 **选项：**
+- [选择物品] 从背包中选择要插入VII号轴端的工具 [前往 clocktower_gear_room] [正确目标：clocktower_gear_room_2] [完成目标：clocktower_gear_room_2] [错误目标：clocktower_gear_room] [正确物品：摇柄] [正确时消耗：否]
 - 返回工作台寻找手柄 [前往 clocktower_find_handle]
 - 尝试直接用手转动轴端 [前往 clocktower_turn_by_hand]
 - 检查齿轮组是否有其他线索 [前往 clocktower_gear_clues]
@@ -100,6 +101,7 @@
 
 **选项：**
 - 去三层观察钟盘指针的移动 [前往 clocktower_observe_hands]
+  - 拿出阿斯特的怀表对照时间（怀表停在11:55，正好与大钟同步，跳过校准） [前往 clocktower_match_rhythm] [条件：需要阿斯特的怀表]
 - 在齿轮室寻找校准标准 [前往 clocktower_calibration]
 
 ---

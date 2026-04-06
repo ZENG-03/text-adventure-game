@@ -28,7 +28,20 @@
 - 询问管家是否认识埃莉诺 [前往 side_ask_butler_elenor]
 - 检查乐谱手稿的更多细节 [前往 side_score_details]
 - 尝试演奏那把小提琴 [前往 side_play_violin]
+  - 拿出银手镯比对图案 [前往 side_compare_bracelet] [条件：需要拥有银手镯]
 - 在音乐室寻找暗格或隐藏空间 [前往 side_music_hidden]
+
+---
+
+场景ID: side_compare_bracelet
+
+你拿出在画室找到的银手镯，上面刻满紫藤花，内圈也有一只极其微小的夜莺图案，与小提琴上的标记一模一样。这证实了画室里的神秘银手镯也是埃莉诺的所有物。你似乎渐渐拼凑出了这个隐秘故事的全貌。
+
+**获得线索：手镯与小提琴的标记吻合**
+
+**选项：**
+- 询问管家是否认识埃莉诺 [前往 side_ask_butler_elenor]
+- 继续探索 [返回 side_story_4_start]
 
 ---
 

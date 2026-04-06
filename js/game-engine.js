@@ -10,7 +10,8 @@ let globalState = {
     saveVersion: 3,
     playCount: 0,
     endingsReached: [],
-    achievements: []
+    achievements: [],
+    visitedOptions: {}
 };
 function safeParseJSON(raw, fallbackValue) {
     if (!raw) return fallbackValue;
@@ -39,7 +40,8 @@ function migrateSave(data, type) {
             saveVersion: 3,
             playCount: typeof data.playCount === "number" ? data.playCount : 0,
             endingsReached: Array.isArray(data.endingsReached) ? data.endingsReached : [],
-            achievements: Array.isArray(data.achievements) ? data.achievements : []
+            achievements: Array.isArray(data.achievements) ? data.achievements : [],
+            visitedOptions: (data.visitedOptions && typeof data.visitedOptions === "object") ? data.visitedOptions : {}
         };
     }
     if (type === "game") {
@@ -386,34 +388,10 @@ function setBackground(sceneId) {
     }
 }
 
-function showItemPopup(itemName) {
-    if (window.itemPopupTimeout) {
-        clearTimeout(window.itemPopupTimeout);
-        window.itemPopupTimeout = null;
-    }
-    let modal = document.getElementById("item-popup-custom");
-    if (!modal) {
-        const div = document.createElement("div");
-        div.id = "item-popup-custom";
-        div.style.cssText = "position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.9); border:2px solid gold; border-radius:16px; padding:20px; z-index:10001; text-align:center; display:none;";
-        div.innerHTML = `<img id="popup-img-custom" style="max-width:80vw; max-height:70vh; border-radius:8px;"><div id="popup-text-custom" style="margin-top:10px; color:gold; font-size:1.5em;"></div>`;
-        document.body.appendChild(div);
-        modal = div;
-    }
-    const img = document.getElementById("popup-img-custom");
-    const textDiv = document.getElementById("popup-text-custom");
-    
-    img.src = `images/item_popup/${encodeURIComponent(itemName)}.jpg`;
-    img.onerror = () => { img.style.display = "none"; };
-    img.onload = () => { img.style.display = "block"; };
-    textDiv.innerText = `获得：${itemName}`;
-    modal.style.display = "block";
-    
-    window.itemPopupTimeout = setTimeout(() => {
-        modal.style.display = "none";
-        window.itemPopupTimeout = null;
-    }, 2500);
-}
+window.showItemPopup = function(itemName) {
+    const desc = ITEM_DESCRIPTIONS[itemName] || "获得新物品";
+    window.showItemDetails(itemName, desc);
+};
 // ========== 图片资源与游戏程序整合结束 ==========
 
 function renderScene(sceneId) {
@@ -446,7 +424,7 @@ function renderScene(sceneId) {
     if (sceneId === "hall_main" && gameState.hall_medal_count >= 3 && !getFlag("side_butler_triggered")) {
         setFlag("side_butler_triggered", true);
         sceneId = "sys_side_story_1_trigger";
-    } else if (sceneId === "studio_entry" && hasItem("色彩徽章") && !getFlag("side_painting_triggered")) {
+    } else if (sceneId === "studio_entry" && (hasItem("色彩徽章") || hasItem("橙色徽章")) && !getFlag("side_painting_triggered")) {
         setFlag("side_painting_triggered", true);
         sceneId = "sys_side_story_2_trigger";
     } else if (sceneId === "basement_entry" && hasItem("深渊徽章") && !getFlag("side_underground_triggered")) {
@@ -455,11 +433,6 @@ function renderScene(sceneId) {
     } else if (sceneId === "musicroom_entry" && hasItem("旋律徽章") && !getFlag("side_music_triggered")) {
         setFlag("side_music_triggered", true);
         sceneId = "sys_side_story_4_trigger";
-    }
-    
-    // Auto-set clock flag if Ruby Medal is obtained, to sync with endgame condition
-    if (hasItem("红宝石徽章") && !getFlag("side_clock_completed")) {
-        setFlag("side_clock_completed", true);
     }
 
     if (sceneId.startsWith("side_ending_")) {
@@ -502,10 +475,14 @@ function renderScene(sceneId) {
         gameState.runStartedAt = Date.now();
     }
     
-    // 执行自动存档（只有不是在标题和结局界面才存档）
-    if (sceneId !== "title" && !sceneId.startsWith("ending_")) {
+    // 执行自动存档（死亡/陷阱/失败场景不存，避免坏档覆盖）
+    const lowerSceneId = String(sceneId || "").toLowerCase();
+    const shouldSkipAutoSave =
+        lowerSceneId === "title" ||
+        lowerSceneId.startsWith("ending_") ||
+        /(trap|death|dead|poison|explosion|fail|game_over|bad_end|fall)/.test(lowerSceneId);
+    if (!shouldSkipAutoSave) {
         localStorage.setItem("riddle_auto_save", JSON.stringify(gameState));
-        showToast("自动存档成功 💾");
         showToast("自动存档成功 💾");
     }
 
@@ -560,8 +537,9 @@ function renderScene(sceneId) {
             dynamicDesc += "\\n[大厅发生了变化：一些雕像的眼睛似乎在盯着你。]";
         }
         
-        const rFmt = (name, item) => {
-            if (gameState.items.some(i => i.includes(item))) {
+        const rFmt = (name, possibleItems) => {
+            const itemsList = Array.isArray(possibleItems) ? possibleItems : [possibleItems];
+            if (gameState.items.some(i => itemsList.some(pat => i.includes(pat)))) {
                 return `<span style="color:#d4af37;text-shadow:0 0 5px #d4af37;font-weight:bold;">${name}(★已探索)</span>`;
             }
             return `<span style="color:#777;">${name}(未探索)</span>`;
@@ -570,7 +548,7 @@ function renderScene(sceneId) {
         dynamicDesc += `
 <div style="background:rgba(0,0,0,0.5); border:1px solid #444; padding:10px; border-radius:5px; margin-top:20px; font-family:monospace; line-height:1.6;">
     <div style="color:#aaa; border-bottom:1px solid #444; padding-bottom:5px; margin-bottom:5px; font-weight:bold;">🗺️ 庄园状态简图</div>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二楼：${rFmt("画室", "色彩徽章")} | ${rFmt("最深处的卧室", "彩虹徽章")}<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二楼：${rFmt("画室", ["色彩徽章", "橙色徽章"])} | ${rFmt("最深处的卧室", "彩虹徽章")}<br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一楼：${rFmt("音乐室", "旋律徽章")} | ${rFmt("大厅", "起始徽章")} | ${rFmt("温室花房", "生命徽章")} | ${rFmt("书房/图书馆", "智慧徽章")}<br>
     &nbsp;&nbsp;东侧附属：${rFmt("钟楼", "时空徽章")}<br>
     &nbsp;&nbsp;&nbsp;地下：${rFmt("地下室", "深渊徽章")}
@@ -730,22 +708,50 @@ const ITEM_DESCRIPTIONS = {
     "金色徽章": "第五枚徽章，金色，散发着淡淡的草木香。",
     "紫色徽章": "第六枚徽章，紫色，表面刻着复杂的符文。",
     "彩虹徽章": "第七枚徽章，七色流转，是所有徽章中唯一会发光的。",
-    "色彩徽章": "第四枚徽章，彩色。",
+    "色彩徽章": "第四枚徽章的别名，在部分分支中与橙色徽章等价。",
     "旋律徽章": "音乐室的徽章。",
     "深渊徽章": "地下室的徽章。",
+    "古树血提取剂": "用七种植物血液调配的深红色液体，能唤醒枯死的古树。",
+    "七色花肥料": "能迅速为七色花提供丰富营养的肥料。",
+    "七色花苞": "被琥珀封存的古老花苞，内部保留着完整的七色结构。",
+    "七色花琥珀": "琥珀中封存着七色花花瓣，背面刻着“以七血滋养，可复生机”。",
+    "长柄夹": "细长夹具，适合从深槽、石盆或机关缝隙中安全取物。",
+    "旧照片": "照片背面的字迹让你察觉到管家隐藏的过去。",
+    "管家在隐瞒什么": "管家似乎在替主人隐瞒一段不为人知的秘密。",
     "克劳利的日记": "皮质封面，记录着庄园的部分秘密。",
     "机械齿轮": "铜质齿轮，边缘有编号，可用于其他机关。",
+    "调音扳手": "用于校准管风琴与弦乐器音高的精密工具。",
     "共鸣水晶": "透明水晶，敲击时会发出纯净的乐音。",
     "神秘颜料": "七色颜料混合而成，可以唤醒枯萎的植物。",
     "生命之露": "一小瓶清澈的液体，散发着草木的清香。",
     "符文石": "黑色石头上刻着古老的符文，微微发热。",
     "星盘钥匙": "铜质圆盘，可嵌入书桌凹槽。",
     "阿斯特的怀表": "停止的怀表，指针指向11:55。",
-    "伊莲娜的纪念徽章": "心形彩虹色徽章，背面刻着“永存于画中”。",
     "夜莺胸针": "银质胸针，夜莺的眼睛是红宝石。",
-    "埃莉诺的琴弓": "乌木琴弓，弓尾库镶着珍珠母贝。",
     "托马斯的笔记本": "地质学家的考察笔记。",
-    "守护者符文": "手背上的银色符文，获得后可封印古老力量。"
+    "守护者符文": "手背上的银色符文，获得后可封印古老力量。",
+    "伊莲娜的纪念徽章": "心形彩虹色徽章，背面刻着“永存于画中”。",
+
+    "停止的怀表": "一块没有指针的怀表，表盘上只有细密的刻度。表盖内侧刻着一行小字：“时间停止的地方，答案开始。”",
+    "衣柜钥匙": "一把黄铜钥匙，钥匙柄上刻着“衣柜”二字，表面有轻微的锈迹，但仍能使用。",
+    "铜钥匙": "一枚古铜色钥匙，钥匙齿纹路清晰，似乎能打开某处隐秘的锁。",
+    "艺术奖章": "一枚铜质奖章，正面刻着“年度最佳肖像画家”，背面有阿斯特·克劳利的名字和1890年的日期。",
+    "画展目录": "一本泛黄的小册子，封面印着“阿斯特·克劳利个人画展，1890年秋”。目录中列出了七幅画作，备注栏写着模特伊莲娜在画展前失踪。",
+    "伊莲娜的日记": "伊莲娜·韦恩的私人日记，皮质封面烫金。日记记录了她与阿斯特从相爱到恐惧的全过程，最后一页有阿斯特的忏悔。",
+    "银手镯": "一只银质手镯，内壁刻着“A.C. to E.W.”（阿斯特·克劳利赠伊莲娜·韦恩）。触摸时能感到一丝冰凉。",
+    "紫藤花束": "一束干枯的紫藤花，用褪色的丝带扎着，散发出淡淡的、几不可闻的香气。花瓣虽已枯黄，却仍保持着绽放的姿态。",
+    "照片": "一张褪色的旧照片，照片中一对年轻男女并肩站在紫藤花架下，笑容温暖。背面写着：“1890年春，我们曾拥有过一切。”",
+    "画布碎片": "一小块从画布上撕下的碎片，上面画着一只传神的眼睛——伊莲娜的眼睛，仿佛在凝视着你。背面写着：“我的灵魂在这里。”",
+    "阿斯特的遗信": "阿斯特·克劳利写给伊莲娜的未寄出的信，信纸泛黄，字迹时而工整时而潦草。信中承认他建造谜语馆是为了纪念伊莲娜，并请求原谅。",
+    "夜莺锁片": "一枚夜莺形状的小锁片，背后刻着“花园紫藤架下，1888”。锁片内部似乎藏着某种机关，可以旋转。",
+    "埃莉诺前六乐章总谱": "一份完整的手写乐谱，包含埃莉诺·布莱克伍德交响曲的前六个乐章：诞生、爱情、漂泊、归乡、告别、等待。乐谱边缘有铅笔注释。",
+    "埃莉诺遗信": "埃莉诺写给阿斯特的遗信，字迹娟秀但虚弱。信中交代她将最后的秘密藏在音乐室壁炉后，并希望有人能完成第七乐章。",
+    "音乐室铜钥匙": "一把造型古朴的铜钥匙，钥匙柄上刻着夜莺图案，可用于打开音乐室壁炉后的密道。",
+    "埃莉诺制琴笔记": "一本深蓝色丝绒封面的笔记，记录了埃莉诺制作七件乐器的技术细节和心路历程，末尾附有她的病中日记。",
+    "埃莉诺的琴弓": "一把乌木琴弓，弓尾库镶着珍珠母贝，马尾洁白如新。弓杆上刻着：“奏响我，我将归来。”",
+    "夜莺徽章（纪念品）": "一枚银色的夜莺徽章，不是主线的七徽章之一。背面刻着：“感谢你让我完成最后的乐章。”",
+    "埃莉诺的完整交响曲（七乐章全本）": "一份完整的交响曲总谱，共七个乐章，第七乐章标题为“重生”。这是埃莉诺未竟之作的最终完成版。",
+    "紫藤花种子": "几粒干瘪的紫藤花种子，用纸包裹着。纸包上写着：“种在安息地前，她将不再孤单。”",
 };
 
 
