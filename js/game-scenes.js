@@ -98,15 +98,63 @@ scenes["hall_main"] = {
 
 scenes["hall_fireplace"] = {
     on_enter: () => {
-        if(!hasClue("烧焦的纸片 (凯撒密码提示)")) {
-            gameState.clues.push("烧焦的纸片 (凯撒密码提示)");
-            return `<div class="system-message">【获得线索】：烧焦的纸片</div>`;
+        let msg = "";
+        if (!StateAPI.hasClue("烧焦的纸片 (凯撒密码提示)")) {
+            msg += StateAPI.addClue("烧焦的纸片 (凯撒密码提示)");
         }
-        return "";
+        return msg;
     },
-    desc: `你用壁炉钳拨开灰烬，找到几片未完全烧毁的纸。\n写着：“第五个房间的钥匙藏在音乐里... 小心音不准...”\n还有一串数字：11-15-21-18-20-5-19-25。好像是凯撒密码。`,
-    options: [{ text: "返回大厅", target: "hall_main" }]
+    desc: `你用壁炉钳拨开灰烬，找到几片未完全烧毁的纸。
+写着：“第五个房间的钥匙藏在音乐里... 小心音不准...”
+壁炉的暗盒上有一个密码锁，以及一串神秘数字：
+3-15-21-18-20-5-19-25
+(提示: 数字可能对应字母的顺序。)\`,
+    options: [
+        { text: "不理会，返回大厅", target: "hall_main" }
+    ],
+    hints: [
+        "A=1, B=2, C=3...",
+        "3=C, 15=O, 21=U... 这个词代表礼貌(Courtesy)",
+        "答案是 courtesy"
+    ],
+    input: {
+        validate: (ans) => ans.trim().toLowerCase() === "courtesy",
+        success: "musicroom_unlock",
+        failMsg: "密码错误，暗格发出一声沉闷的声响。"
+    }
 };
+
+scenes["musicroom_unlock"] = {
+    on_enter: () => {
+        let msg = "";
+        if (!StateAPI.hasItem("夜莺长笛")) {
+            msg += StateAPI.addItem("夜莺长笛");
+            msg += `<div class="system-message">【获得关键道具】：夜莺长笛</div>`;
+        }
+        return msg;
+    },
+    desc: `输入正确！壁炉底座弹出一个暗格，里面躺着一把精美的【夜莺长笛】。或许这是音乐室某处机关的钥匙。`,
+    options: [
+        { text: "带着长笛返回", target: "hall_main" }
+    ]
+};
+
+
+scenes["musicroom_unlock"] = {
+    on_enter: () => {
+        let msg = "";
+        if (!StateAPI.hasItem("夜莺长笛")) {
+            msg += StateAPI.addItem("夜莺长笛");
+            msg += `<div class="system-message">【获得关键道具】：夜莺长笛</div>`;
+        }
+        return msg;
+    },
+    desc: `输入正确！壁炉底座弹出一个暗格，里面躺着一把精美的【夜莺长笛】。或许这是音乐室某处机关的钥匙。`,
+    options: [
+        { text: "带着长笛返回", target: "hall_main" }
+    ]
+};
+
 
 scenes["puzzle_statues"] = {
     desc: `大厅两侧各立着四座大理石雕像：雅典娜、阿波罗、赫尔墨斯、阿尔忒弥斯。\n每座底部都有诗句，并可以旋转。\n你需要按一定顺序排列它们。`,
@@ -2526,6 +2574,8 @@ scenes["greenhouse_entry"] = {
         { text: "检查苗圃", target: "greenhouse_nursery" },
         { text: "查看水井", target: "greenhouse_well" },
         { text: "研究水培墙", target: "greenhouse_hydroponic" },
+        { text: "检查温室实验台", target: "greenhouse_lab" },
+        { text: "检查温室实验台", target: "greenhouse_lab" },
         { text: "返回大厅", target: "hall_main" }
     ]
 };
@@ -2570,7 +2620,7 @@ scenes["greenhouse_pond_tool"] = {
         msg += addClue("需要七种植物部位（根、茎、叶、花、果、种、苗）来激活七色花种");
         return msg;
     },
-    desc: `你用长柄夹深入石盆，夹出一个巴掌大的铜盒。盒子锈迹斑斑，但锁扣完好。打开后，里面是一块琥珀，琥珀中封存着一朵七色花的花瓣——七片花瓣，每片颜色不同。琥珀背面刻着：“七色花种，唯此一株。以七血滋养，可复生机。”`,
+    desc: `你用长柄夹深入石盆，夹出一个巴掌大的铜盒。盒子锈迹斑斑，但锁扣完好。打开后，里面是一个空槽，似乎曾经封存着一朵七色花的花瓣。琥珀背面刻着：“七色花种，唯此一株。以七血滋养，可复生机。”`,
     options: [
         { text: "检查七个花坛", target: "greenhouse_flower_beds" },
         { text: "检查苗圃", target: "greenhouse_nursery" },
@@ -5621,36 +5671,9 @@ scenes["studio_crystal_solution"] = {
     ]
 };
 
-scenes["greenhouse_entry"] = {
-    desc: `温室是一个巨大的玻璃穹顶建筑，内部却是一片枯萎的植物王国。藤蔓干枯，花朵凋零，空气中弥漫着一股腐烂的甜腻。房间中央有一棵枯死的古树，树干上刻着：“生命之水，需以七色之血唤醒。”
-树下有一个石盆，盆中盛着浑浊的液体。周围有七个花盆，分别标着七种颜色，但全部空空如也。`,
-    options: [
-        { text: "检查古树", target: "greenhouse_tree" },
-        { text: "观察石盆", target: "greenhouse_basin" },
-        { text: "使用神秘颜料（若有）", target: "greenhouse_pigment_solution", condition: () => hasItem("神秘颜料") },
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
 
-scenes["greenhouse_pigment_solution"] = {
-    on_enter: () => {
-        let msg = "";
-        if(!hasItem("金色徽章")) {
-            msg += addItem("金色徽章");
-            msg += `<div class="system-message">【获得物品】：金色徽章</div>`;
-        }
-        if(!hasItem("生命之露")) {
-            msg += addItem("生命之露");
-            msg += `<div class="system-message">【获得物品】：生命之露</div>`;
-        }
-        return msg;
-    },
-    desc: `你将神秘颜料分别滴入七个花盆，颜料渗入土壤后，枯死的植物竟然瞬间焕发生机，绽放出七色花朵。花朵的花粉飘向古树，树干上缓缓渗出一滴晶莹的露珠，落入石盆。石盆中的液体变得清澈，你从中捞出一枚金色徽章和一小瓶“生命之露”。`,
-    options: [
-        { text: "返回大厅", target: "hall" },
-        { text: "返回大厅", target: "hall_main" }
-    ]
-};
+
+
 
 scenes["basement_entry"] = {
     desc: `地下室阴冷潮湿，空气中夹杂着铁锈与泥土的气息。铁门后的房间像是一座古老的工坊，墙壁上挂满了各种工具：锤子、凿子、锯子，还有一个巨大的熔炉，炉膛早已冰冷。
@@ -6263,3 +6286,77 @@ scenes["side_study_murals"] = {
 
 })();
 
+
+
+scenes["greenhouse_lab"] = {
+    desc: `温室深处有一张布满藤蔓的刻痕实验台。桌面上散落着几只烧杯和一尊干涸的融合槽。\n你注意到墙上写着一段模糊的笔记：“将【七色花苞】与【古树血提取剂】相融，方能令色彩不灭，化为琥珀。”\n(在背包中选中对应的道具，按确认合成)\`,
+    options: [
+        { text: "离开实验台", target: "greenhouse_entry" }
+    ],
+    hints: [
+        "需要在道具栏选中两个特定的物品进行合成",
+        "笔记提示了【七色花苞】和【古树血提取剂】",
+        "选择这两样物品然后点击合成。"
+    ],
+    combine: {
+        required: ["七色花苞", "古树血提取剂"],
+        success: "greenhouse_lab_success",
+        failMsg: "这些物品放入融合槽后毫无反应，或者产生了难闻的气味。"
+    }
+};
+
+scenes["greenhouse_lab_success"] = {
+    on_enter: () => {
+        let msg = "";
+        StateAPI.removeItem("七色花苞");
+        StateAPI.removeItem("古树血提取剂");
+        msg += `<div class="system-message">【失去道具】：七色花苞、古树血提取剂</div>`;
+
+        if (!StateAPI.hasItem("七色花琥珀")) {
+            msg += StateAPI.addItem("七色花琥珀");
+            msg += `<div class="system-message">【获得合成道具】：七色花琥珀</div>`;
+        }
+        return msg;
+    },
+    desc: `花苞在接触到提取剂的瞬间，原本微弱的七彩光芒瞬间绽放并凝固！\n你得到了一块完美的【七色花琥珀】。`,
+    options: [
+        { text: "返回温室", target: "greenhouse_entry" }
+    ]
+};
+
+
+scenes["greenhouse_lab"] = {
+    desc: `温室深处有一张布满藤蔓的刻痕实验台。桌面上散落着几只烧杯和一尊干涸的融合槽。\n你注意到墙上写着一段模糊的笔记：“将【七色花苞】与【古树血提取剂】相融，方能令色彩不灭，化为琥珀。”\n(在背包中选中对应的道具，按确认合成)\`,
+    options: [
+        { text: "离开实验台", target: "greenhouse_entry" }
+    ],
+    hints: [
+        "需要在道具栏选中两个特定的物品进行合成",
+        "笔记提示了【七色花苞】和【古树血提取剂】",
+        "选择这两样物品然后点击合成。"
+    ],
+    combine: {
+        required: ["七色花苞", "古树血提取剂"],
+        success: "greenhouse_lab_success",
+        failMsg: "这些物品放入融合槽后毫无反应，或者产生了难闻的气味。"
+    }
+};
+
+scenes["greenhouse_lab_success"] = {
+    on_enter: () => {
+        let msg = "";
+        StateAPI.removeItem("七色花苞");
+        StateAPI.removeItem("古树血提取剂");
+        msg += `<div class="system-message">【失去道具】：七色花苞、古树血提取剂</div>`;
+
+        if (!StateAPI.hasItem("七色花琥珀")) {
+            msg += StateAPI.addItem("七色花琥珀");
+            msg += `<div class="system-message">【获得合成道具】：七色花琥珀</div>`;
+        }
+        return msg;
+    },
+    desc: `花苞在接触到提取剂的瞬间，原本微弱的七彩光芒瞬间绽放并凝固！\n你得到了一块完美的【七色花琥珀】。`,
+    options: [
+        { text: "返回温室", target: "greenhouse_entry" }
+    ]
+};
