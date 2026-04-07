@@ -108,7 +108,7 @@ scenes["hall_fireplace"] = {
 写着：“第五个房间的钥匙藏在音乐里... 小心音不准...”
 壁炉的暗盒上有一个密码锁，以及一串神秘数字：
 3-15-21-18-20-5-19-25
-(提示: 数字可能对应字母的顺序。)\`,
+(提示: 数字可能对应字母的顺序。)`,
     options: [
         { text: "不理会，返回大厅", target: "hall_main" }
     ],
@@ -138,23 +138,6 @@ scenes["musicroom_unlock"] = {
         { text: "带着长笛返回", target: "hall_main" }
     ]
 };
-
-
-scenes["musicroom_unlock"] = {
-    on_enter: () => {
-        let msg = "";
-        if (!StateAPI.hasItem("夜莺长笛")) {
-            msg += StateAPI.addItem("夜莺长笛");
-            msg += `<div class="system-message">【获得关键道具】：夜莺长笛</div>`;
-        }
-        return msg;
-    },
-    desc: `输入正确！壁炉底座弹出一个暗格，里面躺着一把精美的【夜莺长笛】。或许这是音乐室某处机关的钥匙。`,
-    options: [
-        { text: "带着长笛返回", target: "hall_main" }
-    ]
-};
-
 
 scenes["puzzle_statues"] = {
     desc: `大厅两侧各立着四座大理石雕像：雅典娜、阿波罗、赫尔墨斯、阿尔忒弥斯。\n每座底部都有诗句，并可以旋转。\n你需要按一定顺序排列它们。`,
@@ -5797,27 +5780,26 @@ scenes["clocktower_fall"] = {
 
 scenes["greenhouse_poison"] = {
     desc: `你将错误的液体倒入石盆，枯树中喷出腐臭的毒气，你来不及逃离，窒息倒下。
-（游戏结束）
-（注：实际实现时，可设计更多分支与失败结局，此处仅展示核心成功路线与部分失败场景，文本总量已接近一万字。您可在此基础上扩展更多选项与描述，以满足完整分支需求。）
- :WofI D :   h a l l _ i n j u r e d 
- 
- \`OSN\$OƉΑnn!j|0
-NwSǏNYEN\`O(W'YSQQv0Wg
-Neg0
- {[eY\\_e(W NeQQ0Ww@w\`O
- 
- c"}\`Ov؏@wbT0
- 
- * * 	y* * 
- -   p0Wzweg~~c"}  [ MR_  h a l l _ m a i n ] 
- 
- 
- `,
+（游戏结束）`,
     options: [
         { text: "返回大厅", target: "hall_main" }
     ]
 };
 
+scenes["hall_injured"] = {
+    on_enter: () => {
+        let msg = "";
+        if (!StateAPI.getFlag("中毒（轻微，影响部分操作）")) {
+            StateAPI.setFlag("中毒（轻微，影响部分操作）", true);
+            msg += `<div class="system-message">【状态】：中毒（轻微，影响部分操作）</div>`;
+        }
+        return msg;
+    },
+    desc: `你感到极其不适，退回到了大厅。你需要休整一下。`,
+    options: [
+        { text: "继续探索", target: "hall_main" }
+    ]
+};
 // --- 自动生成的 文本/主线3_补全内容.txt 场景 ---
 scenes["studio_water_tank"] = {
     desc: `描述: 你走近画室角落里废弃的洗笔水槽。水槽中积满了一层浑浊的、散发着刺鼻化学气味的暗色液体。借着微弱的光线，你注意到水底似乎沉着一块刻着符号的奇怪薄片。`,
@@ -6284,79 +6266,41 @@ scenes["side_study_murals"] = {
     ]
 };
 
+
+scenes["greenhouse_lab"] = {
+    desc: `温室深处有一张布满藤蔓的刻痕实验台。桌面上散落着几只烧杯和一尊干涸的融合槽。\n你注意到墙上写着一段模糊的笔记：“将【七色花苞】与【古树血提取剂】相融，方能令色彩不灭，化为琥珀。”\n(在背包中选中对应的道具，按确认合成)`,
+    options: [
+        { text: "离开实验台", target: "greenhouse_entry" }
+    ],
+    hints: [
+        "需要在道具栏选中两个特定的物品进行合成",
+        "笔记提示了【七色花苞】和【古树血提取剂】",
+        "选择这两样物品然后点击合成。"
+    ],
+    combine: {
+        required: ["七色花苞", "古树血提取剂"],
+        success: "greenhouse_lab_success",
+        failMsg: "这些物品放入融合槽后毫无反应，或者产生了难闻的气味。"
+    }
+};
+
+scenes["greenhouse_lab_success"] = {
+    on_enter: () => {
+        let msg = "";
+        StateAPI.removeItem("七色花苞");
+        StateAPI.removeItem("古树血提取剂");
+        msg += `<div class="system-message">【失去道具】：七色花苞、古树血提取剂</div>`;
+
+        if (!StateAPI.hasItem("七色花琥珀")) {
+            msg += StateAPI.addItem("七色花琥珀");
+            msg += `<div class="system-message">【获得合成道具】：七色花琥珀</div>`;
+        }
+        return msg;
+    },
+    desc: `花苞在接触到提取剂的瞬间，原本微弱的七彩光芒瞬间绽放并凝固！\n你得到了一块完美的【七色花琥珀】。`,
+    options: [
+        { text: "返回温室", target: "greenhouse_entry" }
+    ]
+};
+
 })();
-
-
-
-scenes["greenhouse_lab"] = {
-    desc: `温室深处有一张布满藤蔓的刻痕实验台。桌面上散落着几只烧杯和一尊干涸的融合槽。\n你注意到墙上写着一段模糊的笔记：“将【七色花苞】与【古树血提取剂】相融，方能令色彩不灭，化为琥珀。”\n(在背包中选中对应的道具，按确认合成)\`,
-    options: [
-        { text: "离开实验台", target: "greenhouse_entry" }
-    ],
-    hints: [
-        "需要在道具栏选中两个特定的物品进行合成",
-        "笔记提示了【七色花苞】和【古树血提取剂】",
-        "选择这两样物品然后点击合成。"
-    ],
-    combine: {
-        required: ["七色花苞", "古树血提取剂"],
-        success: "greenhouse_lab_success",
-        failMsg: "这些物品放入融合槽后毫无反应，或者产生了难闻的气味。"
-    }
-};
-
-scenes["greenhouse_lab_success"] = {
-    on_enter: () => {
-        let msg = "";
-        StateAPI.removeItem("七色花苞");
-        StateAPI.removeItem("古树血提取剂");
-        msg += `<div class="system-message">【失去道具】：七色花苞、古树血提取剂</div>`;
-
-        if (!StateAPI.hasItem("七色花琥珀")) {
-            msg += StateAPI.addItem("七色花琥珀");
-            msg += `<div class="system-message">【获得合成道具】：七色花琥珀</div>`;
-        }
-        return msg;
-    },
-    desc: `花苞在接触到提取剂的瞬间，原本微弱的七彩光芒瞬间绽放并凝固！\n你得到了一块完美的【七色花琥珀】。`,
-    options: [
-        { text: "返回温室", target: "greenhouse_entry" }
-    ]
-};
-
-
-scenes["greenhouse_lab"] = {
-    desc: `温室深处有一张布满藤蔓的刻痕实验台。桌面上散落着几只烧杯和一尊干涸的融合槽。\n你注意到墙上写着一段模糊的笔记：“将【七色花苞】与【古树血提取剂】相融，方能令色彩不灭，化为琥珀。”\n(在背包中选中对应的道具，按确认合成)\`,
-    options: [
-        { text: "离开实验台", target: "greenhouse_entry" }
-    ],
-    hints: [
-        "需要在道具栏选中两个特定的物品进行合成",
-        "笔记提示了【七色花苞】和【古树血提取剂】",
-        "选择这两样物品然后点击合成。"
-    ],
-    combine: {
-        required: ["七色花苞", "古树血提取剂"],
-        success: "greenhouse_lab_success",
-        failMsg: "这些物品放入融合槽后毫无反应，或者产生了难闻的气味。"
-    }
-};
-
-scenes["greenhouse_lab_success"] = {
-    on_enter: () => {
-        let msg = "";
-        StateAPI.removeItem("七色花苞");
-        StateAPI.removeItem("古树血提取剂");
-        msg += `<div class="system-message">【失去道具】：七色花苞、古树血提取剂</div>`;
-
-        if (!StateAPI.hasItem("七色花琥珀")) {
-            msg += StateAPI.addItem("七色花琥珀");
-            msg += `<div class="system-message">【获得合成道具】：七色花琥珀</div>`;
-        }
-        return msg;
-    },
-    desc: `花苞在接触到提取剂的瞬间，原本微弱的七彩光芒瞬间绽放并凝固！\n你得到了一块完美的【七色花琥珀】。`,
-    options: [
-        { text: "返回温室", target: "greenhouse_entry" }
-    ]
-};

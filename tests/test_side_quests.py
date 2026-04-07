@@ -33,7 +33,7 @@ class TestSideQuests(unittest.TestCase):
 
     def test_side_quest_trigger(self):
         # Trigger side_story_1
-        self.engine.current_scene = self.engine.scenes["hall_main"]
+        self.engine.current_scene = self.engine.scenes["hall_story_menu"]
         self.engine.state.set("hall_medal_count", 3)
         self.assertTrue(self.go_to("side_story_1_start"))
 

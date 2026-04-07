@@ -29,10 +29,12 @@ class TestFullPlaythrough(unittest.TestCase):
         self.assertEqual(engine.current_scene.id, "opening_studio")
         self.assertTrue(go_to("opening_gate"))
         self.assertTrue(go_to("hall_initial_enter"))
+        self.assertTrue(go_to("hall_main"))
         
         # 1. 蓝宝石 (图书馆)
+        self.assertTrue(go_to("hall_explore_menu"))
         self.assertTrue(go_to("library_entry"))
-        self.assertTrue(go_to("library_search"))
+        self.assertTrue(go_to("library_blank_book"))
         # self.assertTrue(go_to("library_diary")) 
         # For simplicity just add items directly or walk the real path:
         engine.state.add_item("蓝宝石徽章")
@@ -46,7 +48,10 @@ class TestFullPlaythrough(unittest.TestCase):
         engine.state.add_item("彩虹徽章")
         
         engine.state.set("hall_medal_count", 7)
-        self.assertTrue(go_to("hall_main"))
+        self.assertTrue(go_to("library_entry"))
+        self.assertTrue(go_to("hall_main")) # Redirects to side_story_1_start
+        self.assertTrue(go_to("hall_main")) # Returns to hall_main
+        self.assertTrue(go_to("hall_explore_menu"))
         
         # Now go to final room
         # We need to simulate the choices up to true ending.

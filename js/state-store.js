@@ -513,4 +513,45 @@
         validateRootState: validateRootState,
         createStore: createStore
     };
+
+    function loadState() {
+        const raw = localStorage.getItem("game_state");
+        let parsed = null;
+        try {
+            if (raw) parsed = JSON.parse(raw);
+        } catch(e) {}
+        
+        const stateStore = window.StateStore.createStore();
+        if (parsed) {
+            if (parsed.profile || parsed.run) {
+                stateStore.replaceRoot(parsed);
+            } else {
+                // Migrate from legacy format
+                if (parsed.endings_reached || typeof parsed.play_count === 'number') {
+                    stateStore.replaceProfile(parsed);
+                }
+                const oldRun = localStorage.getItem("riddle_auto_save");
+                if (oldRun) {
+                    try {
+                        const parsedOldRun = JSON.parse(oldRun);
+                        if (parsedOldRun.current_scene_id) {
+                            stateStore.replaceRun(parsedOldRun);
+                        }
+                    } catch(e) {}
+                }
+            }
+        }
+        return stateStore.exportRoot();
+    }
+
+    function saveState(state) {
+        localStorage.setItem("game_state", JSON.stringify(state));
+    }
+
+    window.loadState = loadState;
+    window.saveState = saveState;
 })();
+
+export const loadState = window.loadState;
+export const saveState = window.saveState;
+

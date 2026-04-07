@@ -64,8 +64,8 @@ class SceneRegressionTests(unittest.TestCase):
         )
 
     def test_final_chamber_unlock_condition(self):
-        hall_main = self.scenes.get("hall_main")
-        self.assertIsNotNone(hall_main, msg="Scene 'hall_main' is missing")
+        hall_main = self.scenes.get("hall_explore_menu")
+        self.assertIsNotNone(hall_main, msg="Scene 'hall_explore_menu' is missing")
 
         final_entry_opt = None
         for opt in hall_main.options:
@@ -75,7 +75,7 @@ class SceneRegressionTests(unittest.TestCase):
 
         self.assertIsNotNone(
             final_entry_opt,
-            msg="No option to 'final_chamber_entry' found in 'hall_main'",
+            msg="No option to 'final_chamber_entry' found in 'hall_explore_menu'",
         )
         self.assertIsNotNone(
             final_entry_opt.condition,

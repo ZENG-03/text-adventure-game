@@ -127,6 +127,18 @@ def validate_scene_json(path: Path) -> tuple[dict[str, Any] | None, list[Issue]]
                 )
             )
             continue
+            
+        desc = scene.get("desc", "")
+        if isinstance(desc, str):
+            for pattern in ["尚未实装", "TODO", "占位"]:
+                if pattern in desc:
+                    issues.append(
+                        Issue(
+                            code="incomplete_content",
+                            location=f"{path}:$.{scene_id}.desc",
+                            message=f"Scene description contains incomplete content marker: '{pattern}'",
+                        )
+                    )
 
         options = scene.get("options", [])
         if not isinstance(options, list):

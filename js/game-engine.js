@@ -1,99 +1,41 @@
+import { loadState, saveState } from "./state-store.js";
+
 var gameSettings = {
     fontSize: 16,
     typeSpeed: 25,
     noAnim: false
 };
 
-
+let rootState = loadState();
 // 全局与多周目状态管理
-let globalState = {
-    saveVersion: 3,
-    playCount: 0,
-    endingsReached: [],
-    achievements: [],
-    visitedOptions: {}
+window.profile = rootState.profile;
+// 单局游戏状态管理
+window.run = rootState.run;
+
+// 为了反向兼容，确保本地变量也指向它们
+let profile = window.profile;
+let run = window.run;
+
+export const StateAPI = {
+    hasItem: (name) => run.items.includes(name),
+    addItem: (name) => {
+        if (!run.items.includes(name)) run.items.push(name);
+    },
+    removeItem: (name) => {
+        const idx = run.items.indexOf(name);
+        if (idx !== -1) run.items.splice(idx, 1);
+    },
+    hasClue: (name) => run.clues.includes(name),
+    addClue: (name) => {
+        if (!run.clues.includes(name)) run.clues.push(name);
+    },
+    getFlag: (key) => !!run.flags[key],
+    setFlag: (key, val = true) => run.flags[key] = val
 };
-function safeParseJSON(raw, fallbackValue) {
-    if (!raw) return fallbackValue;
-    try {
-        return JSON.parse(raw);
-    } catch (e) {
-        return fallbackValue;
-    }
-}
-function isValidGlobalState(data) {
-    return data && typeof data === "object" && Array.isArray(data.endingsReached);
-}
-function isValidGameState(data) {
-    return data
-        && typeof data === "object"
-        && Array.isArray(data.medals)
-        && Array.isArray(data.items)
-        && Array.isArray(data.clues)
-        && typeof data.flags === "object"
-        && typeof data.currentSceneId === "string";
-}
-function migrateSave(data, type) {
-    if (!data || typeof data !== "object") return null;
-    if (type === "global") {
-        return {
-            saveVersion: 3,
-            playCount: typeof data.playCount === "number" ? data.playCount : 0,
-            endingsReached: Array.isArray(data.endingsReached) ? data.endingsReached : [],
-            achievements: Array.isArray(data.achievements) ? data.achievements : [],
-            visitedOptions: (data.visitedOptions && typeof data.visitedOptions === "object") ? data.visitedOptions : {}
-        };
-    }
-    if (type === "game") {
-        const migratedFlags = (data.flags && typeof data.flags === "object") ? { ...data.flags } : {};
-        const migratedRoomsCompleted = Array.isArray(data.rooms_completed) ? data.rooms_completed : [];
-        const migratedSideQuests = (data.side_quests && typeof data.side_quests === "object") ? data.side_quests : {};
 
-        if (Array.isArray(data.side_quests)) {
-            data.side_quests.forEach((name) => {
-                if (typeof name === "string" && name) {
-                    migratedFlags[name] = true;
-                }
-            });
-        }
-
-        const sideMap = {
-            butler: "side_butler_completed",
-            painting: "side_painting_completed",
-            underground: "side_underground_completed",
-            clock: "side_clock_completed",
-            music: "side_music_completed"
-        };
-        Object.keys(sideMap).forEach((k) => {
-            const v = migratedSideQuests[k];
-            if (v === true || v === "completed" || v === "done") {
-                migratedFlags[sideMap[k]] = true;
-            }
-        });
-
-        migratedRoomsCompleted.forEach((roomId) => {
-            if (typeof roomId === "string" && roomId) {
-                migratedFlags["room_completed_" + roomId] = true;
-            }
-        });
-
-        return {
-            medals: Array.isArray(data.medals) ? data.medals : [],
-            items: Array.isArray(data.items) ? data.items : [],
-            clues: Array.isArray(data.clues) ? data.clues : [],
-            flags: migratedFlags,
-            currentSceneId: typeof data.currentSceneId === "string" ? data.currentSceneId : "title",
-            hall_medal_count: typeof data.hall_medal_count === "number" ? data.hall_medal_count : 0,
-            runStartedAt: typeof data.runStartedAt === "number" ? data.runStartedAt : null,
-            rooms_completed: migratedRoomsCompleted,
-            side_quests: migratedSideQuests
-        };
-    }
-    return data;
-}
 function unlockAchievement(id, name) {
-    if (!globalState.achievements.includes(id)) {
-        globalState.achievements.push(id);
+    if (!profile.achievements.includes(id)) {
+        profile.achievements.push(id);
         return `<div class="system-message" style="color:#ead67d;font-weight:bold;">🏆 成就解锁：${name}</div>`;
     }
     return "";
@@ -136,9 +78,9 @@ function showAchievementToast(msg) {
 
 function checkAchievements() {
     const msgs = [];
-    const medalCount = gameState.hall_medal_count || gameState.medals.length;
-    const clueCount = gameState.clues.length;
-    const ends = globalState.endingsReached || [];
+    const medalCount = run.hall_medal_count || run.medals.length;
+    const clueCount = run.clues.length;
+    const ends = profile.endings_reached || [];
     const hasEnd = (name) => ends.includes(name);
 
     if (medalCount >= 1) msgs.push(unlockAchievement("ach_first_medal", "初入谜域"));
@@ -156,7 +98,7 @@ function checkAchievements() {
         msgs.push(unlockAchievement("ach_manor_child", "庄园之子"));
     }
 
-    const runMs = gameState.runStartedAt ? Date.now() - gameState.runStartedAt : 0;
+    const runMs = run.run_started_at ? Date.now() - run.run_started_at : 0;
     if (medalCount >= 7 && runMs > 0 && runMs < 50 * 60 * 1000) {
         msgs.push(unlockAchievement("ach_lightning", "闪电破解"));
     }
@@ -165,7 +107,7 @@ function checkAchievements() {
         msgs.push(unlockAchievement("ach_cautious", "谨慎行者"));
     }
 
-    const brutal = typeof gameState.flags.brutal_count === "number" ? gameState.flags.brutal_count : 0;
+    const brutal = typeof run.flags.brutal_count === "number" ? run.flags.brutal_count : 0;
     if (brutal >= 3) msgs.push(unlockAchievement("ach_brutal", "暴力解谜者"));
 
     if (clueCount >= 20) msgs.push(unlockAchievement("ach_clue_hunter", "线索猎人"));
@@ -224,10 +166,10 @@ function checkAchievements() {
         msgs.push(unlockAchievement("ach_egg_all_collector", "全徽章收集者"));
     }
 
-    const gotAllRegular = ACHIEVEMENTS_FOR_MASTER.every((id) => globalState.achievements.includes(id));
+    const gotAllRegular = ACHIEVEMENTS_FOR_MASTER.every((id) => profile.achievements.includes(id));
     if (gotAllRegular) msgs.push(unlockAchievement("ach_master", "谜语大师"));
 
-    if (msgs.some(Boolean)) localStorage.setItem("riddle_global", JSON.stringify(globalState));
+    if (msgs.some(Boolean)) saveState(rootState);
     return msgs.filter(Boolean).join("<br>");
 }
 
@@ -246,42 +188,29 @@ function getAchievementNameById(id) {
     };
     return names[id] || id;
 }
-try {
-    const gs = safeParseJSON(localStorage.getItem("riddle_global"), null);
-    if (isValidGlobalState(gs)) {
-        globalState = migrateSave(gs, "global");
-    }
-} catch (e) {}
-
-// 单局游戏状态管理
-let gameState = {
-    medals: [],
-    items: [],
-    clues: [],
-    flags: {}, // 用于存储支线等状态
-    currentSceneId: "title",
-    hall_medal_count: 0,
-    runStartedAt: null
-};
 
 // 辅助方法
-function hasItem(item) { return gameState.items.includes(item); }
+function autoSave() {
+    saveState(rootState);
+}
+function hasItem(item) { return run.items.includes(item); }
 function removeItem(item) { 
-    const idx = gameState.items.indexOf(item);
+    const idx = run.items.indexOf(item);
     if (idx !== -1) {
-        gameState.items.splice(idx, 1);
+        run.items.splice(idx, 1);
         return true;
     }
     return false;
 }
-function hasClue(clue) { return gameState.clues.includes(clue); }
-function getFlag(key) { return gameState.flags[key] || false; }
-function setFlag(key, val) { gameState.flags[key] = val; }
-function addMedal() { gameState.hall_medal_count += 1; }
+function hasClue(clue) { return run.clues.includes(clue); }
+function getFlag(key) { return run.flags[key] || false; }
+function setFlag(key, val) { run.flags[key] = val; }
+function addMedal() { run.hall_medal_count += 1; }
 
 function addClue(clue) {
+function incrementFlag(key, val=1) { setFlag(key, (getFlag(key) || 0) + val); }
     if(!hasClue(clue)) {
-        gameState.clues.push(clue);
+        run.clues.push(clue);
         return `<div class="system-message">【获得线索】：${clue}</div>`;
     }
     return "";
@@ -289,10 +218,10 @@ function addClue(clue) {
 
 function addItem(item) {
     if(!hasItem(item)) {
-        gameState.items.push(item);
+        run.items.push(item);
         if (typeof showItemPopup === "function") showItemPopup(item);
         if (item.includes("徽章")) {
-            gameState.medals.push(item);
+            run.medals.push(item);
             addMedal();
         }
         return `<div class="system-message">【获得物品】：${item}</div>`;
@@ -363,7 +292,7 @@ function resolveItemSubmissionTarget(selection, itemName, sceneId) {
 
     if (typeof selection.validator === "function") {
         try {
-            const validatedTarget = selection.validator(itemName, gameState, sceneId);
+            const validatedTarget = selection.validator(itemName, run, sceneId);
             if (typeof validatedTarget === "string" && validatedTarget.trim()) {
                 return validatedTarget.trim();
             }
@@ -395,21 +324,21 @@ function getItemSubmissionProgressKey(sceneId, selection) {
 
 function getItemSubmissionProgress(sceneId, selection) {
     const key = getItemSubmissionProgressKey(sceneId, selection);
-    const raw = gameState.flags[key];
+    const raw = run.flags[key];
     if (!Array.isArray(raw)) return [];
     return raw.filter((item) => typeof item === "string" && item);
 }
 
 function setItemSubmissionProgress(sceneId, selection, items) {
     const key = getItemSubmissionProgressKey(sceneId, selection);
-    gameState.flags[key] = [...new Set(items.filter((item) => typeof item === "string" && item))];
+    run.flags[key] = [...new Set(items.filter((item) => typeof item === "string" && item))];
 }
 
 function renderItemSubmissionScene(sceneId, selection) {
     const container = optionsContainer;
     if (!container) return;
 
-    const uniqueItems = [...new Set((gameState.items || []).filter(Boolean))];
+    const uniqueItems = [...new Set((run.items || []).filter(Boolean))];
     const requiredCount = Math.max(1, Number(selection.requiredCount || 1));
     const submittedItems = getItemSubmissionProgress(sceneId, selection);
     const submittedSet = new Set(submittedItems);
@@ -626,40 +555,34 @@ window.showItemPopup = function(itemName) {
 // ========== 图片资源与游戏程序整合结束 ==========
 
 function renderScene(sceneId) {
-    if (gameState && gameState.currentSceneId && sceneId) {
+    if (run && run.current_scene_id && sceneId) {
         // Track from current scene to next scene globally
-        if (!globalState.visitedOptions || typeof globalState.visitedOptions !== "object") {
-            globalState.visitedOptions = {};
+        if (!profile.visited_options || typeof profile.visited_options !== "object") {
+            profile.visited_options = {};
         }
-        globalState.visitedOptions[gameState.currentSceneId + "->" + sceneId] = true;
+        profile.visited_options[run.current_scene_id + "->" + sceneId] = true;
     }
     setBackground(sceneId);
     if (sceneId === "system_load_auto") {
-        const saved = safeParseJSON(localStorage.getItem("riddle_auto_save"), null);
-        const migrated = migrateSave(saved, "game");
-        if (isValidGameState(migrated)) {
-            gameState = migrated;
-            renderScene(gameState.currentSceneId || "title");
-        } else {
-        }
+        window.loadGame();
         return;
     }
 
-    if(sceneId === "title" && gameState.currentSceneId !== "title") {
+    if(sceneId === "title" && run.current_scene_id !== "title") {
         // 重置游戏
-        gameState = {
+        run = {
             medals: [],
             items: [],
             clues: [],
             flags: {},
-            currentSceneId: "title",
+            current_scene_id: "title",
             hall_medal_count: 0,
-            runStartedAt: null
+            run_started_at: null
         };
     }
 
     // --- 拦截逻辑：支线和动态事件探测 ---
-    if (sceneId === "hall_main" && gameState.hall_medal_count >= 3 && !getFlag("side_butler_triggered")) {
+    if (sceneId === "hall_main" && run.hall_medal_count >= 3 && !getFlag("side_butler_triggered")) {
         setFlag("side_butler_triggered", true);
         sceneId = "sys_side_story_1_trigger";
     } else if (sceneId === "studio_entry" && (hasItem("色彩徽章") || hasItem("橙色徽章")) && !getFlag("side_painting_triggered")) {
@@ -689,8 +612,10 @@ function renderScene(sceneId) {
         if (sceneId !== "title" && sceneId !== "system_load_auto") {
             console.warn("Target scene missing:", sceneId);
             window.scenes[sceneId] = {
-                desc: "【系统提示】该区域（" + sceneId + "）尚未实装，前路被浓雾封锁，你被迫退回大厅。",
-                options: [{ text: "返回大厅", target: "hall_main" }]
+                desc: `厚重的铁门紧闭，上面布满奇异符号。
+你尝试推开，但纹丝不动。
+某种力量阻止了你继续深入……`,
+                options: [{ text: "暂时离开", target: "hall_main" }]
             };
             setTimeout(() => renderScene(sceneId), 0);
         }
@@ -706,20 +631,18 @@ function renderScene(sceneId) {
         };
     }
     
-    gameState.currentSceneId = sceneId;
-
     const trapScenes = new Set(["library_unlock_clasp", "side_ending_disappear", "side_ending_seeker"]);
     const brutalScenes = new Set(["library_unlock_clasp", "basement_force_furnace", "clocktower_lever_early"]);
     if (trapScenes.has(sceneId)) setFlag("player_hit_trap", true);
     if (brutalScenes.has(sceneId)) {
-        const n = typeof gameState.flags.brutal_count === "number" ? gameState.flags.brutal_count : 0;
-        gameState.flags.brutal_count = n + 1;
+        const n = typeof run.flags.brutal_count === "number" ? run.flags.brutal_count : 0;
+        run.flags.brutal_count = n + 1;
     }
     if (
         (sceneId === "opening_studio" || sceneId === "opening_studio_ng_plus" || sceneId === "opening_gate")
-        && !gameState.runStartedAt
+        && !run.run_started_at
     ) {
-        gameState.runStartedAt = Date.now();
+        run.run_started_at = Date.now();
     }
     
     // 执行自动存档（死亡/陷阱/失败场景不存，避免坏档覆盖）
@@ -728,8 +651,10 @@ function renderScene(sceneId) {
         lowerSceneId === "title" ||
         lowerSceneId.startsWith("ending_") ||
         /(trap|death|dead|poison|explosion|fail|game_over|bad_end|fall)/.test(lowerSceneId);
+    
+    run.current_scene_id = sceneId;
     if (!shouldSkipAutoSave) {
-        localStorage.setItem("riddle_auto_save", JSON.stringify(gameState));
+        autoSave();
         showToast("自动存档成功 💾");
     }
 
@@ -746,18 +671,18 @@ function renderScene(sceneId) {
 
     // 动态添加房间离开过渡如果刚刚获得了新徽章
     if (sceneId === "hall_main") {
-        let prevMedalCount = gameState.last_hall_medal_count || 0;
-        if (gameState.hall_medal_count > prevMedalCount) {
+        let prevMedalCount = run.last_hall_medal_count || 0;
+        if (run.hall_medal_count > prevMedalCount) {
             let transitionId = "sys_room_exit_transition";
             window.scenes[transitionId] = {
                 desc: "你将刚刚获得的徽章小心翼翼地收好，长舒了一口气。\\n伴随着沉重的锁舌闭合声，这扇门在你身后缓缓关上，你再次回到了冰冷的大厅，但你的心境已经不再相同。",
                 options: [{ text: "继续探索大厅", target: "hall_main" }]
             };
-            gameState.last_hall_medal_count = gameState.hall_medal_count;
+            run.last_hall_medal_count = run.hall_medal_count;
             renderScene(transitionId);
             return;
         }
-        gameState.last_hall_medal_count = gameState.hall_medal_count;
+        run.last_hall_medal_count = run.hall_medal_count;
     }
     
     const locationNameEl = document.getElementById("location-name");
@@ -785,15 +710,15 @@ function renderScene(sceneId) {
         }
     }
     if (sceneId === "hall_main") {
-        if (gameState.hall_medal_count >= 5) {
+        if (run.hall_medal_count >= 5) {
             dynamicDesc += "\\n[大厅发生了剧变：空气中弥漫着压抑的气息，中央密室的大门开始渗出微光。]";
-        } else if (gameState.hall_medal_count >= 3) {
+        } else if (run.hall_medal_count >= 3) {
             dynamicDesc += "\\n[大厅发生了变化：一些雕像的眼睛似乎在盯着你。]";
         }
         
         const rFmt = (name, possibleItems) => {
             const itemsList = Array.isArray(possibleItems) ? possibleItems : [possibleItems];
-            if (gameState.items.some(i => itemsList.some(pat => i.includes(pat)))) {
+            if (run.items.some(i => itemsList.some(pat => i.includes(pat)))) {
                 return `<span style="color:#d4af37;text-shadow:0 0 5px #d4af37;font-weight:bold;">${name}(★已探索)</span>`;
             }
             return `<span style="color:#777;">${name}(未探索)</span>`;
@@ -828,6 +753,235 @@ function renderScene(sceneId) {
             return;
         }
 
+        if (scene.input) {
+            let inputContainer = document.createElement("div");
+            inputContainer.className = "puzzle-input-container";
+            inputContainer.style.margin = "20px 0";
+            inputContainer.style.padding = "15px";
+            inputContainer.style.background = "rgba(0,0,0,0.4)";
+            inputContainer.style.border = "1px solid #555";
+            inputContainer.style.borderRadius = "5px";
+            inputContainer.style.textAlign = "center";
+
+            let inputField = document.createElement("input");
+            inputField.id = "puzzle-input";
+            inputField.type = "text";
+            inputField.placeholder = scene.input.placeholder || "输入答案...";
+            inputField.className = "puzzle-input";
+            inputField.style.padding = "10px";
+            inputField.style.width = "70%";
+            inputField.style.maxWidth = "300px";
+            inputField.style.fontSize = "16px";
+            inputField.style.border = "1px solid #777";
+            inputField.style.background = "#222";
+            inputField.style.color = "#eee";
+            inputField.style.borderRadius = "4px";
+
+            let submitBtn = document.createElement("button");
+            submitBtn.innerText = "确认";
+            submitBtn.className = "action-btn puzzle-submit";
+            submitBtn.style.padding = "10px 20px";
+            submitBtn.style.marginLeft = "10px";
+            submitBtn.style.cursor = "pointer";
+            submitBtn.style.background = "#444";
+            submitBtn.style.color = "#fff";
+            submitBtn.style.border = "1px solid #666";
+            submitBtn.style.borderRadius = "4px";
+
+            let feedbackDiv = document.createElement("div");
+            feedbackDiv.className = "puzzle-feedback";
+            feedbackDiv.style.color = "#d9534f";
+            feedbackDiv.style.marginTop = "15px";
+            feedbackDiv.style.minHeight = "24px";
+
+            submitBtn.onclick = () => {
+                let val = inputField.value.trim();
+                if (!val) return;
+                
+                if (scene.input.validate(val)) {
+                    feedbackDiv.style.color = "#5cb85c";
+                    feedbackDiv.innerText = "通过！";
+                    if (scene.input.onSuccess) {
+                        scene.input.onSuccess();
+                    }
+                    if (scene.input.success) {
+                        setTimeout(() => renderScene(scene.input.success), 500);
+                    }
+                } else {
+                    window.run.puzzleFails = window.run.puzzleFails || {};
+                    window.run.puzzleFails[sceneId] = (window.run.puzzleFails[sceneId] || 0) + 1;
+                    
+                    let failMsg = scene.input.failMsg || "不对...似乎还有什么没考虑到。";
+                    let hints = window.run.hint_levels || {};
+                    let hintLvl = hints[sceneId] || 0;
+                    
+                    if (window.run.puzzleFails[sceneId] >= 3 && scene.input.hints && hintLvl < scene.input.hints.length) {
+                        failMsg += "<br><span style='color:#f0ad4e'>【系统提示】" + scene.input.hints[hintLvl] + "</span>";
+                        hints[sceneId] = hintLvl + 1;
+                        window.run.hint_levels = hints;
+                    } else if (scene.input.hints && hintLvl > 0) {
+                        let lastHint = Math.min(hintLvl - 1, scene.input.hints.length - 1);
+                        failMsg += "<br><span style='color:#f0ad4e'>【系统提示】" + scene.input.hints[lastHint] + "</span>";
+                    }
+                    
+                    feedbackDiv.innerHTML = failMsg;
+                    if (scene.input.onFail) scene.input.onFail(val);
+                }
+            };
+            
+            inputField.addEventListener("keypress", (e) => {
+                if (e.key === "Enter") submitBtn.click();
+            });
+
+            inputContainer.appendChild(inputField);
+            inputContainer.appendChild(submitBtn);
+            inputContainer.appendChild(feedbackDiv);
+            optionsContainer.appendChild(inputContainer);
+            
+            setTimeout(() => {
+                const gameContainer = document.getElementById("game-container");
+                if (gameContainer) gameContainer.scrollTop = gameContainer.scrollHeight;
+                inputField.focus();
+            }, 50);
+        }
+
+        if (scene.combine) {
+            let mixContainer = document.createElement("div");
+            mixContainer.className = "puzzle-mix-container";
+            mixContainer.style.margin = "20px 0";
+            mixContainer.style.padding = "15px";
+            mixContainer.style.background = "rgba(0,0,0,0.4)";
+            mixContainer.style.border = "1px solid #555";
+            mixContainer.style.borderRadius = "5px";
+            mixContainer.style.textAlign = "center";
+
+            let mixTitle = document.createElement("h4");
+            mixTitle.innerText = scene.combine.title || "物品组合实验台";
+            mixTitle.style.color = "#d4af37";
+            mixTitle.style.marginTop = "0";
+            mixContainer.appendChild(mixTitle);
+
+            let selectedItems = new Set();
+            let itemsDiv = document.createElement("div");
+            itemsDiv.style.display = "flex";
+            itemsDiv.style.flexWrap = "wrap";
+            itemsDiv.style.gap = "10px";
+            itemsDiv.style.justifyContent = "center";
+            itemsDiv.style.marginBottom = "15px";
+
+            let inventory = window.run.items || [];
+            
+            if (inventory.length === 0) {
+                let emptyMsg = document.createElement("div");
+                emptyMsg.innerText = "背包空空如也，没有可组合的物品。";
+                emptyMsg.style.color = "#777";
+                emptyMsg.style.fontStyle = "italic";
+                itemsDiv.appendChild(emptyMsg);
+            } else {
+                inventory.forEach(itemName => {
+                    let itemBtn = document.createElement("button");
+                    itemBtn.innerText = itemName;
+                    itemBtn.className = "option-btn";
+                    itemBtn.style.margin = "0";
+                    itemBtn.style.padding = "5px 10px";
+                    itemBtn.style.border = "1px solid #777";
+                    itemBtn.style.background = "#222";
+                    itemBtn.style.color = "#ccc";
+                    itemBtn.style.cursor = "pointer";
+                    itemBtn.style.transition = "all 0.2s";
+
+                    itemBtn.onclick = () => {
+                        if (selectedItems.has(itemName)) {
+                            selectedItems.delete(itemName);
+                            itemBtn.style.background = "#222";
+                            itemBtn.style.border = "1px solid #777";
+                            itemBtn.style.color = "#ccc";
+                            itemBtn.style.boxShadow = "none";
+                        } else {
+                            if (selectedItems.size >= (scene.combine.maxSelect || 2)) {
+                                showToast("最多只能选择 " + (scene.combine.maxSelect || 2) + " 个物品进行组合。");
+                                return;
+                            }
+                            selectedItems.add(itemName);
+                            itemBtn.style.background = "#5c4033";
+                            itemBtn.style.border = "1px solid #d4af37";
+                            itemBtn.style.color = "#fff";
+                            itemBtn.style.boxShadow = "0 0 8px rgba(212, 175, 55, 0.5)";
+                        }
+                    };
+                    itemsDiv.appendChild(itemBtn);
+                });
+            }
+            mixContainer.appendChild(itemsDiv);
+
+            let combineBtn = document.createElement("button");
+            combineBtn.innerText = "尝试组合";
+            combineBtn.className = "action-btn";
+            combineBtn.style.padding = "10px 20px";
+            combineBtn.style.cursor = "pointer";
+            combineBtn.style.background = "#444";
+            combineBtn.style.color = "#fff";
+            combineBtn.style.border = "1px solid #666";
+            combineBtn.style.borderRadius = "4px";
+            combineBtn.style.display = inventory.length > 0 ? "inline-block" : "none";
+
+            let mixFeedback = document.createElement("div");
+            mixFeedback.style.color = "#d9534f";
+            mixFeedback.style.marginTop = "15px";
+            mixFeedback.style.minHeight = "24px";
+
+            combineBtn.onclick = () => {
+                if (selectedItems.size === 0) return;
+                
+                let selectedArr = Array.from(selectedItems);
+                let requiredArr = scene.combine.required || [];
+                
+                // Check if match
+                let isMatch = selectedArr.length === requiredArr.length && 
+                              requiredArr.every(req => selectedArr.includes(req));
+                
+                if (isMatch) {
+                    mixFeedback.style.color = "#5cb85c";
+                    mixFeedback.innerText = "组合成功！";
+                    
+                    // Consume ingredients by default
+                    if (scene.combine.consume !== false) {
+                        requiredArr.forEach(req => removeItem(req));
+                    }
+                    
+                    // Add result if any
+                    if (scene.combine.result) {
+                        addItem(scene.combine.result);
+                    }
+                    
+                    if (scene.combine.onSuccess) {
+                        scene.combine.onSuccess();
+                    }
+                    
+                    if (scene.combine.success) {
+                        setTimeout(() => renderScene(scene.combine.success), 800);
+                    }
+                } else {
+                    mixFeedback.innerHTML = scene.combine.failMsg || "组合似乎没有产生任何反应……可能是配方不对。";
+                    
+                    // Clear selection
+                    selectedItems.clear();
+                    Array.from(itemsDiv.children).forEach(btn => {
+                        if(btn.tagName && btn.tagName.toLowerCase() === "button") {
+                            btn.style.background = "#222";
+                            btn.style.border = "1px solid #777";
+                            btn.style.color = "#ccc";
+                            btn.style.boxShadow = "none";
+                        }
+                    });
+                }
+            };
+
+            mixContainer.appendChild(combineBtn);
+            mixContainer.appendChild(mixFeedback);
+            optionsContainer.appendChild(mixContainer);
+        }
+
         const options = Array.isArray(scene.options) ? [...scene.options] : [];
         const isEndingScene = sceneId === "game_over" || sceneId.startsWith("ending_");
 
@@ -852,7 +1006,7 @@ function renderScene(sceneId) {
             options.push({ text: "查看成就与轮回信息", target: "game_over" });
         } else if (sceneId === "game_over") {
             options.push({ text: "返回主界面", target: "title" });
-            options.push({ text: "带着记忆苏醒 (开启多周目)", target: "opening_studio_ng_plus", condition: () => globalState.endingsReached.length > 0 });
+            options.push({ text: "带着记忆苏醒 (开启多周目)", target: "opening_studio_ng_plus", condition: () => profile.endings_reached.length > 0 });
         }
 
         if (options.length === 0) {
@@ -884,14 +1038,14 @@ function renderScene(sceneId) {
             "clocktower_entry": "怀表"
         };
         var visitedKey = sceneId + "->" + opt.target;
-        if (!globalState.visitedOptions) globalState.visitedOptions = {};
-        if (globalState.visitedOptions[visitedKey]) {
+        if (!profile.visited_options) profile.visited_options = {};
+        if (profile.visited_options[visitedKey]) {
             suffix += " <span style='color:#777;'>(已勘查)</span>";
         }
 
         if (roomMedalMap[opt.target]) {
             const req = roomMedalMap[opt.target];
-            if (gameState.items.some(i => i.includes(req))) {
+            if (run.items.some(i => i.includes(req))) {
                 suffix = ' <span style="color:#d4af37; font-weight:bold; font-size:1.1em;">(✓ 已解开)</span>';
             }
         }
@@ -904,8 +1058,8 @@ function renderScene(sceneId) {
             if (isAvailable) {
                 btn.innerHTML = "➤ " + optionText + suffix;
                 btn.onclick = () => {
-                    if (!globalState.visitedOptions) globalState.visitedOptions = {};
-                    globalState.visitedOptions[visitedKey] = true;
+                    if (!profile.visited_options) profile.visited_options = {};
+                    profile.visited_options[visitedKey] = true;
                     if(opt.effectMsg) {
                         let hint = document.createElement("div");
                         hint.className = "system-message";
@@ -925,18 +1079,7 @@ function renderScene(sceneId) {
                     }
 
                     if(normalizedTarget !== sceneId) {
-                        if (normalizedTarget === "system_load_auto" || scenes[normalizedTarget]) {
-                            renderScene(normalizedTarget);
-                        } else {
-                            const fallbackTarget = scenes["hall_main"] ? "hall_main" : "title";
-                            const fallbackLabel = fallbackTarget === "hall_main" ? "大厅" : "主界面";
-                            let hint = document.createElement("div");
-                            hint.className = "danger-message";
-                            hint.innerText = "该选项对应场景尚未完成，已为你返回" + fallbackLabel + "。";
-                            storyElement.appendChild(hint);
-                            document.getElementById("game-container").scrollTop = document.getElementById("game-container").scrollHeight;
-                            renderScene(fallbackTarget);
-                        }
+                        renderScene(normalizedTarget);
                     } else if (!opt.effectMsg) {
                         let hint = document.createElement("div");
                         hint.className = "system-message";
@@ -1045,7 +1188,7 @@ function updateInventoryDisplay() {
     let medalsHtml = "";
 
     // 过滤重复物品
-    let uniqueItems = [...new Set(gameState.items)];
+    let uniqueItems = [...new Set(run.items)];
 
     for (let i = 0; i < uniqueItems.length; i++) {
         let item = uniqueItems[i];
@@ -1065,8 +1208,8 @@ function updateInventoryDisplay() {
         } else {
             itemsHtml += "<span class='inv-item'" + titleAttr + ">" + innerHTML + "</span> ";
         }
-    }for (let i = 0; i < gameState.clues.length; i++) {
-        let clue = gameState.clues[i];
+    }for (let i = 0; i < run.clues.length; i++) {
+        let clue = run.clues[i];
         if (clue.startsWith("[线索]")) {
             cluesHtml += "<span class='inv-item'>" + clue.replace("[线索]", "").trim() + "</span> ";
         } else {
@@ -1076,16 +1219,16 @@ function updateInventoryDisplay() {
     
     if (invItems) invItems.innerHTML = itemsHtml ? itemsHtml : "<span class='empty-text'>无</span>";
     if (invClues) invClues.innerHTML = cluesHtml ? cluesHtml : "<span class='empty-text'>无</span>";
-    if (medalCountSpan) medalCountSpan.innerText = gameState.hall_medal_count || medalsCount;
+    if (medalCountSpan) medalCountSpan.innerText = run.hall_medal_count || medalsCount;
     if (invMedals) invMedals.innerHTML = medalsHtml ? medalsHtml : "<span class='empty-text'>无</span>";
 
     const ngCountSpan = document.getElementById("ng-count");
     const endingCountSpan = document.getElementById("ending-count");
     const invAch = document.getElementById("inv-achievements");
     
-    if (ngCountSpan) ngCountSpan.innerText = globalState.playCount || 0;
+    if (ngCountSpan) ngCountSpan.innerText = profile.play_count || 0;
     
-    let reachedEndings = globalState.endingsReached || [];
+    let reachedEndings = profile.endings_reached || [];
     let uniqueEndings = new Set(reachedEndings).size;
     
     if (endingCountSpan) endingCountSpan.innerText = uniqueEndings;
@@ -1099,8 +1242,8 @@ function updateInventoryDisplay() {
             if (e_name === "normal") e_name = "梦境的终结(大结局)";
             achHtml += "<div class='inv-item achievement' style='display:block;margin-bottom:5px;'><span class='icon'>✨</span> 结局: " + e_name + "</div>";
         }
-        if (Array.isArray(globalState.achievements) && globalState.achievements.length > 0) {
-            achHtml += "<div class='inv-item achievement' style='display:block;margin-bottom:5px;'><span class='icon'>🏆</span> 成就数量: " + globalState.achievements.length + "</div>";
+        if (Array.isArray(profile.achievements) && profile.achievements.length > 0) {
+            achHtml += "<div class='inv-item achievement' style='display:block;margin-bottom:5px;'><span class='icon'>🏆</span> 成就数量: " + profile.achievements.length + "</div>";
         }
         if(achHtml === "") achHtml = "<span class='empty-text'>暂无成就</span>";
         invAch.innerHTML = achHtml;
@@ -1114,12 +1257,12 @@ function updateAchievementDisplay() {
     const achList = document.getElementById("ach-list");
     if (!achList) return;
 
-    const allAchievements = Array.isArray(globalState.achievements) ? globalState.achievements : [];
-    const uniqueEndings = new Set(globalState.endingsReached || []).size;
+    const allAchievements = Array.isArray(profile.achievements) ? profile.achievements : [];
+    const uniqueEndings = new Set(profile.endings_reached || []).size;
 
     if (achTotal) achTotal.innerText = String(allAchievements.length);
     if (achEndingCount) achEndingCount.innerText = String(uniqueEndings);
-    if (achNgCount) achNgCount.innerText = String(globalState.playCount || 0);
+    if (achNgCount) achNgCount.innerText = String(profile.play_count || 0);
 
     if (allAchievements.length === 0) {
         achList.innerHTML = "<span class='empty-text'>暂无成就</span>";
@@ -1189,7 +1332,7 @@ window.toggleAchievements = function() {
 }
 
 window.returnToHall = function() {
-    if (gameState.currentSceneId === 'hall_main' || gameState.currentSceneId === 'hall_initial_enter') {
+    if (run.current_scene_id === 'hall_main' || run.current_scene_id === 'hall_initial_enter') {
         let hint = document.createElement("div");
         hint.className = "danger-message";
         hint.innerText = "你已经在门厅了。";
@@ -1203,10 +1346,7 @@ window.returnToHall = function() {
 }
 
 window.saveGame = function() {
-    gameState = migrateSave(gameState, "game");
-    globalState = migrateSave(globalState, "global");
-    localStorage.setItem("riddle_save", JSON.stringify(gameState));
-    localStorage.setItem("riddle_global", JSON.stringify(globalState));
+    autoSave();
     alert("游戏已保存至浏览器！");
 }
 
@@ -1220,15 +1360,13 @@ window.showToast = function(msg) {
 };
 
 window.loadGame = function() {
-    const saved = safeParseJSON(localStorage.getItem("riddle_save"), null);
-    const migrated = migrateSave(saved, "game");
-    if (isValidGameState(migrated)) {
-        gameState = migrated;
-        renderScene(gameState.currentSceneId || "title");
-        alert("读取成功！");
-    } else {
-        alert("找不到可用存档，或存档已损坏。");
-    }
+    rootState = loadState();
+    window.profile = rootState.profile;
+    window.run = rootState.run;
+    profile = window.profile;
+    run = window.run;
+    renderScene(run.current_scene_id || "title");
+    alert("读取成功！");
 }
 
 // 初始渲染
@@ -1350,9 +1488,9 @@ window.showHint = function() {
 
 
 function displayHintMessage() {
-    if (!gameState || !gameState.currentSceneId) return;
+    if (!run || !run.current_scene_id) return;
     
-    let sid = gameState.currentSceneId;
+    let sid = run.current_scene_id;
     let hintList = gameHints[sid];
     if (!hintList) {
         let prefix = sid.split('_')[0] + "_entry";
