@@ -1,0 +1,16 @@
+**效果：
+
+**第一次：
+
+**普通玩家：没注意
+
+**第二次：
+
+**“等等……我以前见过这个！”
+
+
+def trigger_foreshadow(scene, state):
+    for f in scene.get("foreshadow", []):
+        if f["condition"](state):
+            f["effect"](state)
+            print("你隐约感觉这里有些不对劲……")

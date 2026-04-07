@@ -1,0 +1,34 @@
+{
+  "current_scene": "greenhouse_tool_shed",
+
+  "world_state": {
+    "time_phase": "night",
+    "ritual_progress": 2,
+    "astre_awareness": 1
+  },
+
+  "player_state": {
+    "sanity": 85,
+    "knowledge": [],
+    "flags": []
+  },
+
+  "inventory": [],
+
+  "clues": [],
+
+  "foreshadow_seen": [
+    "portrait_same_face",
+    "shadow_abnormal"
+  ],
+
+  "scene_states": {
+    "butler_room": {
+      "searched": true,
+      "photo_taken": true
+    },
+    "greenhouse": {
+      "tool_pattern_noticed": false
+    }
+  }
+}

@@ -1,66 +1,100 @@
-import os
 import json
+import os
+
+from state_store import StateStore
+
 
 class GameState:
-    def __init__(self):
-        self.state = {
-            "medals": [],
-            "rooms_completed": [],
-            "items": [],
-            "clues": [],
-            "side_quests": {},
-            "hall_medal_count": 0,
-            "current_scene_id": "opening_cinematic"
-        }
+    def __init__(self, initial_state=None):
+        self.store = StateStore(initial_state)
+
+    @property
+    def root(self):
+        return self.store.root
+
+    @property
+    def profile(self):
+        return self.store.profile
+
+    @property
+    def state(self):
+        return self.store.run
+
+    @state.setter
+    def state(self, value):
+        self.store.replace_run(value)
+
+    @property
+    def items(self):
+        return self.store.run["items"]
+
+    @property
+    def clues(self):
+        return self.store.run["clues"]
+
+    @property
+    def medals(self):
+        return self.store.run["medals"]
+
+    @property
+    def flags(self):
+        return self.store.run["flags"]
 
     def get(self, key, default=None):
-        return self.state.get(key, default)
+        if key in self.store.run:
+            return self.store.run.get(key, default)
+        if key.startswith("hint_level_"):
+            scene_id = key[len("hint_level_") :]
+            return self.store.run["hint_levels"].get(scene_id, default)
+        return self.store.run["flags"].get(key, default)
 
     def set(self, key, value):
-        self.state[key] = value
+        if key in self.store.run:
+            self.store.run[key] = value
+            return value
+        if key.startswith("hint_level_"):
+            scene_id = key[len("hint_level_") :]
+            self.store.run["hint_levels"][scene_id] = value
+            return value
+        self.store.run["flags"][key] = value
+        return value
 
     def add_item(self, item):
-        if item not in self.state["items"]:
-            self.state["items"].append(item)
+        if item not in self.items:
+            self.items.append(item)
             return True
         return False
 
     def has_item(self, item):
-        return item in self.state["items"]
+        return item in self.items
 
     def remove_item(self, item):
-        if item in self.state["items"]:
-            self.state["items"].remove(item)
-            return True
-        return False
-
-
-    def remove_item(self, item):
-        if item in self.state["items"]:
-            self.state["items"].remove(item)
+        if item in self.items:
+            self.items.remove(item)
             return True
         return False
 
     def has_clue(self, clue):
-        return clue in self.state["clues"]
+        return clue in self.clues
 
     def add_clue(self, clue):
-        if clue not in self.state["clues"]:
-            self.state["clues"].append(clue)
+        if clue not in self.clues:
+            self.clues.append(clue)
             return True
         return False
 
     def save(self, filename="savegame.json"):
         with open(filename, "w", encoding="utf-8") as f:
-            json.dump(self.state, f, ensure_ascii=False, indent=4)
-        print("游戏已保存！")
+            json.dump(self.store.export_root(), f, ensure_ascii=False, indent=4)
+        print("游戏已保存。")
 
     def load(self, filename="savegame.json"):
         try:
             with open(filename, "r", encoding="utf-8") as f:
-                self.state = json.load(f)
-            print("读取存档成功！")
-            return self.state["current_scene_id"]
+                payload = json.load(f)
+            self.store.replace_root(payload)
+            print("读取存档成功。")
+            return self.get("current_scene_id")
         except FileNotFoundError:
             print("找不到存档文件。")
             return None

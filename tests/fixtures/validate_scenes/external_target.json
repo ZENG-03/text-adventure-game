@@ -1,0 +1,11 @@
+{
+  "scene_a": {
+    "desc": "one",
+    "options": [
+      {
+        "text": "load",
+        "target": "system_load_auto"
+      }
+    ]
+  }
+}

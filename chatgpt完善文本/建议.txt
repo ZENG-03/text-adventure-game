@@ -1,0 +1,7 @@
+1.每个场景加伏笔
+add_foreshadow("mirror_wrong")
+
+
+2.加“二周目体验”
+if "portrait_same_face" in state["foreshadow_seen"]:
+    print("这些画像……你已经见过了。")

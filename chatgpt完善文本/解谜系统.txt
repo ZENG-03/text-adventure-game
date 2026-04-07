@@ -1,0 +1,10 @@
+温室密码箱（你的案例）
+def open_tool_box(state, input_code):
+    if input_code == "188":
+        print("箱子打开，里面是肥料……但排列有些奇怪")
+        state["flags"].append("greenhouse_box_opened")
+    else:
+        print("密码错误")
+🔥 高级版本（伏笔联动）
+if "tool_pattern_noticed" in state["foreshadow_seen"]:
+    print("你突然意识到工具排列就是密码……188")

@@ -1,0 +1,28 @@
+{
+    "schema_version": 1,
+    "profile": {
+        "save_version": 4,
+        "play_count": 2,
+        "endings_reached": [],
+        "achievements": [],
+        "visited_options": {}
+    },
+    "run": {
+        "medals": [],
+        "rooms_completed": [],
+        "items": [],
+        "clues": [],
+        "side_quests": {},
+        "flags": {
+            "side_music_route": "public"
+        },
+        "hall_medal_count": 5,
+        "current_scene_id": "hall_main",
+        "run_started_at": null,
+        "last_hall_medal_count": 0,
+        "hint_levels": {
+            "hall_main": 1
+        },
+        "visited_options": []
+    }
+}

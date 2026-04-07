@@ -1,0 +1,26 @@
+scene = {
+    "id": "butler_room",
+
+    "description": lambda state: get_butler_room_desc(state),
+
+    "foreshadow": [
+        {
+            "id": "photo_same_face",
+            "condition": lambda state: not "photo_same_face" in state["foreshadow_seen"],
+            "effect": lambda state: state["foreshadow_seen"].append("photo_same_face")
+        }
+    ],
+
+    "interactions": [
+        {
+            "name": "查看书桌",
+            "condition": lambda state: True,
+            "effect": examine_desk
+        },
+        {
+            "name": "查看床底",
+            "condition": lambda state: not state["scene_states"]["butler_room"].get("checked_bed"),
+            "effect": check_bed
+        }
+    ]
+}

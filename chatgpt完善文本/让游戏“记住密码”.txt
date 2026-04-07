@@ -1,0 +1,2 @@
+memory["known_codes"].append("188")
+save_memory(memory)

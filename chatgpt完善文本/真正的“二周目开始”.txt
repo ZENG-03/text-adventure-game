@@ -1,0 +1,4 @@
+def restart_game():
+    global state
+    state = new_game()
+    change_scene("gate")

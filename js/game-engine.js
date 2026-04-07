@@ -45,14 +45,48 @@ function migrateSave(data, type) {
         };
     }
     if (type === "game") {
+        const migratedFlags = (data.flags && typeof data.flags === "object") ? { ...data.flags } : {};
+        const migratedRoomsCompleted = Array.isArray(data.rooms_completed) ? data.rooms_completed : [];
+        const migratedSideQuests = (data.side_quests && typeof data.side_quests === "object") ? data.side_quests : {};
+
+        if (Array.isArray(data.side_quests)) {
+            data.side_quests.forEach((name) => {
+                if (typeof name === "string" && name) {
+                    migratedFlags[name] = true;
+                }
+            });
+        }
+
+        const sideMap = {
+            butler: "side_butler_completed",
+            painting: "side_painting_completed",
+            underground: "side_underground_completed",
+            clock: "side_clock_completed",
+            music: "side_music_completed"
+        };
+        Object.keys(sideMap).forEach((k) => {
+            const v = migratedSideQuests[k];
+            if (v === true || v === "completed" || v === "done") {
+                migratedFlags[sideMap[k]] = true;
+            }
+        });
+
+        migratedRoomsCompleted.forEach((roomId) => {
+            if (typeof roomId === "string" && roomId) {
+                migratedFlags["room_completed_" + roomId] = true;
+            }
+        });
+
         return {
             medals: Array.isArray(data.medals) ? data.medals : [],
             items: Array.isArray(data.items) ? data.items : [],
             clues: Array.isArray(data.clues) ? data.clues : [],
-            flags: (data.flags && typeof data.flags === "object") ? data.flags : {},
+            flags: migratedFlags,
             currentSceneId: typeof data.currentSceneId === "string" ? data.currentSceneId : "title",
             hall_medal_count: typeof data.hall_medal_count === "number" ? data.hall_medal_count : 0,
-            runStartedAt: typeof data.runStartedAt === "number" ? data.runStartedAt : null
+            runStartedAt: typeof data.runStartedAt === "number" ? data.runStartedAt : null,
+            rooms_completed: migratedRoomsCompleted,
+            side_quests: migratedSideQuests
         };
     }
     return data;
@@ -245,6 +279,27 @@ function getFlag(key) { return gameState.flags[key] || false; }
 function setFlag(key, val) { gameState.flags[key] = val; }
 function addMedal() { gameState.hall_medal_count += 1; }
 
+function addClue(clue) {
+    if(!hasClue(clue)) {
+        gameState.clues.push(clue);
+        return `<div class="system-message">【获得线索】：${clue}</div>`;
+    }
+    return "";
+}
+
+function addItem(item) {
+    if(!hasItem(item)) {
+        gameState.items.push(item);
+        if (typeof showItemPopup === "function") showItemPopup(item);
+        if (item.includes("徽章")) {
+            gameState.medals.push(item);
+            addMedal();
+        }
+        return `<div class="system-message">【获得物品】：${item}</div>`;
+    }
+    return "";
+}
+
 // 场景定义表
 
 window.scenes = window.scenes || {};
@@ -259,7 +314,10 @@ let isTyping = false;
 
 function isPlaceholderScene(sceneObj) {
     if (!sceneObj || typeof sceneObj.desc !== "string") return false;
-    return sceneObj.desc.includes("尚在整理中") || sceneObj.desc.includes("剧情节点");
+    return sceneObj.desc.includes("尚在整理中")
+        || sceneObj.desc.includes("剧情节点")
+        || sceneObj.desc.includes("细节尚未实装")
+        || sceneObj.desc.includes("该区域（");
 }
 
 function inferSceneTarget(target) {
@@ -300,6 +358,166 @@ function inferSceneTarget(target) {
     return bestScore >= 6 ? bestId : null;
 }
 
+function resolveItemSubmissionTarget(selection, itemName, sceneId) {
+    if (!selection) return sceneId;
+
+    if (typeof selection.validator === "function") {
+        try {
+            const validatedTarget = selection.validator(itemName, gameState, sceneId);
+            if (typeof validatedTarget === "string" && validatedTarget.trim()) {
+                return validatedTarget.trim();
+            }
+        } catch (e) {}
+    }
+
+    if (selection.itemMap && selection.itemMap[itemName]) {
+        return selection.itemMap[itemName];
+    }
+
+    if (Array.isArray(selection.correctItems) && selection.correctItems.includes(itemName)) {
+        return selection.correctTarget || sceneId;
+    }
+
+    if (Array.isArray(selection.fatalItems) && selection.fatalItems.includes(itemName)) {
+        return selection.fatalTarget || selection.wrongTarget || sceneId;
+    }
+
+    if (Array.isArray(selection.fatalKeywords) && selection.fatalKeywords.some((kw) => kw && itemName.includes(kw))) {
+        return selection.fatalTarget || selection.wrongTarget || sceneId;
+    }
+
+    return selection.wrongTarget || sceneId;
+}
+
+function getItemSubmissionProgressKey(sceneId, selection) {
+    return (selection && selection.progressFlag) || (sceneId + "_submitted_items");
+}
+
+function getItemSubmissionProgress(sceneId, selection) {
+    const key = getItemSubmissionProgressKey(sceneId, selection);
+    const raw = gameState.flags[key];
+    if (!Array.isArray(raw)) return [];
+    return raw.filter((item) => typeof item === "string" && item);
+}
+
+function setItemSubmissionProgress(sceneId, selection, items) {
+    const key = getItemSubmissionProgressKey(sceneId, selection);
+    gameState.flags[key] = [...new Set(items.filter((item) => typeof item === "string" && item))];
+}
+
+function renderItemSubmissionScene(sceneId, selection) {
+    const container = optionsContainer;
+    if (!container) return;
+
+    const uniqueItems = [...new Set((gameState.items || []).filter(Boolean))];
+    const requiredCount = Math.max(1, Number(selection.requiredCount || 1));
+    const submittedItems = getItemSubmissionProgress(sceneId, selection);
+    const submittedSet = new Set(submittedItems);
+    const promptBase = selection.prompt || "从背包中选择一件物品提交。";
+    const prompt = requiredCount > 1
+        ? `${promptBase}（已放入 ${submittedItems.length}/${requiredCount} 件）`
+        : promptBase;
+    const completedFlag = selection.completedFlag || (sceneId + "_completed");
+
+    if (getFlag(completedFlag) && selection.completedTarget) {
+        renderScene(selection.completedTarget);
+        return;
+    }
+
+    const promptBox = document.createElement("div");
+    promptBox.className = "system-message";
+    promptBox.innerText = prompt;
+    storyElement.appendChild(promptBox);
+
+    const gameContainer = document.getElementById("game-container");
+    if (gameContainer) {
+        gameContainer.scrollTop = gameContainer.scrollHeight;
+    }
+
+    container.innerHTML = "";
+
+    if (uniqueItems.length === 0) {
+        const emptyBox = document.createElement("div");
+        emptyBox.className = "danger-message";
+        emptyBox.innerText = "你没有任何可提交的物品。";
+        storyElement.appendChild(emptyBox);
+    }
+
+    const backBtn = document.createElement("button");
+    backBtn.className = "option-btn";
+    backBtn.innerText = "返回";
+    backBtn.onclick = () => renderScene(selection.backTarget || sceneId);
+    container.appendChild(backBtn);
+
+    uniqueItems.forEach((itemName) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.innerHTML = "➤ 提交【" + itemName + "】";
+        btn.onclick = () => {
+            const target = resolveItemSubmissionTarget(selection, itemName, sceneId);
+            const isCorrect = target === (selection.correctTarget || target);
+            const isFatal = selection.fatalTarget && target === selection.fatalTarget;
+
+            if (isCorrect) {
+                const nextProgress = submittedSet.has(itemName) ? submittedItems.slice() : submittedItems.concat(itemName);
+                setItemSubmissionProgress(sceneId, selection, nextProgress);
+                if (selection.consumeOnCorrect !== false) {
+                    removeItem(itemName);
+                }
+                const progressCount = nextProgress.length;
+                if (requiredCount > 1 && progressCount < requiredCount) {
+                    const progressBox = document.createElement("div");
+                    progressBox.className = "system-message";
+                    progressBox.innerText = `【${itemName}】已嵌入凹槽，当前进度 ${progressCount}/${requiredCount}。`;
+                    storyElement.appendChild(progressBox);
+                    const gameContainer = document.getElementById("game-container");
+                    if (gameContainer) {
+                        gameContainer.scrollTop = gameContainer.scrollHeight;
+                    }
+                    renderScene(selection.correctTarget || sceneId);
+                    return;
+                }
+                setFlag(completedFlag, true);
+                renderScene(selection.completedTarget || target || selection.correctTarget || sceneId);
+                return;
+            }
+
+            if (isFatal) {
+                if (selection.consumeOnFatal !== false) {
+                    removeItem(itemName);
+                }
+                renderScene(target);
+                return;
+            }
+
+            if (selection.consumeOnWrong) {
+                removeItem(itemName);
+            }
+
+            const hint = document.createElement("div");
+            hint.className = "danger-message";
+            hint.innerText = `【${itemName}】似乎不能放在这里。`;
+            storyElement.appendChild(hint);
+            if (gameContainer) {
+                gameContainer.scrollTop = gameContainer.scrollHeight;
+            }
+
+            renderScene(target || selection.wrongTarget || sceneId);
+        };
+        container.appendChild(btn);
+    });
+
+    if (uniqueItems.length === 0) {
+        return;
+    }
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.className = "option-btn";
+    cancelBtn.innerText = "放弃提交，返回";
+    cancelBtn.onclick = () => renderScene(selection.backTarget || sceneId);
+    container.appendChild(cancelBtn);
+}
+
 function typeWriterHTML(element, htmlString, speed, onComplete) {
     if (typeof gameSettings !== "undefined" && gameSettings.noAnim) {
         clearInterval(typeWriterInterval);
@@ -318,22 +536,35 @@ function typeWriterHTML(element, htmlString, speed, onComplete) {
     let i = 0;
     let currentText = "";
     
-    // 点击任意位置跳过打字效果
-    element.onclick = () => {
-        if (isTyping) {
-            clearInterval(typeWriterInterval);
-            element.innerHTML = htmlString;
-            isTyping = false;
-            element.onclick = null;
-            if (onComplete) onComplete();
+    const finishTypingNow = () => {
+        if (!isTyping) return;
+        clearInterval(typeWriterInterval);
+        element.innerHTML = htmlString;
+        isTyping = false;
+        element.onclick = null;
+        if (containerEl && containerSkipHandler) {
+            containerEl.removeEventListener("click", containerSkipHandler);
         }
+        if (onComplete) onComplete();
     };
+
+    const containerEl = document.getElementById("game-container");
+    const containerSkipHandler = () => finishTypingNow();
+
+    // 点击剧情区或容器空白区域都可跳过打字
+    element.onclick = () => finishTypingNow();
+    if (containerEl) {
+        containerEl.addEventListener("click", containerSkipHandler);
+    }
 
     typeWriterInterval = setInterval(() => {
         if (i >= htmlString.length) {
             clearInterval(typeWriterInterval);
             isTyping = false;
             element.onclick = null;
+            if (containerEl && containerSkipHandler) {
+                containerEl.removeEventListener("click", containerSkipHandler);
+            }
             element.innerHTML = htmlString;
             if (onComplete) onComplete();
             return;
@@ -389,12 +620,19 @@ function setBackground(sceneId) {
 }
 
 window.showItemPopup = function(itemName) {
-    const desc = ITEM_DESCRIPTIONS[itemName] || "获得新物品";
+    const desc = ITEM_DESCRIPTIONS[itemName] || "未详细描述的物品";
     window.showItemDetails(itemName, desc);
 };
 // ========== 图片资源与游戏程序整合结束 ==========
 
 function renderScene(sceneId) {
+    if (gameState && gameState.currentSceneId && sceneId) {
+        // Track from current scene to next scene globally
+        if (!globalState.visitedOptions || typeof globalState.visitedOptions !== "object") {
+            globalState.visitedOptions = {};
+        }
+        globalState.visitedOptions[gameState.currentSceneId + "->" + sceneId] = true;
+    }
     setBackground(sceneId);
     if (sceneId === "system_load_auto") {
         const saved = safeParseJSON(localStorage.getItem("riddle_auto_save"), null);
@@ -434,7 +672,7 @@ function renderScene(sceneId) {
         setFlag("side_music_triggered", true);
         sceneId = "sys_side_story_4_trigger";
     }
-
+    
     if (sceneId.startsWith("side_ending_")) {
         const p1 = ["side_ending_master", "side_ending_spreader", "side_ending_memento"];
         const p2 = ["side_ending_reconciliation", "side_ending_legacy"];
@@ -457,6 +695,15 @@ function renderScene(sceneId) {
             setTimeout(() => renderScene(sceneId), 0);
         }
         return;
+    }
+
+    if (isPlaceholderScene(scene)) {
+        const fallbackTarget = scenes["hall_main"] ? "hall_main" : "title";
+        const fallbackText = fallbackTarget === "hall_main" ? "返回大厅" : "返回主界面";
+        window.scenes[sceneId] = {
+            desc: "【系统提示】该场景仍是占位内容，已临时收束为安全出口。",
+            options: [{ text: fallbackText, target: fallbackTarget }]
+        };
     }
     
     gameState.currentSceneId = sceneId;
@@ -529,7 +776,14 @@ function renderScene(sceneId) {
         }
     }
 
-    let dynamicDesc = scene.desc;
+    let dynamicDesc = typeof scene.desc === "function" ? scene.desc() : scene.desc;
+    if (scene.itemSelection) {
+        const completedFlag = scene.itemSelection.completedFlag || (sceneId + "_completed");
+        if (getFlag(completedFlag) && scene.itemSelection.completedTarget) {
+            renderScene(scene.itemSelection.completedTarget);
+            return;
+        }
+    }
     if (sceneId === "hall_main") {
         if (gameState.hall_medal_count >= 5) {
             dynamicDesc += "\\n[大厅发生了剧变：空气中弥漫着压抑的气息，中央密室的大门开始渗出微光。]";
@@ -549,9 +803,9 @@ function renderScene(sceneId) {
 <div style="background:rgba(0,0,0,0.5); border:1px solid #444; padding:10px; border-radius:5px; margin-top:20px; font-family:monospace; line-height:1.6;">
     <div style="color:#aaa; border-bottom:1px solid #444; padding-bottom:5px; margin-bottom:5px; font-weight:bold;">🗺️ 庄园状态简图</div>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二楼：${rFmt("画室", ["色彩徽章", "橙色徽章"])} | ${rFmt("最深处的卧室", "彩虹徽章")}<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一楼：${rFmt("音乐室", "旋律徽章")} | ${rFmt("大厅", "起始徽章")} | ${rFmt("温室花房", "生命徽章")} | ${rFmt("书房/图书馆", "智慧徽章")}<br>
-    &nbsp;&nbsp;东侧附属：${rFmt("钟楼", "时空徽章")}<br>
-    &nbsp;&nbsp;&nbsp;地下：${rFmt("地下室", "深渊徽章")}
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一楼：${rFmt("音乐室", ["旋律徽章", "翠绿徽章"])} | ${rFmt("大厅", "起始徽章")} | ${rFmt("温室花房", ["生命徽章", "金色徽章"])} | ${rFmt("书房/图书馆", ["智慧徽章", "蓝宝石徽章"])}<br>
+    &nbsp;&nbsp;东侧附属：${rFmt("钟楼", ["时空徽章", "红宝石徽章"])}<br>
+    &nbsp;&nbsp;&nbsp;地下：${rFmt("地下室", ["深渊徽章", "紫色徽章"])}
 </div>`;
     }
 
@@ -568,6 +822,11 @@ function renderScene(sceneId) {
 
     typeWriterHTML(storyElement, fullDescHTML, 25, () => {
         optionsContainer.style.display = "flex";
+
+        if (scene.itemSelection) {
+            renderItemSubmissionScene(sceneId, scene.itemSelection);
+            return;
+        }
 
         const options = Array.isArray(scene.options) ? [...scene.options] : [];
         const isEndingScene = sceneId === "game_over" || sceneId.startsWith("ending_");
@@ -620,8 +879,6 @@ function renderScene(sceneId) {
         const roomMedalMap = {
             "puzzle_statues": "勇气徽章",
             "library_entry": "知识徽章",
-            "musicroom_entry": "和谐徽章",
-            "greenhouse_entry": "生命徽章",
             "studio_entry": "洞察徽章",
             "basement_entry": "转化徽章",
             "clocktower_entry": "怀表"
@@ -708,30 +965,16 @@ const ITEM_DESCRIPTIONS = {
     "金色徽章": "第五枚徽章，金色，散发着淡淡的草木香。",
     "紫色徽章": "第六枚徽章，紫色，表面刻着复杂的符文。",
     "彩虹徽章": "第七枚徽章，七色流转，是所有徽章中唯一会发光的。",
-    "色彩徽章": "第四枚徽章的别名，在部分分支中与橙色徽章等价。",
-    "旋律徽章": "音乐室的徽章。",
-    "深渊徽章": "地下室的徽章。",
     "古树血提取剂": "用七种植物血液调配的深红色液体，能唤醒枯死的古树。",
     "七色花肥料": "能迅速为七色花提供丰富营养的肥料。",
-    "七色花苞": "被琥珀封存的古老花苞，内部保留着完整的七色结构。",
-    "七色花琥珀": "琥珀中封存着七色花花瓣，背面刻着“以七血滋养，可复生机”。",
-    "长柄夹": "细长夹具，适合从深槽、石盆或机关缝隙中安全取物。",
+    "七色花苞": "一枚被妥善保存的花苞，花萼边缘呈现不自然的七色过渡，像在等待某种催化。",
+    "七色花琥珀": "一块封存着七色花花瓣的古老琥珀，背面刻着“以七血滋养，可复生机”。",
+    "长柄夹": "一把细长的取物夹，适合从深槽、石盆和狭窄缝隙中安全夹取目标。",
     "旧照片": "照片背面的字迹让你察觉到管家隐藏的过去。",
     "管家在隐瞒什么": "管家似乎在替主人隐瞒一段不为人知的秘密。",
-    "克劳利的日记": "皮质封面，记录着庄园的部分秘密。",
-    "机械齿轮": "铜质齿轮，边缘有编号，可用于其他机关。",
-    "调音扳手": "用于校准管风琴与弦乐器音高的精密工具。",
-    "共鸣水晶": "透明水晶，敲击时会发出纯净的乐音。",
-    "神秘颜料": "七色颜料混合而成，可以唤醒枯萎的植物。",
-    "生命之露": "一小瓶清澈的液体，散发着草木的清香。",
-    "符文石": "黑色石头上刻着古老的符文，微微发热。",
-    "星盘钥匙": "铜质圆盘，可嵌入书桌凹槽。",
-    "阿斯特的怀表": "停止的怀表，指针指向11:55。",
-    "夜莺胸针": "银质胸针，夜莺的眼睛是红宝石。",
-    "托马斯的笔记本": "地质学家的考察笔记。",
-    "守护者符文": "手背上的银色符文，获得后可封印古老力量。",
-    "伊莲娜的纪念徽章": "心形彩虹色徽章，背面刻着“永存于画中”。",
-
+    "色彩徽章": "第四枚徽章，彩色。",
+    "旋律徽章": "音乐室的徽章。",
+    "深渊徽章": "地下室的徽章。",
     "停止的怀表": "一块没有指针的怀表，表盘上只有细密的刻度。表盖内侧刻着一行小字：“时间停止的地方，答案开始。”",
     "衣柜钥匙": "一把黄铜钥匙，钥匙柄上刻着“衣柜”二字，表面有轻微的锈迹，但仍能使用。",
     "铜钥匙": "一枚古铜色钥匙，钥匙齿纹路清晰，似乎能打开某处隐秘的锁。",
@@ -748,10 +991,23 @@ const ITEM_DESCRIPTIONS = {
     "埃莉诺遗信": "埃莉诺写给阿斯特的遗信，字迹娟秀但虚弱。信中交代她将最后的秘密藏在音乐室壁炉后，并希望有人能完成第七乐章。",
     "音乐室铜钥匙": "一把造型古朴的铜钥匙，钥匙柄上刻着夜莺图案，可用于打开音乐室壁炉后的密道。",
     "埃莉诺制琴笔记": "一本深蓝色丝绒封面的笔记，记录了埃莉诺制作七件乐器的技术细节和心路历程，末尾附有她的病中日记。",
-    "埃莉诺的琴弓": "一把乌木琴弓，弓尾库镶着珍珠母贝，马尾洁白如新。弓杆上刻着：“奏响我，我将归来。”",
     "夜莺徽章（纪念品）": "一枚银色的夜莺徽章，不是主线的七徽章之一。背面刻着：“感谢你让我完成最后的乐章。”",
     "埃莉诺的完整交响曲（七乐章全本）": "一份完整的交响曲总谱，共七个乐章，第七乐章标题为“重生”。这是埃莉诺未竟之作的最终完成版。",
     "紫藤花种子": "几粒干瘪的紫藤花种子，用纸包裹着。纸包上写着：“种在安息地前，她将不再孤单。”",
+    "克劳利的日记": "皮质封面，记录着庄园的部分秘密。",
+    "机械齿轮": "铜质齿轮，边缘有编号，可用于其他机关。",
+    "调音扳手": "用于校准管风琴与弦乐器音高的精密工具。",
+    "共鸣水晶": "透明水晶，敲击时会发出纯净的乐音。",
+    "神秘颜料": "七色颜料混合而成，可以唤醒枯萎的植物。",
+    "生命之露": "一小瓶清澈的液体，散发着草木的清香。",
+    "符文石": "黑色石头上刻着古老的符文，微微发热。",
+    "星盘钥匙": "铜质圆盘，可嵌入书桌凹槽。",
+    "阿斯特的怀表": "停止的怀表，指针指向11:55。",
+    "伊莲娜的纪念徽章": "心形彩虹色徽章，背面刻着“永存于画中”。",
+    "夜莺胸针": "银质胸针，夜莺的眼睛是红宝石。",
+    "埃莉诺的琴弓": "乌木琴弓，弓尾库镶着珍珠母贝。",
+    "托马斯的笔记本": "地质学家的考察笔记。",
+    "守护者符文": "手背上的银色符文，获得后可封印古老力量。"
 };
 
 

@@ -1,0 +1,11 @@
+{
+  "scene_a": {
+    "desc": "one",
+    "options": [
+      {
+        "text": "go",
+        "target": "scene_b"
+      }
+    ]
+  }
+}

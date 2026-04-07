@@ -1,0 +1,181 @@
+import sys
+
+# =========================
+# 初始化
+# =========================
+def new_game():
+    return {
+        "current_scene": "gate",
+        "world_state": {
+            "ritual_progress": 0,
+            "astre_awareness": 0
+        },
+        "inventory": [],
+        "clues": [],
+        "foreshadow_seen": [],
+        "scene_flags": {}
+    }
+
+state = new_game()
+
+# =========================
+# 工具
+# =========================
+def foreshadow(key):
+    if key not in state["foreshadow_seen"]:
+        state["foreshadow_seen"].append(key)
+        print("（你隐约感到不对劲……）")
+
+def update_awareness():
+    state["world_state"]["astre_awareness"] = len(state["foreshadow_seen"]) // 2
+
+# =========================
+# 场景函数
+# =========================
+
+# 1 铁门
+def scene_gate():
+    print("\n【铁门】雾气弥漫，铁门纹路像某种仪式符号。")
+    foreshadow("gate_symbol")
+    print("1. 进入庄园")
+    if input("> ") == "1":
+        state["current_scene"] = "path"
+
+# 2 小径
+def scene_path():
+    print("\n【小径】树影像扭曲的人形。")
+    foreshadow("tree_shadow")
+    print("1. 前往主楼  2. 返回")
+    c = input("> ")
+    state["current_scene"] = "hall" if c=="1" else "gate"
+
+# 3 主楼外
+def scene_mansion():
+    print("\n【主楼外】某些窗户亮得异常。")
+    foreshadow("window_light")
+    print("1. 进入大厅")
+    if input("> ")=="1":
+        state["current_scene"]="hall"
+
+# 4 大厅
+def scene_hall():
+    print("\n【大厅】画像似乎是同一个人。")
+    foreshadow("portrait_same")
+    print("1. 管家房 2. 温室 3. 地下入口")
+    c=input("> ")
+    if c=="1": state["current_scene"]="butler"
+    elif c=="2": state["current_scene"]="greenhouse"
+    elif c=="3": state["current_scene"]="basement"
+
+# 5 管家房
+def scene_butler():
+    print("\n【管家房】照片中主人没有变老。")
+    if "photo" not in state["scene_flags"]:
+        foreshadow("photo_same")
+        state["scene_flags"]["photo"]=True
+    print("1. 返回")
+    input("> ")
+    state["current_scene"]="hall"
+
+# 6 温室工具房（密码）
+def scene_greenhouse():
+    print("\n【工具房】工具排列奇怪。")
+    foreshadow("tool_pattern")
+    print("1. 输入密码 2. 返回")
+    c=input("> ")
+    if c=="1":
+        code=input("密码:")
+        if code=="188":
+            print("打开了。")
+            state["world_state"]["ritual_progress"]+=1
+        else:
+            print("错误")
+    else:
+        state["current_scene"]="hall"
+
+# 7 温室
+def scene_garden():
+    print("\n【温室】植物生长诡异。")
+    foreshadow("plant_weird")
+    print("1. 返回")
+    input("> ")
+    state["current_scene"]="hall"
+
+# 8 地下入口
+def scene_basement():
+    print("\n【地下入口】符文避开中间。")
+    foreshadow("rune_avoid")
+    print("1. 下去 2. 返回")
+    c=input("> ")
+    state["current_scene"]="lab" if c=="1" else "hall"
+
+# 9 实验室
+def scene_lab():
+    print("\n【实验室】实验记录完全相同。")
+    foreshadow("repeat_exp")
+    print("1. 仪式厅")
+    input("> ")
+    state["current_scene"]="ritual"
+
+# 10 仪式厅（解谜）
+def scene_ritual():
+    print("\n【仪式厅】符号围绕中心。")
+    foreshadow("ritual_center")
+
+    if "ritual_done" not in state["scene_flags"]:
+        print("输入符文顺序（提示：你见过的异常数量）")
+        ans=input("> ")
+        if ans==str(len(state["foreshadow_seen"])):
+            print("仪式被触发")
+            state["scene_flags"]["ritual_done"]=True
+            state["world_state"]["ritual_progress"]+=2
+        else:
+            print("失败")
+
+    print("1. 继续")
+    input("> ")
+    state["current_scene"]="final"
+
+# 11 真相房
+def scene_final():
+    print("\n【真相】所有画像都是他。")
+    foreshadow("truth")
+
+    ending()
+
+# =========================
+# 结局
+# =========================
+def ending():
+    a=state["world_state"]["astre_awareness"]
+
+    if a>=4:
+        print("\n【结局：被同化】你成为循环的一部分。")
+    elif len(state["foreshadow_seen"])>=8:
+        print("\n【结局：看破】你意识到一切。")
+    else:
+        print("\n【结局：无知】你什么也没发现。")
+
+    sys.exit()
+
+# =========================
+# 主循环
+# =========================
+def loop():
+    while True:
+        update_awareness()
+
+        s=state["current_scene"]
+
+        if s=="gate": scene_gate()
+        elif s=="path": scene_path()
+        elif s=="hall": scene_hall()
+        elif s=="butler": scene_butler()
+        elif s=="greenhouse": scene_greenhouse()
+        elif s=="basement": scene_basement()
+        elif s=="lab": scene_lab()
+        elif s=="ritual": scene_ritual()
+        elif s=="final": scene_final()
+
+# =========================
+loop()

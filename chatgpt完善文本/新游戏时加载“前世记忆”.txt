@@ -1,0 +1,34 @@
+扩展阿斯特对话
+def astre_meta_dialogue():
+    lines = []
+
+    if memory["played"]:
+        lines.append("……你又来了。")
+
+    if "188" in memory["known_codes"]:
+        lines.append("你还记得那个密码，对吗？")
+
+    if memory["death_count"] >= 2:
+        lines.append("你已经失败很多次了。")
+
+    if len(state["foreshadow"]) >= 4:
+        lines.append("你不该知道这些的。")
+
+    if not lines:
+        lines.append("欢迎。")
+
+    import random
+    return random.choice(lines)
+
+
+修改阿斯特出现函数
+def astre_appear():
+    update_astre()
+
+    normal_line = random.choice(ASTRE_DIALOGUE[state["astre"]["stage"]])
+    meta_line = astre_meta_dialogue()
+
+    text.config(text=f"【阿斯特】\n{normal_line}\n\n{meta_line}")
+
+    clear_buttons()
+    add_button("……", lambda: return_to_scene())

@@ -1,0 +1,13 @@
+修改 ending：
+
+def ending(result):
+    memory["played"] = True
+    memory["death_count"] += 1
+    memory["seen_endings"].append(result)
+
+    save_memory(memory)
+
+    text.config(text=f"【结局】{result}\n\n（世界似乎没有结束……）")
+
+    clear_buttons()
+    add_button("重新开始", restart_game)

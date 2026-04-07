@@ -1,0 +1,11 @@
+👉 在开场加入：
+def scene_gate():
+    set_bg("gate")
+
+    if memory["played"]:
+        text.config(text="你再次站在铁门前。\n这一次……你记得这里。")
+    else:
+        text.config(text="你第一次来到庄园。")
+👉 在温室直接触发“既视感”：
+if "188" in memory["known_codes"]:
+    text.config(text="你突然想起……密码是188。")

@@ -1,0 +1,103 @@
+1️⃣ 阿斯特状态
+
+放在 state 里：
+
+state["astre"] = {
+    "stage": 0,  # 0正常 1怀疑 2压迫 3真相
+    "met": False
+}
+🧠 2️⃣ 更新阿斯特阶段
+def update_astre():
+    f = len(state["foreshadow"])
+    r = state["ritual"]
+
+    if f >= 2:
+        state["astre"]["stage"] = 1
+    if f >= 4:
+        state["astre"]["stage"] = 2
+    if f >= 6 or r >= 2:
+        state["astre"]["stage"] = 3
+🎭 3️⃣ 阿斯特对话库（核心🔥）
+ASTRE_DIALOGUE = {
+    0: [
+        "欢迎来到我的庄园。",
+        "这里的一切，都有它的意义。"
+    ],
+    1: [
+        "你似乎看得比别人更多。",
+        "有些东西，不应该被注意到。"
+    ],
+    2: [
+        "你已经开始理解了，对吗？",
+        "……那就不能让你离开了。"
+    ],
+    3: [
+        "你终于看见了。",
+        "但你真的以为……你能离开这里？"
+    ]
+}
+👁 4️⃣ 阿斯特出现函数
+def astre_appear():
+    update_astre()
+
+    stage = state["astre"]["stage"]
+    lines = ASTRE_DIALOGUE[stage]
+
+    import random
+    line = random.choice(lines)
+
+    text.config(text="【阿斯特】\n" + line)
+
+    clear_buttons()
+    add_button("……", lambda: return_to_scene())
+🔁 5️⃣ 返回原场景
+def return_to_scene():
+    change_scene(state["scene"])
+🎬 三、插入“阿斯特随机出现”
+
+在这些场景结尾加👇
+
+👉 在 scene_hall / greenhouse / lab 中加入：
+import random
+
+if random.random() < 0.4:
+    root.after(500, astre_appear)
+💀 四、强化压迫（文本侵蚀效果🔥）
+
+替换 text 输出：
+
+def creepy_text(msg):
+    if state["astre"]["stage"] >= 2:
+        msg += "\n……你感觉有人在看着你。"
+    text.config(text=msg)
+
+👉 然后把所有：
+
+text.config(...)
+
+换成：
+
+creepy_text(...)
+👁 五、终局强化（最关键）
+
+修改 final 场景👇
+
+def scene_final():
+    set_bg("final")
+
+    update_astre()
+
+    stage = state["astre"]["stage"]
+
+    if stage == 3:
+        text.config(text="【阿斯特】\n你终于明白了。\n\n你从未离开过这里。")
+    else:
+        text.config(text="你离开了庄园……但你不确定那是否真实。")
+
+    clear_buttons()
+🎯 六、你现在得到的变化
+🧠 从“解谜游戏” → “心理游戏”
+之前	现在
+静态场景	动态角色
+解题	被观察
+玩家主动	NPC反制
