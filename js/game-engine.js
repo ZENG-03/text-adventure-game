@@ -1514,3 +1514,5 @@ function displayHintMessage() {
     setTimeout(() => { t.style.opacity = '0'; setTimeout(()=>t.remove(), 500); }, 5000);
 }
 
+
+export { renderScene };
