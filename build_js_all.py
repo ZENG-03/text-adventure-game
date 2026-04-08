@@ -64,13 +64,43 @@ FILES = [
 
 
 def js_str(value: str) -> str:
+    """
+    转义字符串中的特殊字符，使其可以安全地用于JavaScript代码中
+    
+    Args:
+        value (str): 需要转义的字符串
+    
+    Returns:
+        str: 转义后的字符串
+    """
     return value.replace("\\", "\\\\").replace('"', '\\"').replace("`", "\\`")
 
 
 def parse_txt(file_path: Path) -> dict:
+    """
+    解析文本文件中的场景定义
+    
+    该函数读取指定文本文件，解析其中的场景定义，
+    包括场景描述、选项、条件、效果和结局标记。
+    
+    Args:
+        file_path (Path): 要解析的文本文件路径
+    
+    Returns:
+        dict: 场景字典，键为场景ID，值为场景数据对象
+        
+        场景数据对象包含：
+            - desc: 场景描述文本
+            - options: 选项列表，每个选项包含 text、target、cond_str
+            - effs: 效果列表
+            - mark_ending: 结局标记
+            - item_selection: 物品选择配置
+    """
+    # 检查文件是否存在
     if not file_path.is_file():
         print(f"Skipping missing file: {file_path}")
         return {}
+    # 读取文件内容
     content = file_path.read_text(encoding="utf-8", errors="ignore")
 
     parts = re.split(r"场景ID:\s*([A-Za-z0-9_]+)", content)
@@ -244,12 +274,29 @@ def parse_txt(file_path: Path) -> dict:
 
 
 def make_js_code(scenes: dict) -> str:
+    """
+    将场景数据转换为 JavaScript 代码
+    
+    该函数接收解析后的场景字典，生成对应的 JavaScript 场景定义代码。
+    包括场景描述、选项、进入效果、结局标记和物品选择配置。
+    
+    Args:
+        scenes (dict): 场景字典，由 parse_txt() 函数返回
+    
+    Returns:
+        str: 生成的 JavaScript 代码字符串
+    """
+    # 存储生成的 JavaScript 代码行
     js_lines = []
+    # 遍历每个场景
     for sid, sdata in scenes.items():
+        # 开始定义场景对象
         js_lines.append(f'scenes["{sid}"] = {{')
 
+        # 获取结局标记并转义
         mark_end = sdata.get("mark_ending") or ""
         mark_esc = mark_end.replace("\\", "\\\\").replace('"', '\\"')
+        # 获取效果列表
         effs = sdata.get("effs") or []
 
         if effs or mark_end:
@@ -430,45 +477,85 @@ def make_js_code(scenes: dict) -> str:
 
 
 def manual_scene_ids(prefix: str) -> frozenset:
+    """
+    从手写场景代码中提取场景ID
+    
+    该函数使用正则表达式从手写场景代码中提取所有场景ID，
+    用于确定哪些场景需要保留，不被自动生成的代码覆盖。
+    
+    Args:
+        prefix (str): 手写场景代码部分
+    
+    Returns:
+        frozenset: 场景ID的不可变集合
+    """
     return frozenset(re.findall(r'scenes\["([^"]+)"\]', prefix))
 
 
 def main():
+    """
+    主函数：执行场景构建流程
+    
+    该函数执行以下操作：
+    1. 检查 game-scenes.js 文件是否存在
+    2. 读取文件内容，找到自动生成标记和 IIFE 结尾
+    3. 提取手写场景ID，确定需要跳过的场景
+    4. 解析所有文本文件，生成对应的 JavaScript 代码
+    5. 处理跨文件重复场景ID
+    6. 将生成的代码写入 game-scenes.js 文件
+    
+    Returns:
+        None
+    """
+    # 检查 game-scenes.js 文件是否存在
     if not SCENES_JS.is_file():
         raise SystemExit(f"找不到 {SCENES_JS}")
 
+    # 读取文件内容
     raw = SCENES_JS.read_text(encoding="utf-8")
+    # 找到自动生成标记的位置
     idx = raw.find(AUTO_MARKER)
     if idx == -1:
         raise SystemExit(f"{SCENES_JS} 中未找到「{AUTO_MARKER}」标记")
 
+    # 找到 IIFE 结尾
     footer_m = re.search(r"\n\s*\}\)\(\);\s*\Z", raw)
     if not footer_m:
         raise SystemExit("未找到 IIFE 结尾 })();")
     footer = raw[footer_m.start() :]
+    # 提取手写场景代码部分
     prefix = raw[:idx].rstrip() + "\n\n"
 
+    # 提取手写场景ID
     manual_ids = manual_scene_ids(prefix)
+    # 确定需要跳过的场景ID（手写场景和额外保留场景）
     skip_ids = set(manual_ids) | set(EXTRA_RESERVED)
 
+    # 处理扩展文件中的场景ID，允许覆盖手写场景
     expansion_ids: set[str] = set()
     for rel in FILES:
         if any(k in rel for k in EXPANSION_FILE_KEYWORDS):
             fp = ROOT / rel.replace("\\", "/")
             expansion_ids |= set(parse_txt(fp).keys())
+    # 从跳过列表中移除扩展文件中的场景ID（非保护场景）
     for sid in expansion_ids:
         if sid not in PROTECTED_IDS:
             skip_ids.discard(sid)
 
+    # 生成 JavaScript 代码
     full_js = ""
     total = 0
     seen_ids: set[str] = set()
     first_owner: dict[str, str] = {}
     cross_file_dup_count = 0
+    
+    # 遍历所有文本文件
     for rel in FILES:
         fp = ROOT / rel.replace("\\", "/")
+        # 解析文本文件
         scenes = parse_txt(fp)
 
+        # 处理跨文件重复场景ID
         for sid in scenes.keys():
             if sid in first_owner:
                 cross_file_dup_count += 1
@@ -479,7 +566,9 @@ def main():
             else:
                 first_owner[sid] = rel
 
+        # 过滤掉需要跳过的场景
         filtered = {k: v for k, v in scenes.items() if k not in skip_ids}
+        # 添加文件注释和生成的代码
         full_js += f"\n// --- 自动生成的 {rel} 场景 ---\n"
         full_js += make_js_code(filtered)
         seen_ids |= set(filtered.keys())
@@ -489,6 +578,7 @@ def main():
             f"(skipped {len(scenes) - len(filtered)} manual/reserved)"
         )
 
+    # 组合新内容并写入文件
     new_content = prefix + full_js.rstrip() + footer
     SCENES_JS.write_text(new_content, encoding="utf-8")
     print(f"\n已写入 {SCENES_JS}，共生成约 {total} 个场景块（跨文件累计，后者覆盖同 ID）。")

@@ -1,41 +1,86 @@
 from engine import Scene, Option
 
 def build_scenes():
+    """
+    构建游戏中所有的场景和选项逻辑
+    
+    该函数创建并返回一个包含所有游戏场景的字典，每个场景包含：
+    - 场景ID
+    - 场景描述
+    - 可选择的选项
+    - 进入场景时的触发函数
+    - 选项的条件和效果
+    
+    Returns:
+        dict: 包含所有游戏场景的字典，键为场景ID，值为Scene对象
+    """
     scenes = {}
 
     def clocktower_enter(s):
-        if s.has_item('红宝石徽章'): s.set('side_clock_completed', True)
+        """钟楼场景进入触发器：检查是否有红宝石徽章以完成侧边任务"""
+        if s.has_item('红宝石徽章'):
+            s.set('side_clock_completed', True)
 
     def hall_main_enter(state):
+        """
+        大厅主场景进入触发器
+        
+        该函数在玩家进入大厅主场景时执行，主要功能包括：
+        1. 检查获得的徽章数量，当集齐3枚徽章且未触发管家剧情时，强制重定向到支线1
+        2. 根据收集进度动态更新大厅的描述，显示不同的环境变化
+        3. 生成并显示庄园各处的探索状态简图，方便玩家了解进度
+        
+        Args:
+            state: 游戏状态对象，包含玩家的物品、线索和标志等信息
+        
+        Returns:
+            dict or None: 如果需要重定向，返回包含type和target的字典；否则返回None
+        """
+        # 获取当前获得的徽章数量
         count = state.get("hall_medal_count", 0)
+        # 当集齐3枚徽章且未触发管家剧情时，强制重定向到支线1
         if count >= 3 and not state.get("side_butler_triggered"):
             state.set("side_butler_triggered", True)
             return {"type": "redirect", "target": "side_story_1_start"}
             
+        # 基础场景描述
         desc = """你站在大厅中央。大厅两侧各立着四座大理石雕像。通往各处的门紧闭着。
 壁炉里有烧焦的纸片。通往其他房间的走廊隐约可见。"""
+        
+        # 根据进度增加描述深度，显示不同的环境变化
         if count >= 5:
             desc += "\n\n[大厅发生了剧变：空气中弥漫着压抑的气息，中央密室的大门开始渗出微光。]"
         elif count >= 3:
             desc += "\n\n[大厅发生了变化：一些雕像的眼睛似乎在盯着你。]"
             
         def r_fmt(name, item):
+            """
+            格式化显示各房间的探索状态
+            
+            Args:
+                name (str): 房间名称
+                item (str): 该房间对应的徽章名称
+                
+            Returns:
+                str: 格式化后的房间状态字符串
+            """
             light = "[93m(★已探索)[0m" if state.has_item(item) else "[90m(未探索)[0m"
             return f"{name}{light}"
 
+        # 动态生成地图简图，方便玩家了解进度
         map_str = f"\n\n[ 🗺️ 庄园状态简图 ]\n"
         map_str += f"     二楼：{r_fmt('画室', '色彩徽章')} | {r_fmt('最深处的卧室', '彩虹徽章')}\n"
         map_str += f"     一楼：{r_fmt('音乐室', '旋律徽章')} | {r_fmt('大厅', '起始徽章')} | {r_fmt('温室花房', '生命徽章')} | {r_fmt('书房/图书馆', '智慧徽章')}\n"
         map_str += f"  东侧附属：{r_fmt('钟楼', '时空徽章')}\n"
         map_str += f"   地下：{r_fmt('地下室', '深渊徽章')}"
 
+        # 将地图添加到描述中
         desc += map_str
 
+        # 更新场景描述
         if "hall_main" in scenes:
             scenes["hall_main"].desc = desc
         return None
-
-
 
     # --- 开场模块 ---
     scenes["title"] = Scene(
@@ -64,6 +109,7 @@ def build_scenes():
     )
 
     def on_enter_ng_plus(state):
+        """多周目（二周目及以上）开始时的特殊奖励逻辑"""
         if "怀表" not in state.items:
             state.items.append("怀表")
         if "前世记忆" not in state.clues:
@@ -121,6 +167,7 @@ def build_scenes():
     # --- 大厅初始逻辑 --- 
 
     def gain_clue_paper(state):
+        """在大厅壁炉获得关键线索的逻辑"""
         state.add_clue("烧焦的纸片 (凯撒密码提示)")
         
     scenes["hall_fireplace"] = Scene(
@@ -134,6 +181,10 @@ def build_scenes():
         on_enter=gain_clue_paper
     )
 
+    def start_side_butler(s):
+        """触发管家支线任务的逻辑"""
+        s.set("side_quest_butler_started", True)
+
     scenes["side_story_1_start"] = Scene(
         "side_story_1_start",
         """你在大厅里等了许久，仍不见管家奥尔德斯的身影。壁炉台上多了一张纸条：
@@ -146,24 +197,38 @@ def build_scenes():
             Option("前往阁楼", "side_attic"),
             Option("返回大厅", "hall_main")
         ],
-        on_enter=lambda s: s.set("side_quest_butler_started", True)
+        on_enter=start_side_butler
     )
+
+    def enter_servant_room(s):
+        """进入仆人房并添加线索"""
+        s.add_clue("管家最近在午夜频繁出没")
 
     scenes["side_servant_room"] = Scene(
         "side_servant_room",
         """仆人房间里堆着整齐的床铺和旧制服。墙边挂着一张庄园值班表，最近几天管家的名字总是出现在午夜时分。
 你还发现一枚断裂的袖扣，上面刻着阿斯特家族的家徽。""",
         [Option("继续寻找管家", "side_story_1_start")],
-        on_enter=lambda s: s.add_clue("管家最近在午夜频繁出没")
+        on_enter=enter_servant_room
     )
+
+    def enter_attic(s):
+        """进入阁楼并添加线索"""
+        s.add_clue("阁楼里有通往地窖的隐藏楼梯")
 
     scenes["side_attic"] = Scene(
         "side_attic",
         """阁楼里堆满旧箱子和被布盖住的画像。最靠里的箱子里放着一张褪色地图，标出了通往地窖的隐藏楼梯。
 灰尘中还有一行字：哥哥不会希望你一直守在这里。""",
         [Option("回到大厅侧边", "side_story_1_start")],
-        on_enter=lambda s: s.add_clue("阁楼里有通往地窖的隐藏楼梯")
+        on_enter=enter_attic
     )
+
+    def enter_butler_quarters(s):
+        """进入管家起居室，获取关键道具"""
+        s.add_item("旧照片")
+        s.add_item("生锈的钥匙")
+        s.add_item("对不起，哥哥的纸条")
 
     scenes["side_butler_quarters"] = Scene(
         "side_butler_quarters",
@@ -175,31 +240,43 @@ def build_scenes():
             Option("用钥匙试试地窖的门", "side_cellar_key", condition=lambda s: s.has_item("生锈的钥匙")),
             Option("返回大厅", "hall_main")
         ],
-        on_enter=lambda s: (s.add_item("旧照片"), s.add_item("生锈的钥匙"), s.add_item("对不起，哥哥的纸条"))
+        on_enter=enter_butler_quarters
     )
+
+    def check_butler_fireplace(s):
+        """检查管家壁炉的线索"""
+        s.add_clue("管家在隐瞒什么")
 
     scenes["side_fireplace"] = Scene(
         "side_fireplace",
         """壁炉的余烬中有一块未完全烧毁的纸片。你用火钳夹出，上面写着：“我无法继续隐瞒……他其实……”
 纸片的材质与账本相同，很可能是被撕下的账本页。""",
         [Option("返回起居室", "side_butler_quarters")],
-        on_enter=lambda s: s.add_clue("管家在隐瞒什么")
+        on_enter=check_butler_fireplace
     )
+
+    def check_under_bed(s):
+        """检查床底获得管家身份线索"""
+        s.add_clue("管家与主人的兄弟关系")
 
     scenes["side_under_bed"] = Scene(
         "side_under_bed",
         """床底有一个落满灰尘的皮箱。里面是几封寄给“奥尔德斯·克劳利”的信件，落款都是阿斯特。
 最末一封信提到：遗嘱会放在中央密室，若有人失败，就让他离开，不要伤害任何人。""",
         [Option("继续寻找管家", "side_story_1_start"), Option("前往地窖", "side_cellar")],
-        on_enter=lambda s: s.add_clue("管家与主人的兄弟关系")
+        on_enter=check_under_bed
     )
+
+    def use_cellar_key(s):
+        """使用钥匙打开地窖入口"""
+        s.add_clue("地窖入口已经打开")
 
     scenes["side_cellar_key"] = Scene(
         "side_cellar_key",
         """你用生锈的钥匙打开了地下更深处的木门，石阶后是一段向下延伸的通道。空气潮湿阴冷，墙壁上有古老符文。
 你终于来到了地窖入口。""",
         [Option("进入地窖", "side_cellar")],
-        on_enter=lambda s: s.add_clue("地窖入口已经打开")
+        on_enter=use_cellar_key
     )
 
     scenes["side_cellar"] = Scene(
@@ -214,28 +291,44 @@ def build_scenes():
         ]
     )
 
+    def reveal_butler_identity(s):
+        """揭露管家真实身份"""
+        s.add_clue("管家是阿斯特的弟弟")
+
     scenes["side_reveal_1"] = Scene(
         "side_reveal_1",
         """“你是阿斯特·克劳利的弟弟。”你亮出旧照片和信件。
 管家沉默片刻，缓缓点头：“是的。我以管家的身份守护庄园，等待能够通过七谜考验的人。”""",
         [Option("继续追问", "side_cellar")],
-        on_enter=lambda s: s.add_clue("管家是阿斯特的弟弟")
+        on_enter=reveal_butler_identity
     )
+
+    def reveal_blood_writing(s):
+        """揭露地窖血字的含义"""
+        s.add_clue("阿斯特留下了地窖血字")
 
     scenes["side_reveal_2"] = Scene(
         "side_reveal_2",
         """你问起血字。管家走近石棺，手指轻触石壁：这是阿斯特留下的最后留言。他在这里写下遗嘱之前，先留下了这句等候。""",
         [Option("继续追问", "side_cellar")],
-        on_enter=lambda s: s.add_clue("阿斯特留下了地窖血字")
+        on_enter=reveal_blood_writing
     )
+
+    def reveal_butler_intent(s):
+        """揭露管家的初衷"""
+        s.add_clue("管家在执行主人的遗愿")
 
     scenes["side_reveal_3"] = Scene(
         "side_reveal_3",
         """你后退一步，管家却只是摇摇头：“我不会伤害你。七年来，我见过太多失败者，也见过几个有潜力的探索者。”
 他取出一卷羊皮纸，低声说：“这是哥哥真正的遗嘱。”""",
         [Option("继续追问", "side_cellar")],
-        on_enter=lambda s: s.add_clue("管家在执行主人的遗愿")
+        on_enter=reveal_butler_intent
     )
+
+    def reveal_butler_truth(s):
+        """支线1真相大白"""
+        s.set("side_quest_butler_revealed", True)
 
     scenes["side_truth"] = Scene(
         "side_truth",
@@ -247,7 +340,7 @@ def build_scenes():
             Option("询问更多关于阿斯特自杀的细节", "side_ask_more"),
             Option("领取怀表纪念", "side_ending_memento")
         ],
-        on_enter=lambda s: s.set("side_quest_butler_revealed", True)
+        on_enter=reveal_butler_truth
     )
 
     scenes["side_ask_more"] = Scene(
@@ -257,30 +350,48 @@ def build_scenes():
         [Option("回到真相选择", "side_truth")]
     )
 
+    def gain_butler_memento(s):
+        """获得管家赠予的怀表纪念"""
+        s.add_item("阿斯特的怀表")
+        s.set("side_quest_butler_memento", True)
+
     scenes["side_ending_memento"] = Scene(
         "side_ending_memento",
         """管家将一只银怀表递给你：“这是哥哥的遗物。他曾说过，时间会证明一切。现在，它属于你了。”""",
         [Option("带着怀表回到真相", "side_truth")],
-        on_enter=lambda s: (s.add_item("阿斯特的怀表"), s.set("side_quest_butler_memento", True))
+        on_enter=gain_butler_memento
     )
+
+    def complete_butler_master(s):
+        """支线1结局：选择成为主人"""
+        s.set("side_butler_completed", True)
 
     scenes["side_ending_master"] = Scene(
         "side_ending_master",
         """你选择成为谜语馆的主人。管家尊重你的决定，将钥匙交给你，但也提醒你：门可以从里面打开，心却可能被锁住。
 庄园从此成为你的责任。""",
         [Option("返回大厅", "hall_main")],
-        on_enter=lambda s: s.set("side_butler_completed", True)
+        on_enter=complete_butler_master
     )
+
+    def complete_butler_spreader(s):
+        """支线1结局：选择成为传播者"""
+        s.set("side_butler_completed", True)
+        s.add_clue("谜语的意义在于分享，而不是禁锢")
 
     scenes["side_ending_spreader"] = Scene(
         "side_ending_spreader",
         """你选择成为传播者。管家露出七年来第一个微笑，愿意与你一起整理并出版谜题笔记。
 你带走的不是遗产，而是让谜语继续流动下去的方式。""",
         [Option("返回大厅", "hall_main")],
-        on_enter=lambda s: (s.set("side_butler_completed", True), s.add_clue("谜语的意义在于分享，而不是禁锢"))
+        on_enter=complete_butler_spreader
     )
 
     # --- 支线二：画中女子 ---
+    def start_side_painting(s):
+        """触发支线2：画中女子的逻辑"""
+        s.set("side_story_2_started", True)
+
     scenes["side_story_2_start"] = Scene(
         "side_story_2_start",
         """你再次回到画室，发现南墙彩色玻璃窗投下的光斑在地面上拼出一个女人的侧影。
@@ -297,32 +408,49 @@ def build_scenes():
             Option("粗暴刮除画层（危险）", "side_ending_paint_curse"),
             Option("先返回画室主区域", "studio_entry")
         ],
-        on_enter=lambda s: s.set("side_story_2_started", True)
+        on_enter=start_side_painting
     )
+
+    def link_painting_clocktower(s):
+        """将画室线索与钟楼关联"""
+        s.add_clue("钟楼节拍与画室七色叙事相互印证")
 
     scenes["side2_clocktower_link"] = Scene(
         "side2_clocktower_link",
         """你带着画室线索来到钟楼，发现摆锤的节拍与七幅画的情绪序列存在同构关系：由急促到舒缓，再归于平静。
 这让你确认：伊莲娜线索并非孤立回忆，而是贯穿庄园整体叙事的主轴之一。""",
         [Option("带着新理解返回画室", "side_story_2_start")],
-        on_enter=lambda s: s.add_clue("钟楼节拍与画室七色叙事相互印证")
+        on_enter=link_painting_clocktower
     )
+
+    def link_painting_bedroom(s):
+        """将画室线索与卧室关联"""
+        s.add_clue("卧室认可‘纪念而非占有’的回答方向")
 
     scenes["side2_bedroom_link"] = Scene(
         "side2_bedroom_link",
         """在卧室油画前，你意识到“最后的答案”并非技巧，而是对人心与代价的理解。
 当你提及伊莲娜时，烛光短暂变亮，仿佛某段未竟心事得到回应。""",
         [Option("返回画室继续追查", "side_story_2_start")],
-        on_enter=lambda s: s.add_clue("卧室认可‘纪念而非占有’的回答方向")
+        on_enter=link_painting_bedroom
     )
+
+    def fail_side_painting(s):
+        """支线2失败：粗暴操作导致诅咒"""
+        s.set("side_story_2_failed", True)
 
     scenes["side_ending_paint_curse"] = Scene(
         "side_ending_paint_curse",
         """你粗暴刮开画层，颜料像血一样渗开。画室骤然降温，玻璃震响，所有画框同时发出刺耳声。
 一股无形力量将你推出房门，画室短时间内拒绝你再次深入。""",
         [Option("狼狈退回大厅", "hall_main")],
-        on_enter=lambda s: s.set("side_story_2_failed", True)
+        on_enter=fail_side_painting
     )
+
+    def check_painting_back(s):
+        """检查画作背面获得伊莲娜的故事碎片"""
+        s.add_clue("画背面的女子自述")
+        s.add_clue("1890年，紫藤花架")
 
     scenes["side_painting_back"] = Scene(
         "side_painting_back",
@@ -331,39 +459,61 @@ def build_scenes():
 “我试图逃离，却发现自己已经变成了颜料。”
 最后一幅写着：“最后一幅画完成时，我消失了。”""",
         [Option("前往紫藤花架", "side_wisteria"), Option("继续调查画室", "side_story_2_start")],
-        on_enter=lambda s: (s.add_clue("画背面的女子自述"), s.add_clue("1890年，紫藤花架"))
+        on_enter=check_painting_back
     )
+
+    def check_palette_clue(s):
+        """检查调色板暗格线索"""
+        s.add_clue("调色板中央凹槽可触发机关")
 
     scenes["side_palette_clue"] = Scene(
         "side_palette_clue",
         """你检查调色板，发现中央凹槽有旧奖章摩擦痕迹。凹槽内壁刻着极小字迹：
 “若你看见她，请把故事带出去。”""",
         [Option("继续调查画室", "side_story_2_start")],
-        on_enter=lambda s: s.add_clue("调色板中央凹槽可触发机关")
+        on_enter=check_palette_clue
     )
+
+    def check_mirror_again(s):
+        """再次观察镜子中的幻象"""
+        s.add_clue("镜中提示：紫藤花架与银手镯")
 
     scenes["side_mirror_again"] = Scene(
         "side_mirror_again",
         """你再次看向肖像画里的镜子，镜中短暂映出紫藤花架和一只银手镯，然后迅速恢复正常。""",
         [Option("继续调查画室", "side_story_2_start")],
-        on_enter=lambda s: s.add_clue("镜中提示：紫藤花架与银手镯")
+        on_enter=check_mirror_again
     )
+
+    def ask_butler_about_painting(s):
+        """询问管家关于伊莲娜的信息"""
+        s.add_clue("伊莲娜与紫藤花架有关")
 
     scenes["side_ask_butler"] = Scene(
         "side_ask_butler",
         """管家沉默良久，只说了一句：
 “伊莲娜小姐是哥哥最重要的人。若你真想知道真相，去花园东南角的紫藤花架。”""",
         [Option("前往紫藤花架", "side_wisteria"), Option("继续调查画室", "side_story_2_start")],
-        on_enter=lambda s: s.add_clue("伊莲娜与紫藤花架有关")
+        on_enter=ask_butler_about_painting
     )
+
+    def find_hidden_drawer(s):
+        """在画室暗格发现钥匙和票根"""
+        s.add_item("画室小钥匙")
+        s.add_clue("1890年画展票根")
 
     scenes["side_hidden_drawer"] = Scene(
         "side_hidden_drawer",
         """你在画架背后找到一个暗抽屉，里面有一把生锈的小钥匙和半张旧票根。
 票根上写着：阿斯特·克劳利个人画展，1890年秋。""",
         [Option("前往紫藤花架", "side_wisteria"), Option("继续调查画室", "side_story_2_start")],
-        on_enter=lambda s: (s.add_item("画室小钥匙"), s.add_clue("1890年画展票根"))
+        on_enter=find_hidden_drawer
     )
+
+    def enter_wisteria(s):
+        """进入紫藤花架并获得纪念品"""
+        s.add_item("艺术奖章")
+        s.add_item("画展目录")
 
     scenes["side_wisteria"] = Scene(
         "side_wisteria",
@@ -371,30 +521,45 @@ def build_scenes():
 “献给伊莲娜，我的光与影。阿斯特·克劳利，1890。”
 石板下埋着铁盒，里面有画展目录和艺术奖章。""",
         [Option("将奖章带回画室", "side_medal_trigger"), Option("继续搜寻伊莲娜踪迹", "side_search_elenor")],
-        on_enter=lambda s: (s.add_item("艺术奖章"), s.add_item("画展目录"))
+        on_enter=enter_wisteria
     )
+
+    def search_elenor_trace(s):
+        """追寻伊莲娜失踪的真相"""
+        s.add_clue("伊莲娜在画展前失踪")
 
     scenes["side_search_elenor"] = Scene(
         "side_search_elenor",
         """你顺着画展目录和石板线索继续追查，确认伊莲娜在画展前失踪，之后阿斯特再也没有停止寻找她。""",
         [Option("带着线索回画室", "side_medal_trigger")],
-        on_enter=lambda s: s.add_clue("伊莲娜在画展前失踪")
+        on_enter=search_elenor_trace
     )
+
+    def trigger_medal_mechanism(s):
+        """使用奖章触发画室机关"""
+        s.add_item("铜钥匙")
+        s.add_clue("地窖第七级台阶藏有秘密")
 
     scenes["side_medal_trigger"] = Scene(
         "side_medal_trigger",
         """你将艺术奖章放入调色板中央凹槽。调色板发出轻响，侧面抽屉弹开，里面是一把铜钥匙和一张纸条：
 “地窖，第七级台阶下。”""",
         [Option("前往地窖台阶", "side_cellar_steps")],
-        on_enter=lambda s: (s.add_item("铜钥匙"), s.add_clue("地窖第七级台阶藏有秘密"))
+        on_enter=trigger_medal_mechanism
     )
+
+    def find_cellar_steps_secret(s):
+        """在地窖台阶下发现伊莲娜的日记和手镯"""
+        s.add_item("伊莲娜的日记")
+        s.add_item("银手镯")
+        s.add_clue("伊莲娜的失踪与阿斯特的悔恨")
 
     scenes["side_cellar_steps"] = Scene(
         "side_cellar_steps",
         """你在地窖第七级台阶下方暗格中找到《伊莲娜日记》和银手镯。
 日记记录了她与阿斯特从相爱到失衡的全过程，也记录了她最后一次逃离庄园。""",
         [Option("阅读关键页并继续追查", "side_read_diary")],
-        on_enter=lambda s: (s.add_item("伊莲娜的日记"), s.add_item("银手镯"), s.add_clue("伊莲娜的失踪与阿斯特的悔恨"))
+        on_enter=find_cellar_steps_secret
     )
 
     scenes["side_read_diary"] = Scene(
@@ -404,21 +569,35 @@ def build_scenes():
         [Option("检查暗格深处", "side_cellar_hidden"), Option("返回画室尝试银手镯机关", "side_bracelet_trigger")]
     )
 
+    def find_cellar_hidden_items(s):
+        """在地窖暗格深处发现遗物"""
+        s.add_item("紫藤花束")
+        s.add_item("旧照片")
+        s.add_item("画布碎片")
+
     scenes["side_cellar_hidden"] = Scene(
         "side_cellar_hidden",
         """你撬开暗格底层，发现干枯紫藤花束、旧照片和一小块画布碎片。
 画布上只画了一只眼睛，背面写着：“我的灵魂在这里。”""",
         [Option("带着证物返回画室", "side_bracelet_trigger")],
-        on_enter=lambda s: (s.add_item("紫藤花束"), s.add_item("旧照片"), s.add_item("画布碎片"))
+        on_enter=find_cellar_hidden_items
     )
+
+    def trigger_bracelet_mechanism(s):
+        """使用银手镯开启画室密室"""
+        s.add_item("阿斯特的遗信")
 
     scenes["side_bracelet_trigger"] = Scene(
         "side_bracelet_trigger",
         """你把银手镯贴近紫色画，画布像门一样开启。后方密室里满墙都是伊莲娜素描，桌上放着阿斯特未写完的遗信。
 信中承认：他建造谜语馆并非为了财富，而是试图用谜题与画作留住失去的人。""",
         [Option("追查伊莲娜最终归宿", "side_elenor_fate")],
-        on_enter=lambda s: s.add_item("阿斯特的遗信")
+        on_enter=trigger_bracelet_mechanism
     )
+
+    def find_elenor_final_fate(s):
+        """发现伊莲娜的最终结局"""
+        s.add_item("伊莲娜纪念徽章")
 
     scenes["side_elenor_fate"] = Scene(
         "side_elenor_fate",
@@ -426,26 +605,42 @@ def build_scenes():
 当你把遗信与日记并排放好，室内蜡烛自动点燃，墙上浮现一句话：
 “传承他们的故事，让后来者懂得：爱不是占有，而是成全。”""",
         [Option("将纪念徽章带回大厅", "side_ending_reconciliation"), Option("将纪念徽章留在画室", "side_ending_legacy")],
-        on_enter=lambda s: s.add_item("伊莲娜纪念徽章")
+        on_enter=find_elenor_final_fate
     )
+
+    def complete_painting_reconciliation(s):
+        """支线2结局：达成和解并将徽章带回大厅"""
+        s.set("side_painting_completed", True)
+        s.set("side_quest_painting_done", True)
+        s.add_clue("伊莲娜与阿斯特的故事被完整看见")
 
     scenes["side_ending_reconciliation"] = Scene(
         "side_ending_reconciliation",
         """你将纪念徽章带回大厅。几天后，徽章旁多了一束新鲜紫藤花。
 从此以后，画室不再阴冷，像终于完成了一场迟到的和解。""",
         [Option("返回大厅", "hall_main")],
-        on_enter=lambda s: (s.set("side_painting_completed", True), s.set("side_quest_painting_done", True), s.add_clue("伊莲娜与阿斯特的故事被完整看见"))
+        on_enter=complete_painting_reconciliation
     )
+
+    def complete_painting_legacy(s):
+        """支线2结局：留下遗产并将故事传承"""
+        s.set("side_painting_completed", True)
+        s.set("side_quest_painting_done", True)
+        s.add_clue("你决定将画中往事整理为可传承的故事")
 
     scenes["side_ending_legacy"] = Scene(
         "side_ending_legacy",
         """你把纪念徽章留在画室密室，决定将这段往事写成书。
 谜语馆开始吸引真正愿意理解历史的人，而不只是猎奇的寻宝者。""",
         [Option("返回大厅", "hall_main")],
-        on_enter=lambda s: (s.set("side_painting_completed", True), s.set("side_quest_painting_done", True), s.add_clue("你决定将画中往事整理为可传承的故事"))
+        on_enter=complete_painting_legacy
     )
 
     # --- 支线三：地下的回响 ---
+    def start_side_underground(s):
+        """触发支线3：地下的回响逻辑"""
+        s.set("side_story_3_started", True)
+
     scenes["side_story_3_start"] = Scene(
         "side_story_3_start",
         """地下室入口旁的墙壁出现一道新裂缝，冷风从缝隙里渗出。你贴耳细听，深处传来有节奏的敲击声。
@@ -458,16 +653,24 @@ def build_scenes():
             Option("直接爆破裂缝（极高风险）", "side_ending_disappear"),
             Option("暂时返回地下室", "basement_entry")
         ],
-        on_enter=lambda s: s.set("side_story_3_started", True)
+        on_enter=start_side_underground
     )
+
+    def link_underground_clocktower(s):
+        """将地下回响与钟楼关联"""
+        s.add_clue("地下敲击声与钟楼节拍存在人为编码关系")
 
     scenes["side3_clocktower_link"] = Scene(
         "side3_clocktower_link",
         """你在钟楼记录敲击间隔，发现它与地下回响的停顿比例一致，像是人为编码的引导信号。
 这说明地下通道并非天然遗迹，而曾被系统性改造过。""",
         [Option("带着节拍记录返回裂缝处", "side_story_3_start")],
-        on_enter=lambda s: s.add_clue("地下敲击声与钟楼节拍存在人为编码关系")
+        on_enter=link_underground_clocktower
     )
+
+    def link_underground_bedroom(s):
+        """将地下回响与卧室关联"""
+        s.add_clue("卧室家训验证了托马斯对地下风险的判断")
 
     scenes["side3_bedroom_link"] = Scene(
         "side3_bedroom_link",
@@ -475,23 +678,37 @@ def build_scenes():
 “若深处回响再起，谨记先求证，再开门。”
 这与托马斯笔记中的警告完全一致。""",
         [Option("返回地下裂缝继续调查", "side_story_3_start")],
-        on_enter=lambda s: s.add_clue("卧室家训验证了托马斯对地下风险的判断")
+        on_enter=link_underground_bedroom
     )
+
+    def ask_butler_about_underground(s):
+        """询问管家关于地下裂缝的信息"""
+        s.add_clue("管家知道地下石柱的存在")
 
     scenes["side_tell_butler"] = Scene(
         "side_tell_butler",
         """管家短暂沉默后只说了一句：“如果你一定要下去，就把看到的一切记下来。不要轻易触动石柱。”""",
         [Option("进入裂缝通道", "side_cave_table"), Option("返回地下室", "basement_entry")],
-        on_enter=lambda s: s.add_clue("管家知道地下石柱的存在")
+        on_enter=ask_butler_about_underground
     )
+
+    def enter_cave_table(s):
+        """进入地下洞穴并获得托马斯的笔记"""
+        s.add_item("托马斯地质笔记本")
+        s.add_item("矿石标本")
+        s.add_clue("托马斯可能被困于庄园地下")
 
     scenes["side_cave_table"] = Scene(
         "side_cave_table",
         """你穿过狭窄岩缝来到洞穴，石桌上散落着地质锤、测量仪和写有 T.H. 的帆布包。
 包里是《托马斯·赫胥黎地质考察笔记》与未寄出的家书。""",
         [Option("研究墙壁笔记", "side_cave_notes"), Option("探索洞穴深处", "side_cave_deeper")],
-        on_enter=lambda s: (s.add_item("托马斯地质笔记本"), s.add_item("矿石标本"), s.add_clue("托马斯可能被困于庄园地下"))
+        on_enter=enter_cave_table
     )
+
+    def check_cave_notes(s):
+        """检查洞穴墙壁的笔记"""
+        s.add_clue("塌方可能是人为制造")
 
     scenes["side_cave_notes"] = Scene(
         "side_cave_notes",
@@ -499,16 +716,24 @@ def build_scenes():
 “第二条通道塌方了。真的是意外吗？”
 箭头指向洞穴更深处，旁边只有一个词：通道。""",
         [Option("跟随箭头前进", "side_cave_passage"), Option("返回洞穴入口", "side_cave_table")],
-        on_enter=lambda s: s.add_clue("塌方可能是人为制造")
+        on_enter=check_cave_notes
     )
+
+    def enter_cave_deeper(s):
+        """进入洞穴深处获得身份牌"""
+        s.add_item("托马斯身份牌")
 
     scenes["side_cave_deeper"] = Scene(
         "side_cave_deeper",
         """洞穴深处出现更明显的人工开凿痕迹，你在石缝间捡到一枚刻着 T.H. 的金属牌。
 前方有两条路：一条通往塌方区，一条通往古老壁画区。""",
         [Option("前往塌方区", "side_cave_passage"), Option("前往古殿壁画区", "side_ancient_chamber")],
-        on_enter=lambda s: s.add_item("托马斯身份牌")
+        on_enter=enter_cave_deeper
     )
+
+    def enter_cave_passage(s):
+        """进入塌方通道获得地质锤"""
+        s.add_item("托马斯的地质锤")
 
     scenes["side_cave_passage"] = Scene(
         "side_cave_passage",
@@ -518,7 +743,7 @@ def build_scenes():
             Option("寻找其他路径", "side_alternate_path"),
             Option("用地质锤强行挖掘", "side_dig_with_hammer")
         ],
-        on_enter=lambda s: s.add_item("托马斯的地质锤")
+        on_enter=enter_cave_passage
     )
 
     scenes["side_find_tools"] = Scene(
@@ -527,11 +752,15 @@ def build_scenes():
         [Option("手动清理塌方", "side_manual_clear"), Option("使用黑火药爆破", "side_dynamite")]
     )
 
+    def find_alternate_path(s):
+        """寻找替代路径通过塌方区"""
+        s.add_clue("洞穴有备用通路")
+
     scenes["side_alternate_path"] = Scene(
         "side_alternate_path",
         """你沿着侧洞前进，绕到了塌方另一侧，虽然路更险，但成功避开了最厚的石堆。""",
         [Option("进入古老殿堂", "side_ancient_chamber")],
-        on_enter=lambda s: s.add_clue("洞穴有备用通路")
+        on_enter=find_alternate_path
     )
 
     scenes["side_dig_with_hammer"] = Scene(
@@ -540,18 +769,26 @@ def build_scenes():
         [Option("停止硬挖，回去找工具", "side_find_tools"), Option("冒险继续深入", "side_ending_disappear")]
     )
 
+    def complete_manual_clear(s):
+        """以低风险方式通过塌方区"""
+        s.add_clue("你以低风险方式通过塌方区")
+
     scenes["side_manual_clear"] = Scene(
         "side_manual_clear",
         """你用撬棍和镐花了很久才清出一条勉强通过的狭缝。对面壁画区空气潮湿，石柱轮廓若隐若现。""",
         [Option("进入古老殿堂", "side_ancient_chamber")],
-        on_enter=lambda s: s.add_clue("你以低风险方式通过塌方区")
+        on_enter=complete_manual_clear
     )
+
+    def complete_dynamite_blast(s):
+        """使用黑火药爆破打通道路"""
+        s.add_clue("洞穴结构已不稳定")
 
     scenes["side_dynamite"] = Scene(
         "side_dynamite",
         """爆破打通了道路，但洞顶裂痕增多。你必须加快探索节奏，否则随时可能再次坍塌。""",
         [Option("快速进入古老殿堂", "side_ancient_chamber")],
-        on_enter=lambda s: s.add_clue("洞穴结构已不稳定")
+        on_enter=complete_dynamite_blast
     )
 
     scenes["side_ancient_chamber"] = Scene(
@@ -565,19 +802,28 @@ def build_scenes():
         ]
     )
 
+    def find_thomas_trail(s):
+        """发现托马斯的遗信"""
+        s.add_item("托马斯遗信")
+
     scenes["side_thomas_trail"] = Scene(
         "side_thomas_trail",
         """你在石壁侧室找到托马斯遗信：他认为阿斯特曾试图利用地下力量，并在塌方后被困。
 信背面的简图标出东侧出口与石柱位置。""",
         [Option("寻找东侧出口", "side_east_exit"), Option("回到石柱前", "side_activate_pillar")],
-        on_enter=lambda s: s.add_item("托马斯遗信")
+        on_enter=find_thomas_trail
     )
+
+    def find_east_exit_proof(s):
+        """在东侧出口发现托马斯的身份证明"""
+        s.add_item("托马斯身份证明")
+        s.add_clue("托马斯未能逃出生天")
 
     scenes["side_east_exit"] = Scene(
         "side_east_exit",
         """你在东侧封堵出口处发现托马斯遗骸与身份证明。你将其安葬后，决定把真相带回庄园。""",
         [Option("带着证据返回石柱", "side_activate_pillar")],
-        on_enter=lambda s: (s.add_item("托马斯身份证明"), s.add_clue("托马斯未能逃出生天"))
+        on_enter=find_east_exit_proof
     )
 
     scenes["side_activate_pillar"] = Scene(
@@ -593,18 +839,26 @@ def build_scenes():
         ]
     )
 
+    def gain_ancient_knowledge(s):
+        """支线3：选择获得远古知识"""
+        s.add_clue("你获得知识但开始遗忘过去")
+
     scenes["side_seeker"] = Scene(
         "side_seeker",
         """你接受古老知识，脑海涌入庞大符号体系。你看懂了更多秘密，却开始遗忘普通生活里的细节。""",
         [Option("记录代价并返回大厅", "side_ending_seeker")],
-        on_enter=lambda s: s.add_clue("你获得知识但开始遗忘过去")
+        on_enter=gain_ancient_knowledge
     )
+
+    def gain_guardian_rune(s):
+        """支线3：选择获得守护者符文"""
+        s.add_clue("你获得了守护者符文")
 
     scenes["side_guardian"] = Scene(
         "side_guardian",
         """你选择守护，双手浮现银色符文。你能封印地下力量，但必须长期守望这片区域。""",
         [Option("接受守护者之责", "side_ending_guardian")],
-        on_enter=lambda s: s.add_clue("你获得了守护者符文")
+        on_enter=gain_guardian_rune
     )
 
     scenes["side_refuse"] = Scene(
@@ -613,28 +867,43 @@ def build_scenes():
         [Option("整理证据并离开洞穴", "side_ending_truth")]
     )
 
+    def finish_side_seeker(s):
+        """支线3结局：知识的代价"""
+        s.set("side_underground_completed", True)
+        s.set("side_ending_seeker", True)
+
     scenes["side_ending_seeker"] = Scene(
         "side_ending_seeker",
         """【支线三结局：知识的代价】
 你获得远古知识，却逐渐被其同化。你越来越难与普通人共情，也更难回到原本的人生节奏。""",
         [Option("返回大厅", "hall_main")],
-        on_enter=lambda s: (s.set("side_underground_completed", True), s.set("side_underground_completed", True), s.set("side_ending_seeker", True))
+        on_enter=finish_side_seeker
     )
+
+    def finish_side_guardian(s):
+        """支线3结局：守护者的责任"""
+        s.set("side_underground_completed", True)
+        s.set("side_ending_guardian", True)
 
     scenes["side_ending_guardian"] = Scene(
         "side_ending_guardian",
         """【支线三结局：守护者的责任】
 你继承了封印职责，决定守住地下秘密，避免它再次被狂热者滥用。""",
         [Option("返回大厅", "hall_main")],
-        on_enter=lambda s: (s.set("side_underground_completed", True), s.set("side_underground_completed", True), s.set("side_ending_guardian", True))
+        on_enter=finish_side_guardian
     )
+
+    def finish_side_truth(s):
+        """支线3结局：真相的传播者"""
+        s.set("side_underground_completed", True)
+        s.add_clue("托马斯地质学会正名")
 
     scenes["side_ending_truth"] = Scene(
         "side_ending_truth",
         """【支线三结局：真相的传播者】
 你把托马斯遗物与调查记录公之于众，谜语馆地下遗迹被纳入公开研究。""",
         [Option("返回大厅", "hall_main")],
-        on_enter=lambda s: (s.set("side_underground_completed", True), s.set("side_underground_completed", True), s.add_clue("托马斯地质学会正名"))
+        on_enter=finish_side_truth
     )
 
     scenes["side_ending_disappear"] = Scene(
@@ -643,6 +912,11 @@ def build_scenes():
 “献给一位勇敢的探索者，他找到了最后的谜题，却未能带回答案。”""",
         [Option("重新步入轮回", "title")]
     )
+
+    # --- 支线四：未完成的旋律 ---
+    def start_side_music(s):
+        """触发支线4：未完成的旋律逻辑"""
+        s.set("side_story_4_started", True)
 
     scenes["side_story_4_start"] = Scene(
         "side_story_4_start",
@@ -655,30 +929,46 @@ def build_scenes():
             Option("搜索音乐室暗格", "side_music_hidden"),
             Option("返回音乐室主区域", "musicroom_entry")
         ],
-        on_enter=lambda s: s.set("side_story_4_started", True)
+        on_enter=start_side_music
     )
+
+    def ask_butler_about_elenor_music(s):
+        """询问管家关于埃莉诺的信息（音乐支线）"""
+        s.add_clue("埃莉诺留下七件夜莺标记乐器")
 
     scenes["side_ask_butler_elenor"] = Scene(
         "side_ask_butler_elenor",
         """管家沉默良久，承认埃莉诺曾是庄园最重要的音乐家与制琴师。
 她病逝前只完成了交响曲前六乐章，第七乐章只留下主题。""",
         [Option("追问交响曲细节", "side_symphony_details"), Option("询问安息地点", "side_elenor_grave"), Option("回音乐室继续查证", "side_story_4_start")],
-        on_enter=lambda s: s.add_clue("埃莉诺留下七件夜莺标记乐器")
+        on_enter=ask_butler_about_elenor_music
     )
+
+    def find_symphony_details(s):
+        """了解交响曲的存储细节"""
+        s.add_clue("前六乐章在钢琴琴凳内")
 
     scenes["side_symphony_details"] = Scene(
         "side_symphony_details",
         """管家告诉你：前六乐章完整乐谱被藏在三角钢琴琴凳里，第七乐章只剩主题旋律。""",
         [Option("打开琴凳寻找乐谱", "side_piano_stool"), Option("返回继续调查", "side_story_4_start")],
-        on_enter=lambda s: s.add_clue("前六乐章在钢琴琴凳内")
+        on_enter=find_symphony_details
     )
+
+    def find_elenor_grave_hint(s):
+        """获得埃莉诺安息地的提示"""
+        s.add_clue("完成第七乐章后会出现安息地线索")
 
     scenes["side_elenor_grave"] = Scene(
         "side_elenor_grave",
         """管家只给你一句含糊提示：“若你真的让第七乐章完成，她会自己带你去该去的地方。”""",
         [Option("回音乐室继续追查", "side_story_4_start")],
-        on_enter=lambda s: s.add_clue("完成第七乐章后会出现安息地线索")
+        on_enter=find_elenor_grave_hint
     )
+
+    def check_score_details(s):
+        """检查乐谱手稿细节"""
+        s.add_clue("第七乐章与夜莺标记有关")
 
     scenes["side_score_details"] = Scene(
         "side_score_details",
@@ -686,7 +976,7 @@ def build_scenes():
 “献给谜语馆，以及永远听不到它的人。”
 边角还有夜莺符号与七个小节拍记号。""",
         [Option("回音乐室继续调查", "side_story_4_start")],
-        on_enter=lambda s: s.add_clue("第七乐章与夜莺标记有关")
+        on_enter=check_score_details
     )
 
     scenes["side_play_violin"] = Scene(
@@ -696,37 +986,60 @@ def build_scenes():
         [Option("稳妥推进线索", "side_story_4_start"), Option("强行演奏（失败分支）", "side_ending_music_silence")]
     )
 
+    def find_music_hidden_items(s):
+        """在音乐室暗格发现夜莺锁片"""
+        s.add_item("夜莺锁片")
+
     scenes["side_music_hidden"] = Scene(
         "side_music_hidden",
         """你在壁炉与展柜间找到暗槽机关，里面有一枚夜莺形锁片。锁片背后刻着：
 “花园紫藤架下，1888。”""",
         [Option("带着线索回到调查起点", "side_story_4_start"), Option("直接去紫藤花架", "side_brooch_clue")],
-        on_enter=lambda s: s.add_item("夜莺锁片")
+        on_enter=find_music_hidden_items
     )
+
+    def find_piano_stool_items(s):
+        """在钢琴琴凳中发现总谱和胸针"""
+        s.add_item("埃莉诺前六乐章总谱")
+        s.add_item("夜莺胸针")
 
     scenes["side_piano_stool"] = Scene(
         "side_piano_stool",
         """你打开琴凳，找到前六乐章完整总谱与一枚夜莺胸针。第七乐章页脚写着：
 “若我未完成，请让音乐室自己演奏它。”""",
         [Option("研究夜莺胸针", "side_brooch_clue"), Option("回音乐室继续调查", "side_story_4_start")],
-        on_enter=lambda s: (s.add_item("埃莉诺前六乐章总谱"), s.add_item("夜莺胸针"))
+        on_enter=find_piano_stool_items
     )
+
+    def find_brooch_clue_items(s):
+        """通过胸针发现埃莉诺的遗信和钥匙"""
+        s.add_item("埃莉诺遗信")
+        s.add_item("音乐室铜钥匙")
 
     scenes["side_brooch_clue"] = Scene(
         "side_brooch_clue",
         """你旋转胸针机关，背面弹针指向“花园紫藤架”。石板下铁盒里有埃莉诺遗信与铜钥匙。
 遗信提到：最后的礼物藏在音乐室壁炉后。""",
         [Option("用钥匙打开音乐室壁炉", "side_fireplace_secret")],
-        on_enter=lambda s: (s.add_item("埃莉诺遗信"), s.add_item("音乐室铜钥匙"))
+        on_enter=find_brooch_clue_items
     )
+
+    def find_fireplace_secret_items(s):
+        """开启音乐室壁炉密道并获得制琴笔记和琴弓"""
+        s.add_item("埃莉诺制琴笔记")
+        s.add_item("埃莉诺琴弓")
 
     scenes["side_fireplace_secret"] = Scene(
         "side_fireplace_secret",
         """壁炉后密道打开，尽头是简陋工作室。台上放着《制琴笔记》与一把保存完好的琴弓，弓杆刻着：
 “奏响我，我将归来。”""",
         [Option("阅读埃莉诺日记", "side_elenor_diary")],
-        on_enter=lambda s: (s.add_item("埃莉诺制琴笔记"), s.add_item("埃莉诺琴弓"))
+        on_enter=find_fireplace_secret_items
     )
+
+    def read_elenor_diary(s):
+        """阅读埃莉诺日记并获得关键提示"""
+        s.add_clue("第七乐章主题可激活乐器群共鸣")
 
     scenes["side_elenor_diary"] = Scene(
         "side_elenor_diary",
@@ -734,15 +1047,21 @@ def build_scenes():
 最后一页写着：
 “第七乐章叫‘重生’，若我不在，请替我奏完最后一个音符。”""",
         [Option("用琴弓与主题旋律尝试共鸣", "side_play_elenor_violin"), Option("带着资料返回音乐室", "side_story_4_start")],
-        on_enter=lambda s: s.add_clue("第七乐章主题可激活乐器群共鸣")
+        on_enter=read_elenor_diary
     )
+
+    def play_elenor_violin_success(s):
+        """成功演奏埃莉诺的主题旋律并获得徽章和全本总谱"""
+        s.add_item("夜莺徽章")
+        s.add_item("埃莉诺七乐章全本")
+        s.set("side_music_completed", True)
 
     scenes["side_play_elenor_violin"] = Scene(
         "side_play_elenor_violin",
         """你用埃莉诺琴弓拉响主题，七件夜莺标记乐器同时共鸣，自动补全第七乐章。
 乐曲终止时，中央暗格开启，出现夜莺徽章与完整交响曲总谱。""",
         [Option("整理并决定如何处理交响曲", "side_symphony_complete")],
-        on_enter=lambda s: (s.add_item("夜莺徽章"), s.add_item("埃莉诺七乐章全本"), s.set("side_music_completed", True))
+        on_enter=play_elenor_violin_success
     )
 
     scenes["side_symphony_complete"] = Scene(
@@ -756,52 +1075,59 @@ def build_scenes():
         ]
     )
 
+    def finish_music_public(s):
+        """支线4结局：永恒的回响"""
+        s.set("side_music_completed", True)
+        s.set("side_music_route", "public")
+        s.add_clue("音乐的传承已完成")
+
     scenes["side_ending_music_public"] = Scene(
         "side_ending_music_public",
         """【支线四结局：永恒的回响】
 你将交响曲交给公开乐团演出，埃莉诺名字重回舞台中央。
 首演当晚，第七乐章“重生”响起时，你确信音乐室在远方也作出了回应。""",
         [Option("返回大厅", "hall_main")],
-        on_enter=lambda s: (
-            s.set("side_music_completed", True),
-            s.set("side_music_completed", True),
-            s.set("side_music_route", "public"),
-            s.add_clue("音乐的传承已完成")
-        )
+        on_enter=finish_music_public
     )
+
+    def finish_music_keep(s):
+        """支线4结局：留在沉默中"""
+        s.set("side_music_completed", True)
+        s.set("side_music_route", "keep")
+        s.add_clue("你选择守护音乐室的秘密")
 
     scenes["side_ending_music_keep"] = Scene(
         "side_ending_music_keep",
         """【支线四结局：留在沉默中】
 你把乐谱与琴弓留在密室，选择守住这段只属于庄园与故人的对话。""",
         [Option("返回大厅", "hall_main")],
-        on_enter=lambda s: (
-            s.set("side_music_completed", True),
-            s.set("side_music_completed", True),
-            s.set("side_music_route", "keep"),
-            s.add_clue("你选择守护音乐室的秘密")
-        )
+        on_enter=finish_music_keep
     )
+
+    def finish_music_mechanism(s):
+        """支线4结局：触发终极机关"""
+        s.set("side_music_completed", True)
+        s.set("side_music_route", "mechanism")
+        s.add_item("埃莉诺的祝福")
 
     scenes["side_music_final_mechanism"] = Scene(
         "side_music_final_mechanism",
         """你把夜莺徽章嵌入管风琴凹槽，并拉响第七乐章主题。墙后暗道开启，通往埃莉诺安息地。
 墓前紫藤在暗处绽放，你获得一枚“灵感加成”的祝福。""",
         [Option("带着祝福返回大厅", "hall_main")],
-        on_enter=lambda s: (
-            s.set("side_music_completed", True),
-            s.set("side_music_completed", True),
-            s.set("side_music_route", "mechanism"),
-            s.add_item("埃莉诺的祝福")
-        )
+        on_enter=finish_music_mechanism
     )
+
+    def fail_music_silence(s):
+        """支线4失败：强行演奏导致沉默"""
+        s.set("side_story_4_failed", True)
 
     scenes["side_ending_music_silence"] = Scene(
         "side_ending_music_silence",
         """你在未完成准备时强行演奏，琴弦骤断，尖锐噪音回荡。音乐室机关短暂锁死，所有乐器陷入沉默。
 你被迫退出，必须冷静后再回来按线索推进。""",
         [Option("退回大厅调整状态", "hall_main")],
-        on_enter=lambda s: s.set("side_story_4_failed", True)
+        on_enter=fail_music_silence
     )
 
     scenes["puzzle_statues"] = Scene(
@@ -817,6 +1143,7 @@ def build_scenes():
     )
 
     def gain_statue_medal(state):
+        """获得雕像谜题的起始徽章和齿轮"""
         if not state.has_item("起始徽章"):
             state.add_item("起始徽章")
             state.add_item("机械齿轮")
@@ -833,8 +1160,6 @@ def build_scenes():
 
     # --- 大厅与分支 更新版 ---
     # 需要在hall_main更新选项，增加前往音乐室、温室、画室、地下室和最终密室
-
-
 
     scenes["hall_main"] = Scene(
         "hall_main",
@@ -887,11 +1212,15 @@ def build_scenes():
         ]
     )
 
+    def reset_side_quests(s):
+        """重置所有失败的支线任务"""
+        s.set("any_side_failed", False)
+
     scenes["sys_reset_all_side_quests"] = Scene(
         "sys_reset_all_side_quests",
         "【系统提示】所有失败的支线结局锁定已经解除。你可以重新触发了。",
         [Option("返回大厅", "hall_main")],
-        on_enter=lambda s: s.set("any_side_failed", False) # Simplify for tests
+        on_enter=reset_side_quests
     )
 
     scenes["library_entry"] = Scene(
@@ -917,6 +1246,7 @@ def build_scenes():
     )
     
     def gain_scholar_clue(state):
+        """获得图书馆的学者名单线索"""
         state.add_clue("七学者名单 (部分)")
 
     scenes["library_press_star"] = Scene(
@@ -945,6 +1275,7 @@ def build_scenes():
     )
     
     def gain_library_medal(state):
+        """获得图书馆的智慧徽章"""
         if not state.has_item("智慧徽章"):
             state.add_item("智慧徽章")
             state.set("hall_medal_count", state.get("hall_medal_count") + 1)
@@ -958,15 +1289,20 @@ def build_scenes():
         on_enter=gain_library_medal
     )
     
+    def trigger_library_switch(s):
+        """触发图书馆隐藏开关"""
+        print("开关咔哒一声响了...")
+
     scenes["library_check_books"] = Scene(
         "library_check_books",
         """《梦的解析》被撕掉了半页，写着“第五位...镜子中的...”。
 《几何原本》书脊处有一个隐藏开关。""",
-        [Option("按下隐藏开关", "library_scholar_order", effect=lambda s: print("开关咔哒一声响了..."))],
+        [Option("按下隐藏开关", "library_scholar_order", effect=trigger_library_switch)],
     )
 
     # --- 音乐室谜题 ---
     def musicroom_enter(state):
+        """音乐室进入触发器：如果已获得徽章且未触发支线，则重定向到支线4"""
         if state.has_item("旋律徽章") and not state.get("side_music_triggered"):
             state.set("side_music_triggered", True)
             return {"type": "redirect", "target": "side_story_4_start"}
@@ -987,12 +1323,16 @@ def build_scenes():
         on_enter=musicroom_enter
     )
 
+    def organ_locked_hint(s):
+        """显示管风琴锁定的提示"""
+        print("音栓被锁住了...没反应。")
+
     scenes["musicroom_organ"] = Scene(
         "musicroom_organ",
         """管风琴有七个音栓，但拉不动。侧面有一个齿轮状的凹槽。
 背面有一个手摇鼓风机，需要提供气流才能发声。""",
         [
-            Option("放入金属键帽并尝试拉音栓", "musicroom_organ", effect=lambda s: print("音栓被锁住了...没反应。")),
+            Option("放入金属键帽并尝试拉音栓", "musicroom_organ", effect=organ_locked_hint),
             Option("嵌入机械齿轮", "musicroom_organ_unlock", condition=lambda s: s.has_item("机械齿轮")),
             Option("返回音乐室", "musicroom_entry")
         ]
@@ -1009,6 +1349,7 @@ def build_scenes():
     )
 
     def gain_music_medal(state):
+        """获得旋律徽章和调音扳手"""
         if not state.has_item("旋律徽章"):
             state.add_item("旋律徽章")
             state.add_item("调音扳手")
@@ -1034,12 +1375,16 @@ def build_scenes():
         ]
     )
 
+    def gain_piano_buds(s):
+        """在钢琴校准后获得七色花苞"""
+        s.add_item("七色花苞")
+
     scenes["musicroom_piano_tuned"] = Scene(
         "musicroom_piano_tuned",
         """你利用扳手将钢琴调回标准音高...钢琴响起了纯洁清澈的回音！
 在琴底暗格，你发现了一些【七色花苞】。""",
         [Option("装起花苞并返回", "musicroom_entry")],
-        on_enter=lambda s: s.add_item("七色花苞")
+        on_enter=gain_piano_buds
     )
 
     scenes["musicroom_instruments"] = Scene(
@@ -1063,22 +1408,30 @@ def build_scenes():
         ]
     )
 
+    def tree_sting_hint(s):
+        """显示被古树刺伤的提示"""
+        print("啊！被刺了一下，稍微有些中毒发麻。")
+
     scenes["greenhouse_tree"] = Scene(
         "greenhouse_tree",
         """古树底部有个石盆，装满浑浊的水。底下埋着什么东西，直接用手摸可能会中毒。""",
         [
-            Option("伸手捞取", "greenhouse_tree", effect=lambda s: print("啊！被刺了一下，稍微有些中毒发麻。")),
+            Option("伸手捞取", "greenhouse_tree", effect=tree_sting_hint),
             Option("用长柄夹夹出", "greenhouse_tree_safe", condition=lambda s: s.has_item("长柄夹")),
             Option("返回", "greenhouse_entry")
         ]
     )
+
+    def gain_tree_amber(s):
+        """安全获得七色花琥珀"""
+        s.add_item("七色花琥珀")
 
     scenes["greenhouse_tree_safe"] = Scene(
         "greenhouse_tree_safe",
         """你用夹子捞出一个铜盒，内部有一块【七色花琥珀】！
 说明书上写着：“以七血（根茎叶花果种苗）滋养，可复生机。”""",
         [Option("收起琥珀", "greenhouse_entry")],
-        on_enter=lambda s: s.add_item("七色花琥珀")
+        on_enter=gain_tree_amber
     )
 
     scenes["greenhouse_tool_shed"] = Scene(
@@ -1091,19 +1444,29 @@ def build_scenes():
         ]
     )
 
+    def gain_shed_items(s):
+        """在工具房获得长柄夹和提取剂"""
+        s.add_item("长柄夹")
+        s.add_item("古树血提取剂")
+
     scenes["greenhouse_box_open"] = Scene(
         "greenhouse_box_open",
         """你输入了根据文本建成年份的密码 188。箱子开了！
 你找到了【长柄夹】和【古树血提取剂】。""",
         [Option("返回", "greenhouse_entry")],
-        on_enter=lambda s: (s.add_item("长柄夹"), s.add_item("古树血提取剂"))
+        on_enter=gain_shed_items
     )
 
     def gain_greenhouse_medal(state):
+        """唤醒古树并获得生命徽章"""
         if not state.has_item("生命徽章"):
             state.add_item("生命徽章")
             state.set("hall_medal_count", state.get("hall_medal_count") + 1)
             print("【获得：生命徽章】 古树重生了！")
+
+    def greenhouse_lack_items_hint(s):
+        """显示道具不足的提示"""
+        print("你需要更多的生命元素和植物血的提取物。")
 
     scenes["greenhouse_flower_beds"] = Scene(
         "greenhouse_flower_beds",
@@ -1111,7 +1474,7 @@ def build_scenes():
         [
             Option("融合七彩琥珀、花苞与提取剂，唤醒古树", "greenhouse_solved", 
                 condition=lambda s: s.has_item("七色花琥珀") and s.has_item("七色花苞") and s.has_item("古树血提取剂")),
-            Option("没有足够的道具", "greenhouse_flower_beds", effect=lambda s: print("你需要更多的生命元素和植物血的提取物。")),
+            Option("没有足够的道具", "greenhouse_flower_beds", effect=greenhouse_lack_items_hint),
             Option("返回温室", "greenhouse_entry")
         ]
     )
@@ -1148,6 +1511,11 @@ def build_scenes():
         on_enter=studio_enter
     )
 
+    def complete_painting_side_quest(s):
+        """完成伊莲娜的哀叹支线"""
+        s.add_clue("伊莲娜的日记")
+        s.set("side_quest_painting_done", True)
+
     scenes["side_quest_painting"] = Scene(
         "side_quest_painting",
         """【支线：伊莲娜的哀叹】
@@ -1155,7 +1523,7 @@ def build_scenes():
 日记中记载：“阿斯特沉迷于谜语，我感觉他在变成另一个人...”
 这段支线剧情让你更深刻理解了男主人的痴迷，和她最终未能完成的那幅画。""",
         [Option("将日记收好（完成支线）", "studio_entry")],
-        on_enter=lambda s: (s.add_clue("伊莲娜的日记"), s.set("side_quest_painting_done", True))
+        on_enter=complete_painting_side_quest
     )
 
     scenes["studio_palette"] = Scene(
@@ -1174,19 +1542,28 @@ def build_scenes():
         ]
     )
 
+    def gain_mystery_paints(s):
+        """获得七色神秘颜料"""
+        s.add_item("七色神秘颜料")
+
     scenes["studio_palette_active"] = Scene(
         "studio_palette_active",
         """随着你按照：赤、橙、黄、绿、青、蓝、紫的顺序排列。
 一束光闪过后，远处的调色板开始涌出鲜活的【七色神秘颜料】！""",
         [Option("获取颜料并去肖像画前作画", "studio_entry")],
-        on_enter=lambda s: s.add_item("七色神秘颜料")
+        on_enter=gain_mystery_paints
     )
 
     def gain_studio_medal(state):
+        """获得色彩徽章"""
         if not state.has_item("色彩徽章"):
             state.add_item("色彩徽章")
             state.set("hall_medal_count", state.get("hall_medal_count") + 1)
             print("【获得：色彩徽章】")
+
+    def studio_lack_paint_hint(s):
+        """显示缺少颜料的提示"""
+        print("你需要先想办法激活调色板。")
 
     scenes["studio_portrait"] = Scene(
         "studio_portrait",
@@ -1194,7 +1571,7 @@ def build_scenes():
 你需要用七色神秘颜料在镜面作画才能解开秘密。""",
         [
             Option("在镜面上作画", "studio_solved", condition=lambda s: s.has_item("七色神秘颜料")),
-            Option("没有颜料，无法作画", "studio_portrait", effect=lambda s: print("你需要先想办法激活调色板。")),
+            Option("没有颜料，无法作画", "studio_portrait", effect=studio_lack_paint_hint),
             Option("返回", "studio_entry")
         ]
     )
@@ -1209,6 +1586,7 @@ def build_scenes():
 
     # --- 地下室谜题 ---
     def basement_enter(state):
+        """地下室进入触发器：如果已获得徽章且未触发支线，则重定向到支线3"""
         if state.has_item("深渊徽章") and not state.get("side_underground_triggered"):
             state.set("side_underground_triggered", True)
             return {"type": "redirect", "target": "side_story_3_start"}
@@ -1226,16 +1604,22 @@ def build_scenes():
         on_enter=basement_enter
     )
 
+    def complete_basement_side_quest(s):
+        """完成地下室地质支线"""
+        s.add_clue("托马斯的地质笔记")
+        s.set("side_underground_completed", True)
+
     scenes["side_quest_basement"] = Scene(
         "side_quest_basement",
         """【支线：地底的回响】
 你找到了托马斯留下的地质笔记，里面记载了这片土地下方蕴含着古老的神秘力量。
 阿斯特设立谜语并非是在寻找继承人，而是为了筛选有资格镇压这股力量的守护者！""",
         [Option("合上笔记（完成支线）", "basement_entry")],
-        on_enter=lambda s: (s.add_clue("托马斯的地质笔记"), s.set("side_underground_completed", True))
+        on_enter=complete_basement_side_quest
     )
 
     def gain_basement_medal(state):
+        """获得深渊徽章和符文石"""
         if not state.has_item("深渊徽章"):
             state.add_item("深渊徽章")
             state.add_item("符文石")
@@ -1274,21 +1658,30 @@ def build_scenes():
         ]
     )
 
+    def complete_clock_side_quest(s):
+        """完成钟楼观测支线"""
+        s.add_clue("观测记录")
+        s.set("side_clock_completed", True)
+
     scenes["side_quest_clock"] = Scene(
         "side_quest_clock",
         """【支线：星月的低语】
 你在中层观察窗找到了一份泛黄的观测记录，记载着月相与钟楼时间同步的秘密。
 这让你理解了克劳利对时间精确度的痴迷，甚至超越了普通的密码学。""",
         [Option("收起记录（完成支线）", "clocktower_entry")],
-        on_enter=lambda s: (s.add_clue("观测记录"), s.set("side_clock_completed", True))
+        on_enter=complete_clock_side_quest
     )
+
+    def gain_clock_key(s):
+        """在工坊获得齿轮钥匙"""
+        s.add_item("齿轮钥匙")
 
     scenes["clocktower_workshop"] = Scene(
         "clocktower_workshop",
         """底层是一个半地下的工坊，布满了工具。
 你在铁皮柜里找到了一把形状奇特的【齿轮钥匙】，可以用于调节齿轮室。""",
         [Option("拿取钥匙", "clocktower_entry")],
-        on_enter=lambda s: s.add_item("齿轮钥匙")
+        on_enter=gain_clock_key
     )
 
     scenes["clocktower_top"] = Scene(
@@ -1310,6 +1703,7 @@ def build_scenes():
     )
 
     def gain_clock_medal(state):
+        """获得时空徽章"""
         if not state.has_item("时空徽章"):
             state.add_item("时空徽章")
             state.set("hall_medal_count", state.get("hall_medal_count") + 1)
@@ -1343,6 +1737,11 @@ def build_scenes():
         ]
     )
 
+    def gain_bedroom_bed_items(s):
+        """在床铺处获得钥匙和怀表"""
+        s.add_item("衣柜钥匙")
+        s.add_item("停止的怀表")
+
     scenes["bedroom_bed"] = Scene(
         "bedroom_bed",
         """四柱床的四根柱子雕刻着藤蔓和花蕾，帷幔是深红色的天鹅绒，落满灰尘。你掀开帷幔，床上的丝绸被褥已经发黄。
@@ -1352,7 +1751,7 @@ def build_scenes():
             Option("研究怀表", "bedroom_pocket_watch"),
             Option("返回卧室", "bedroom_entry")
         ],
-        on_enter=lambda s: (s.add_item("衣柜钥匙"), s.add_item("停止的怀表"))
+        on_enter=gain_bedroom_bed_items
     )
 
     scenes["bedroom_pocket_watch"] = Scene(
@@ -1360,6 +1759,11 @@ def build_scenes():
         """怀表已经停止，表盖内侧刻着“时间停止的地方，答案开始”。你盯着表盘，隐约觉得它和钟楼的11:55是同一个时刻。""",
         [Option("返回四柱床", "bedroom_bed")],
     )
+
+    def gain_bedroom_diary_clues(s):
+        """翻阅卧室日记获得线索"""
+        s.add_clue("主人建造谜语馆的动机——传承谜语精神")
+        s.add_clue("窗外可能有提示")
 
     scenes["bedroom_diary"] = Scene(
         "bedroom_diary",
@@ -1372,7 +1776,7 @@ def build_scenes():
             Option("继续探索房间", "bedroom_entry"),
             Option("去落地窗看看", "bedroom_window")
         ],
-        on_enter=lambda s: (s.add_clue("主人建造谜语馆的动机——传承谜语精神"), s.add_clue("窗外可能有提示"))
+        on_enter=gain_bedroom_diary_clues
     )
 
     scenes["bedroom_dressing_table"] = Scene(
@@ -1387,20 +1791,32 @@ def build_scenes():
         ]
     )
 
+    def gain_candle_hint(s):
+        """获得子时烛光的提示"""
+        s.add_clue("子时的烛光与卧室机关有关")
+
     scenes["bedroom_candle_midnight"] = Scene(
         "bedroom_candle_midnight",
         """你试着在烛台前等待子时，蜡烛底座上的“子时之光”似乎在暗示一个固定时间。可惜现在还不到真正的时刻。""",
         [Option("返回梳妆台", "bedroom_dressing_table")],
-        on_enter=lambda s: s.add_clue("子时的烛光与卧室机关有关")
+        on_enter=gain_candle_hint
     )
+
+    def gain_family_motto_clue(s):
+        """获得克劳利家训线索"""
+        s.add_clue("克劳利家训，强调谜语精神的传承")
 
     scenes["bedroom_find_key"] = Scene(
         "bedroom_find_key",
         """你在梳妆台背面找到了一个隐蔽的小铁盒，里面是一把铜钥匙。打开第四个抽屉后，里面是一本皮革封面的小册子《克劳利家训》。
 家训里反复强调：谜语是连接过去与未来的桥梁。""",
         [Option("继续探索", "bedroom_entry")],
-        on_enter=lambda s: s.add_clue("克劳利家训，强调谜语精神的传承")
+        on_enter=gain_family_motto_clue
     )
+
+    def gain_mirror_delay_clue(s):
+        """发现梳妆镜投射线索"""
+        s.add_clue("镜子可以投射影像，需要将七枚徽章的影像依次映出")
 
     scenes["bedroom_mirror_delay"] = Scene(
         "bedroom_mirror_delay",
@@ -1410,8 +1826,12 @@ def build_scenes():
             Option("尝试用镜子投射所有徽章", "bedroom_mirror_projection"),
             Option("返回梳妆台", "bedroom_dressing_table")
         ],
-        on_enter=lambda s: s.add_clue("镜子可以投射影像，需要将七枚徽章的影像依次映出")
+        on_enter=gain_mirror_delay_clue
     )
+
+    def gain_projection_order_clue(s):
+        """获得投射顺序的重要线索"""
+        s.add_clue("顺序很重要，可能需按房间解谜的顺序或某种逻辑顺序")
 
     scenes["bedroom_mirror_projection"] = Scene(
         "bedroom_mirror_projection",
@@ -1421,16 +1841,25 @@ def build_scenes():
             Option("等待子时再试", "bedroom_midnight_mirror"),
             Option("返回梳妆台", "bedroom_dressing_table")
         ],
-        on_enter=lambda s: s.add_clue("顺序很重要，可能需按房间解谜的顺序或某种逻辑顺序")
+        on_enter=gain_projection_order_clue
     )
+
+    def gain_midnight_mirror_clue(s):
+        """获得子时镜光线索"""
+        s.add_clue("需要在子时结合镜光与月光")
 
     scenes["bedroom_midnight_mirror"] = Scene(
         "bedroom_midnight_mirror",
         """你把镜子带到窗边，等待子时。月光与镜光叠在一起，卧室油画上的窗户终于彻底点亮。
 衣柜背后的墙壁传来机关开启的轻响。""",
         [Option("检查衣柜背后", "bedroom_closet_back")],
-        on_enter=lambda s: s.add_clue("需要在子时结合镜光与月光")
+        on_enter=gain_midnight_mirror_clue
     )
+
+    def gain_fountain_clues(s):
+        """在落地窗获得喷泉相关的线索"""
+        s.add_clue("喷泉池底的七角星图案")
+        s.add_clue("子夜时分喷泉倒影可能揭示答案")
 
     scenes["bedroom_window"] = Scene(
         "bedroom_window",
@@ -1441,7 +1870,7 @@ def build_scenes():
             Option("尝试用望远镜寻找其他线索", "bedroom_telescope"),
             Option("返回卧室", "bedroom_entry")
         ],
-        on_enter=lambda s: (s.add_clue("喷泉池底的七角星图案"), s.add_clue("子夜时喷泉倒影可能揭示答案"))
+        on_enter=gain_fountain_clues
     )
 
     scenes["bedroom_telescope"] = Scene(

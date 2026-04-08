@@ -1,3 +1,20 @@
+/**
+ * 游戏场景定义模块
+ * 
+ * 该模块定义了游戏中的所有场景，包括：
+ * - 主界面和开场场景
+ * - 大厅和各个房间的场景
+ * - 谜题和支线任务场景
+ * - 结局场景
+ * - 占位和未实装场景
+ * 
+ * 每个场景包含：
+ * - desc: 场景描述文本
+ * - on_enter: 进入场景时的触发函数
+ * - options: 场景选项列表
+ * - 其他特殊属性（如hints、input等）
+ */
+
 window.scenes = window.scenes || {};
 
 (() => {
@@ -254,14 +271,29 @@ scenes["final_chamber_test"] = {
     ]
 };
 
+/**
+ * 标记游戏结局
+ * 
+ * 该函数用于记录玩家达成的结局，更新游戏统计信息，
+ * 检查并解锁相关成就，保存全局状态，并返回结局提示信息。
+ * 
+ * @param {string} name - 结局名称
+ * @returns {string} - 结局提示的HTML字符串
+ */
 function markEnding(name) {
+    // 记录结局（去重）
     if(!globalState.endingsReached.includes(name)) {
         globalState.endingsReached.push(name);
     }
+    // 增加游戏次数
     globalState.playCount += 1;
+    // 检查成就解锁
     const achMsg = checkAchievements();
+    // 保存全局状态
     localStorage.setItem("riddle_global", JSON.stringify(globalState));
-    localStorage.removeItem("riddle_auto_save"); // 通关后删掉自动存档避免死循环
+    // 通关后删掉自动存档避免死循环
+    localStorage.removeItem("riddle_auto_save");
+    // 返回结局提示信息
     return `<div class="system-message" style="color:var(--hover-color); font-weight:bold; font-size:1.1em;">【命运定格】<br>已达成结局 - ${name}</div>${achMsg ? "<br>" + achMsg : ""}`;
 }
 

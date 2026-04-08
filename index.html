@@ -6,6 +6,8 @@
     <title>《谜语遗产：七重谜域》</title>
     <link rel="icon" href="data:,">
     <style>
+        /* 全局样式变量定义 */
+        /* 定义游戏界面的颜色方案，便于统一管理和修改 */
         :root {
             --bg-color: #1a1a1a;
             --text-color: #e0e0e0;
@@ -14,6 +16,8 @@
             --border-color: #333;
         }
 
+        /* 全局body样式 */
+        /* 设置游戏的基础样式，包括背景颜色、字体和布局 */
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
@@ -26,6 +30,8 @@
             height: 100vh;
         }
 
+        /* 游戏容器样式 */
+        /* 定义游戏主界面的布局和外观 */
         #game-container {
             position: relative;
             width: 85%;
@@ -42,6 +48,8 @@
             overflow-y: auto;
         }
 
+        /* 游戏头部样式 */
+        /* 显示游戏标题和状态栏 */
         #header {
             text-align: center;
             border-bottom: 1px solid var(--border-color);
@@ -62,6 +70,8 @@
             color: #aaa;
         }
 
+        /* 故事文本区域样式 */
+        /* 显示游戏的故事文本，支持自动换行和滚动 */
         #story-text {
             flex-grow: 1;
             overflow-y: visible;
@@ -72,17 +82,22 @@
             padding-right: 10px;
         }
 
-        /* 隐藏滚动条但保留功能 */
+        /* 滚动条样式 */
+        /* 隐藏滚动条但保留功能，美化界面 */
         #game-container::-webkit-scrollbar { width: 8px; }
         #game-container::-webkit-scrollbar-track { background: #111; }
         #game-container::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
         
+        /* 选项容器样式 */
+        /* 用于容纳游戏中的选项按钮 */
         #options-container {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
 
+        /* 选项按钮样式 */
+        /* 游戏中选项按钮的外观和交互效果 */
         .option-btn {
             background-color: transparent;
             color: var(--accent-color);
@@ -132,6 +147,8 @@
             50% { opacity: 0; }
         }
 
+        /* 背包面板样式 */
+        /* 显示玩家的物品、线索和徽章 */
         #inventory-panel {
             display: none;
             position: fixed;
@@ -148,6 +165,8 @@
             box-shadow: 0 0 30px rgba(0,0,0,0.8);
         }
 
+        /* 遮罩层样式 */
+        /* 用于模态框的背景遮罩 */
         .overlay {
             display: none;
             position: fixed;
@@ -325,7 +344,7 @@
         <button class="sys-btn" style="width: 100%; margin-top: 15px; padding: 10px;" onclick="toggleInventory()">关闭笔记</button>
     </div>
 
-    <div id="achievement-panel">
+    <div id="achievement-panel" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #2a2a2a; border: 2px solid var(--accent-color); padding: 20px; border-radius: 8px; z-index: 1000; width: 80%; max-width: 500px; box-shadow: 0 0 30px rgba(0,0,0,0.8);">
         <h2 style="color: var(--accent-color); margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 10px;">成就墙</h2>
         <div style="margin-bottom: 10px; color: #bbb;">
             已解锁成就：<span id="ach-total">0</span>
@@ -339,8 +358,8 @@
     <!-- 已迁移：场景 DSL JSON -> data/scenes.dsl.json -->
 
     
-    <div id="settings-panel">
-        <h2 style="color: var(--accent-color); margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 10px;">设置</h2>
+    <div id="settings-panel" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #333; border: 2px solid var(--accent-color); width: 80%; max-width: 400px; padding: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.8); z-index: 100; border-radius: 8px;">
+        <h2 style="color: var(--accent-color); margin-top: 0; border-bottom: 1px solid #555; padding-bottom: 10px;">设置</h2>
         <div style="margin-bottom: 15px;">
             <label>字体大小：</label>
             <input type="range" id="setting-fontsize" min="14" max="24" value="16" oninput="applySettings()">
@@ -355,19 +374,28 @@
             <label>关闭动画：</label>
             <input type="checkbox" id="setting-noanim" onchange="applySettings()">
         </div>
-        <button class="sys-btn" style="width: 100%; margin-top: 15px; padding: 10px;" onclick="toggleSettings()">关闭设置</button>
+        <div style="margin-bottom: 15px;">
+            <label>亮度：</label>
+            <input type="range" id="setting-brightness" min="50" max="150" value="100" oninput="applySettings()">
+            <span id="brightness-val">100%</span>
+        </div>
+        <button class="sys-btn" style="width: 100%; margin-top: 15px; padding: 10px; background-color: #444; color: #ddd; border: 1px solid #666; border-radius: 4px; cursor: pointer;" onclick="toggleSettings()">关闭设置</button>
     </div>
 
     <!-- 游戏引擎核心逻辑 (DSL解析器) -->
     
-    <script type="module" src="./js/state-store.js"></script>
-    <script type="module" src="./js/game-engine.js"></script>
+    <!-- 游戏主入口模块 -->
+    <!-- 整合所有游戏模块，包括状态管理、场景渲染和数据存储 -->
+    <script type="module" src="./src/main.js"></script>
+    
+    <!-- 游戏场景模块 -->
+    <!-- 定义游戏中的所有场景和选项 -->
     <script type="module" src="./js/game-scenes.js"></script>
+    
+    <!-- 初始化脚本 -->
+    <!-- 场景定义 -->
     <script type="module">
-        import { renderScene } from "./js/game-engine.js";
-        window.renderScene = renderScene;
         const scenes = window.scenes = window.scenes || {};
-        renderScene("title");
     
 // --- 自动生成的地下室场景 ---
 scenes["basement_entry"] = {

@@ -9,10 +9,16 @@ __pycache__/
 venv/
 env/
 ENV/
+node_modules/
+package-lock.json
 
 # Runtime files
 output.log
 savegame.json
+
+# Dependencies
+node_modules/
+package-lock.json
 
 # Editor / OS files
 .vscode/
