@@ -49,7 +49,7 @@ const loadNGPlus = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('/src/assets/background.jpg');
+  background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('https://zeng-03.github.io/text-adventure-game/images/backgrounds/管家地窖.png');
   background-size: cover;
   background-position: center;
 }

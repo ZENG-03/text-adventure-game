@@ -33,7 +33,7 @@
           v-for="(option, index) in availableOptions" 
           :key="index"
           class="option-btn"
-          @click="selectOption(option)"
+          @click="selectOption(option.target)"
         >
           {{ option.text }}
         </button>
@@ -58,7 +58,7 @@
             class="inv-item"
             @click="showItemDetails(item)"
           >
-            <img :src="`/src/assets/items/${item}.png`" :alt="item" onerror="this.style.display='none'">
+            <img :src="`${basePath}images/items/${item}.png`" :alt="item" onerror="this.style.display='none'">
             <span>{{ item }}</span>
           </div>
           <span v-if="items.length === 0" class="empty-text">无</span>
@@ -132,7 +132,7 @@
       <div id="char-list">
         <div v-for="(character, index) in characters" :key="index" class="char-card">
           <div class="char-image">
-            <img :src="`/src/assets/characters/${character.image}`" :alt="character.name">
+            <img :src="`${basePath}images/characters/${character.image}`" :alt="character.name">
           </div>
           <h4>{{ character.name }}</h4>
           <p class="char-role">{{ character.role }}</p>
@@ -167,7 +167,7 @@
     <div class="item-modal" v-if="itemDetailsOpen">
       <h3>{{ selectedItem }}</h3>
       <div class="item-image">
-        <img :src="`/src/assets/items/${selectedItem}.png`" :alt="selectedItem" onerror="this.style.display='none'">
+        <img :src="`${basePath}images/items/${selectedItem}.png`" :alt="selectedItem" onerror="this.style.display='none'">
       </div>
       <p>{{ itemDescription }}</p>
       <button class="sys-btn" @click="itemDetailsOpen = false">关闭</button>
@@ -201,6 +201,8 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useGameStore } from '../store/gameStore'
+
+const basePath = import.meta.env.BASE_URL;
 
 const gameStore = useGameStore()
 
@@ -291,21 +293,54 @@ onMounted(() => {
 })
 
 // 方法
+const selectOption = (targetId) => {
+  if (targetId) {
+    loadScene(targetId)
+  }
+}
+
 const loadScene = (sceneId) => {
   currentScene.value = sceneId
   const scene = gameStore.getScene(sceneId)
   if (scene) {
     currentSceneName.value = scene.name || sceneId
-    sceneDesc.value = scene.desc
+    let descHtml = typeof scene.desc === 'function' ? scene.desc() : scene.desc
+    
+    // 如果是大厅，则单独渲染动态描述与庄园简图
+    if (sceneId === 'hall_main') {
+        const medalCount = gameStore.achievements.filter(a => a.includes('徽章')).length || 0;
+        if (medalCount >= 5) {
+            descHtml += "\n[大厅发生了剧变：空气中弥漫着压抑的气息，中央密室的大门开始渗出微光。]";
+        } else if (medalCount >= 3) {
+            descHtml += "\n[大厅发生了变化：一些雕像的眼睛似乎在盯着你。]";
+        }
+        
+        const rFmt = (name, possibleItems, targetId) => {
+            const itemsList = Array.isArray(possibleItems) ? possibleItems : [possibleItems];
+            const isExplored = gameStore.inventory.some(i => itemsList.some(pat => i.includes(pat)));
+            const colorStyle = isExplored ? "color:#d4af37;text-shadow:0 0 5px #d4af37;font-weight:bold;" : "color:#777;";
+            const text = isExplored ? `${name}(★已探索)` : `${name}(未探索)`;
+            return `<span style="${colorStyle} cursor:pointer; text-decoration: underline;" onclick="window.handleMapClick('${targetId}')">${text}</span>`;
+        };
+
+        descHtml += `
+<div style="background:rgba(0,0,0,0.5); border:1px solid #444; padding:10px; border-radius:5px; margin-top:20px; font-family:monospace; line-height:1.6;">
+    <div style="color:#aaa; border-bottom:1px solid #444; padding-bottom:5px; margin-bottom:5px; font-weight:bold;">🗺️ 庄园状态简图</div>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二楼：${rFmt("画室", ["色彩徽章", "橙色徽章"], 'studio_entry')} | ${rFmt("最深处的卧室", "彩虹徽章", 'bedroom_entry')}<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一楼：${rFmt("音乐室", ["旋律徽章", "翠绿徽章"], 'musicroom_entry')} | ${rFmt("大厅", "起始徽章", 'hall_main')} | ${rFmt("温室花房", ["生命徽章", "金色徽章"], 'greenhouse_entry')} | ${rFmt("书房/图书馆", ["智慧徽章", "蓝宝石徽章"], 'library_entry')}<br>
+    &nbsp;&nbsp;东侧附属：${rFmt("钟楼", ["时空徽章", "红宝石徽章"], 'clocktower_entry')}<br>
+    &nbsp;&nbsp;&nbsp;地下：${rFmt("地下室", ["深渊徽章", "紫色徽章"], 'basement_entry')}
+</div>`;
+    }
+    
+    // 渲染打字机效果并替换 \n
+    sceneDesc.value = descHtml.replace(/\\n/g, "<br>");
     availableOptions.value = scene.options || []
   }
 }
 
-const selectOption = (option) => {
-  if (option.target) {
-    loadScene(option.target)
-  }
-}
+// 暴露给全局以便 HTML onclick 能调用到
+window.handleMapClick = selectOption;
 
 const returnToHall = () => {
   loadScene('hall_main')

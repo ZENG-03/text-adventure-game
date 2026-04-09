@@ -159,7 +159,7 @@ export const useGameStore = defineStore('game', {
           const api = await import('../api/index.js');
           await api.ServerAPI.syncSaveData({ profile: this.profile, run: this.run, settings: this.settings });
         } catch (error) {
-          console.warn("云同步通讯失败或被拦截", error);
+          console.warn("云存档同步失败，当前仅在本地保存", error);
         } finally {
           this.isSyncing = false;
         }
