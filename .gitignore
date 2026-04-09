@@ -9,8 +9,6 @@ __pycache__/
 venv/
 env/
 ENV/
-node_modules/
-package-lock.json
 
 # Runtime files
 output.log
@@ -25,3 +23,8 @@ package-lock.json
 .idea/
 .DS_Store
 Thumbs.db
+
+# Build & DB
+dist/
+*.db
+

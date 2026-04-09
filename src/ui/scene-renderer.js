@@ -468,6 +468,22 @@ function setBackground(sceneId) {
  * @param {string} sceneId - 要渲染的场景ID
  */
 export function renderScene(sceneId) {
+    // ----------------- 新增特效逻辑：三周目以上污染/花屏特效 -----------------
+    const playCount = (typeof window.getPlayCount === "function") ? window.getPlayCount() : 0;
+    const gameContainer = document.getElementById("game-container");
+    if (gameContainer) {
+        // 重置状态
+        gameContainer.classList.remove("glitch-text");
+        // 当玩了大于 2 次时（三周目或以上），每次切换场景有10%的几率整个容器短暂花屏
+        if (playCount > 2 && Math.random() < 0.1) {
+            gameContainer.classList.add("glitch-text");
+            setTimeout(() => {
+                gameContainer.classList.remove("glitch-text");
+            }, 300 + Math.random() * 500); // 持续 0.3s ~ 0.8s
+        }
+    }
+    // -------------------------------------------------------------------------
+
     // 记录访问过的选项路径（用于灰显已访问的选项）
     if (window.run && window.run.current_scene_id && sceneId) {
         if (!window.profile.visited_options || typeof window.profile.visited_options !== "object") {

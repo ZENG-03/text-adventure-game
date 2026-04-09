@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 TEXT_DIR = ROOT / "文本"
-SCENES_JS = ROOT / "js" / "game-scenes.js"
+SCENES_JS = ROOT / "src" / "data" / "game-scenes.js"
 
 AUTO_MARKER = "// --- 自动生成的"
 
@@ -421,6 +421,8 @@ def make_js_code(scenes: dict) -> str:
                 elif cs.startswith("js:"):
                     js_code = cs[3:].strip()
                     opt_line += f', condition: () => {js_code}'
+                elif "前世记忆" in cond_str:
+                    opt_line += f', condition: () => getPlayCount() > 0'
                 elif cs.startswith("allflags:"):
                     keys = [x.strip() for x in cs[9:].split("|") if x.strip()]
                     if keys:

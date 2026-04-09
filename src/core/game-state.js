@@ -404,3 +404,23 @@ window.addClue = addClue;
 window.addItem = addItem;
 window.checkAchievements = checkAchievements;
 window.autoSave = autoSave;
+
+// 二周目与Meta游戏相关API 暴露给全局以便 game-scenes.js 里调用
+export function hasEnding(name) {
+    return profile.endings_reached && profile.endings_reached.includes(name);
+}
+export function getPlayCount() {
+    return profile.play_count || 0;
+}
+export function checkProfileVisited(key) {
+    return profile.visited_options && profile.visited_options[key] === true;
+}
+export function markProfileVisited(key) {
+    if (!profile.visited_options) profile.visited_options = {};
+    profile.visited_options[key] = true;
+    autoSave();
+}
+window.hasEnding = hasEnding;
+window.getPlayCount = getPlayCount;
+window.checkProfileVisited = checkProfileVisited;
+window.markProfileVisited = markProfileVisited;
