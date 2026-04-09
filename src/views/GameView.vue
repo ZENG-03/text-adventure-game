@@ -24,7 +24,9 @@
 
     <!-- 游戏内容 -->
     <main class="game-content">
-      <!-- 场景描述 -->
+      <Transition name="fade" mode="out-in">
+      <div :key="currentScene" class="scene-wrapper">
+        <!-- 场景描述 -->
       <div class="story-text" v-html="sceneDesc"></div>
 
       <!-- 选项按钮 -->
@@ -38,10 +40,13 @@
           {{ option.text }}
         </button>
       </div>
+          </div>
+    </Transition>
     </main>
 
     <!-- 背包面板 -->
-    <div class="inventory-panel" :style="{ right: inventoryOpen ? '0' : '-300px' }">
+    <Transition name="fade">
+    <div class="inventory-panel" v-show="inventoryOpen" style="right:0;">
       <h2>侦探笔记</h2>
       <div>
         <h3>【已获徽章】 ({{ medalCount }}/7)</h3>
@@ -72,9 +77,11 @@
       </div>
       <button class="sys-btn" @click="toggleInventory">关闭笔记</button>
     </div>
+    </Transition>
 
     <!-- 成就面板 -->
-    <div class="achievement-panel" :style="{ display: achievementsOpen ? 'block' : 'none' }">
+    <Transition name="fade">
+    <div class="achievement-panel" v-show="achievementsOpen">
       <h2>成就墙</h2>
       <div class="achievement-stats">
         已解锁成就：<span id="ach-total">{{ achievementCount }}</span>
@@ -93,9 +100,11 @@
       </div>
       <button class="sys-btn" @click="toggleAchievements">关闭成就墙</button>
     </div>
+    </Transition>
 
     <!-- 设置面板 -->
-    <div class="settings-panel" :style="{ display: settingsOpen ? 'block' : 'none' }">
+    <Transition name="fade">
+    <div class="settings-panel" v-show="settingsOpen">
       <h2>设置</h2>
       <div class="setting-item">
         <label>字体大小：</label>
@@ -125,9 +134,11 @@
       </div>
       <button class="sys-btn" @click="toggleSettings">关闭设置</button>
     </div>
+    </Transition>
 
     <!-- 人物图鉴面板 -->
-    <div class="character-panel" :style="{ display: charactersOpen ? 'block' : 'none' }">
+    <Transition name="fade">
+    <div class="character-panel" v-show="charactersOpen">
       <h2>人物图鉴 <span id="char-count">({{ characters.length }}/{{ characters.length }})</span></h2>
       <div id="char-list">
         <div v-for="(character, index) in characters" :key="index" class="char-card">
@@ -141,8 +152,10 @@
       </div>
       <button class="sys-btn" @click="toggleCharacters">关闭图鉴</button>
     </div>
+    </Transition>
 
     <!-- 物品组合界面 -->
+    <Transition name="fade">
     <div class="combine-popup" v-if="combineOpen">
       <h3>物品组合</h3>
       <div class="combine-form">
@@ -162,8 +175,10 @@
         <button class="btn-secondary" @click="combineOpen = false">关闭</button>
       </div>
     </div>
+    </Transition>
 
     <!-- 物品详情弹窗 -->
+    <Transition name="fade">
     <div class="item-modal" v-if="itemDetailsOpen">
       <h3>{{ selectedItem }}</h3>
       <div class="item-image">
@@ -172,9 +187,11 @@
       <p>{{ itemDescription }}</p>
       <button class="sys-btn" @click="itemDetailsOpen = false">关闭</button>
     </div>
+    </Transition>
 
     
     <!-- 登录注册弹窗 -->
+    <Transition name="fade">
     <div class="login-modal" v-if="loginOpen" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a1a1a;border:2px solid #d4af37;padding:20px;border-radius:8px;z-index:9999;box-shadow:0 0 15px rgba(212,175,55,0.3);width:300px;color:#d4af37;">
       <h3 style="margin-top:0;text-align:center;">连接到云端档案室</h3>
       <div class="login-form">
@@ -193,8 +210,11 @@
         </div>
       </div>
     </div>
+    </Transition>
 \n    <!-- 遮罩层 -->
+    <Transition name="fade">
     <div class="overlay" v-if="overlayOpen" @click="closePanels"></div>
+  </Transition>
   </div>
 </template>
 
@@ -540,7 +560,7 @@ const combineItems = () => {
   border-left: 2px solid #d4af37;
   padding: 20px;
   overflow-y: auto;
-  transition: right 0.3s ease;
+  
   z-index: 1000;
 }
 
@@ -781,5 +801,15 @@ const combineItems = () => {
 .item-modal p {
   line-height: 1.6;
   margin-bottom: 20px;
+}
+
+/* Vue Transition CSS */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
