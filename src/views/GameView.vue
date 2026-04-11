@@ -163,7 +163,7 @@ const loadScene = (sceneId) => {
     
     // 如果是大厅，则单独渲染动态描述与庄园简图
     if (sceneId === 'hall_main') {
-        const medalCount = gameStore.achievements.filter(a => a.includes('徽章')).length || 0;
+        const medalCount = (gameStore.profile.achievements || []).filter(a => a.includes('徽章')).length || 0;
         if (medalCount >= 5) {
             descHtml += "\n[大厅发生了剧变：空气中弥漫着压抑的气息，中央密室的大门开始渗出微光。]";
         } else if (medalCount >= 3) {
@@ -172,7 +172,7 @@ const loadScene = (sceneId) => {
         
         const rFmt = (name, possibleItems, targetId) => {
             const itemsList = Array.isArray(possibleItems) ? possibleItems : [possibleItems];
-            const isExplored = gameStore.inventory.some(i => itemsList.some(pat => i.includes(pat)));
+            const isExplored = gameStore.items.some(i => itemsList.some(pat => i.includes(pat)));
             const colorStyle = isExplored ? "color:#d4af37;text-shadow:0 0 5px #d4af37;font-weight:bold;" : "color:#777;";
             const text = isExplored ? `${name}(★已探索)` : `${name}(未探索)`;
             return `<span style="${colorStyle} cursor:pointer; text-decoration: underline;" onclick="window.handleMapClick('${targetId}')">${text}</span>`;
@@ -189,7 +189,7 @@ const loadScene = (sceneId) => {
     }
     
     // 渲染打字机效果并替换 \n
-    sceneDesc.value = descHtml.replace(/\\n/g, "<br>");
+    sceneDesc.value = (descHtml || "").replace(/\\n/g, "<br>");
     
     // 过滤选项，如果 options 中存在 cond 数组，根据条件验证显示
     const rawOptions = scene.options || []

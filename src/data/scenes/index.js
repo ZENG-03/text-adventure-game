@@ -369,9 +369,7 @@ export async function loadScene(sceneId, store) {
   
   try {
     const module = await loader()
-    const scene = module.default || module[sceneId]
-    if (!scene) throw new Error(`Scene ${sceneId} not exported from module`)
-    
+      const scene = (module.default && module.default[sceneId]) || module[sceneId]
     // 为场景函数绑定 store（可选）
     if (scene.on_enter) {
       const originalOnEnter = scene.on_enter
