@@ -1,12 +1,51 @@
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createPinia, setActivePinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
-import { scenesMap } from './store/gameStore'
+import { scenesMap, useGameStore } from './store/gameStore'
 import { getAllSceneIds, loadScene } from './data/scenes/index.js'
+
+function registerLegacyGlobals(pinia) {
+    setActivePinia(pinia)
+    const getStore = () => useGameStore()
+
+    const hasItem = (item) => getStore().run.items.includes(item)
+    const hasClue = (clue) => getStore().run.clues.includes(clue)
+    const getFlag = (flag) => !!getStore().run.flags[flag]
+    const setFlag = (flag, value = true) => getStore().setFlag(flag, value)
+    const addItem = (item) => getStore().addItem(item) || ''
+    const removeItem = (item) => getStore().removeItem(item) || ''
+    const addClue = (clue) => getStore().addClue(clue) || ''
+
+    globalThis.hasItem = hasItem
+    globalThis.hasClue = hasClue
+    globalThis.getFlag = getFlag
+    globalThis.setFlag = setFlag
+    globalThis.addItem = addItem
+    globalThis.removeItem = removeItem
+    globalThis.addClue = addClue
+
+    globalThis.StateAPI = {
+        hasItem,
+        hasClue,
+        getFlag,
+        setFlag,
+        addItem,
+        removeItem,
+        addClue
+    }
+
+    Object.defineProperty(globalThis, 'gameState', {
+        configurable: true,
+        get() {
+            return getStore().run
+        }
+    })
+}
 
 async function init() {
     const pinia = createPinia()
+    registerLegacyGlobals(pinia)
     try {
         console.log('[Engine] Preloading all scenes...');
         const ids = getAllSceneIds();

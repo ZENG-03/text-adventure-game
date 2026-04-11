@@ -374,19 +374,24 @@ export async function loadScene(sceneId, store) {
       scene.on_enter = () => originalOnEnter(store)
     }
     
-    // 处理选项中的条件函数
-    if (scene.options) {
-      scene.options.forEach(option => {
-        if (option.cond) {
-          const originalCond = option.cond
-          option.cond = originalCond.map(cond => {
+    // 处理选项中的条件函数（仅在 options 为数组时处理）
+    if (Array.isArray(scene.options)) {
+      scene.options = scene.options.map(option => {
+        if (!option || typeof option !== 'object') {
+          return option
+        }
+        if (Array.isArray(option.cond)) {
+          option.cond = option.cond.map(cond => {
             if (typeof cond === 'function') {
               return () => cond(store)
             }
             return cond
           })
         }
+        return option
       })
+    } else if (scene.options && typeof scene.options !== 'function') {
+      scene.options = []
     }
     
     sceneCache.set(sceneId, scene)

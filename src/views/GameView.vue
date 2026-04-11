@@ -74,7 +74,8 @@
     <Transition name="fade">
       <LoginModal v-if="uiState.login" @close="uiState.login = false" />
     </Transition>
-\n    <!-- 遮罩层-->
+
+    <!-- 遮罩层-->
     <Transition name="fade">
     <div class="overlay" v-if="overlayOpen" @click="closePanels"></div>
   </Transition>
@@ -181,19 +182,34 @@ const loadScene = (sceneId) => {
         descHtml += `
 <div style="background:rgba(0,0,0,0.5); border:1px solid #444; padding:10px; border-radius:5px; margin-top:20px; font-family:monospace; line-height:1.6;">
     <div style="color:#aaa; border-bottom:1px solid #444; padding-bottom:5px; margin-bottom:5px; font-weight:bold;">🗺️ 庄园状态简图</div>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二楼：\${rFmt("画室", ["色彩徽章", "橙色徽章"], 'studio_entry')} | \${rFmt("最深处的卧室", "彩虹徽章", 'bedroom_entry')}<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一楼：\${rFmt("音乐室", ["旋律徽章", "翠绿徽章"], 'musicroom_entry')} | \${rFmt("大厅", "起始徽章", 'hall_main')} | \${rFmt("温室花房", ["生命徽章", "金色徽章"], 'greenhouse_entry')} | \${rFmt("书房/图书室", ["智慧徽章", "蓝宝石徽章"], 'library_entry')}<br>
-    &nbsp;&nbsp;东侧附属建筑：\${rFmt("钟楼", ["时空徽章", "红宝石徽章"], 'clocktower_entry')}<br>
-    &nbsp;&nbsp;&nbsp;地下：\${rFmt("地下室", ["深渊徽章", "紫色徽章"], 'basement_entry')}
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;二楼：${rFmt("画室", ["色彩徽章", "橙色徽章"], 'studio_entry')} | ${rFmt("最深处的卧室", "彩虹徽章", 'bedroom_entry')}<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一楼：${rFmt("音乐室", ["旋律徽章", "翠绿徽章"], 'musicroom_entry')} | ${rFmt("大厅", "起始徽章", 'hall_main')} | ${rFmt("温室花房", ["生命徽章", "金色徽章"], 'greenhouse_entry')} | ${rFmt("书房/图书室", ["智慧徽章", "蓝宝石徽章"], 'library_entry')}<br>
+      &nbsp;&nbsp;东侧附属建筑：${rFmt("钟楼", ["时空徽章", "红宝石徽章"], 'clocktower_entry')}<br>
+      &nbsp;&nbsp;&nbsp;地下：${rFmt("地下室", ["深渊徽章", "紫色徽章"], 'basement_entry')}
 </div>`;
     }
     
     // 渲染打字机效果并替换 \n
     sceneDesc.value = (descHtml || "").replace(/\\n/g, "<br>");
     
-    // 过滤选项，如?options 中存储cond 数组，根据条件验证显示
-    const rawOptions = (typeof scene.options === 'function' ? scene.options(gameStore) : scene.options) || []
-    availableOptions.value = rawOptions.filter(opt => (opt.condition ? opt.condition(gameStore) : evaluateConditions(opt.cond)))
+    // 过滤选项：兼容函数式 options、数组 options 以及旧剧本 condition/cond 写法
+    const evaluatedOptions = typeof scene.options === 'function' ? scene.options(gameStore) : scene.options
+    const rawOptions = Array.isArray(evaluatedOptions) ? evaluatedOptions : []
+    availableOptions.value = rawOptions.filter((opt) => {
+      if (!opt || typeof opt !== 'object') return false
+      try {
+        if (typeof opt.condition === 'function') {
+          return !!opt.condition(gameStore)
+        }
+        if (Array.isArray(opt.cond)) {
+          return evaluateConditions(opt.cond)
+        }
+        return true
+      } catch (err) {
+        console.warn('Skip invalid option condition:', err)
+        return false
+      }
+    })
   }
 }
 
