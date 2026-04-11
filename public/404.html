@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>跳转中...</title>
+  </head>
+  <body>
+    <script>
+      (function () {
+        var base = '/text-adventure-game';
+        var path = window.location.pathname.indexOf(base) === 0
+          ? window.location.pathname.slice(base.length)
+          : window.location.pathname;
+        var target = base + '/#' + (path || '/') + window.location.search + window.location.hash;
+        window.location.replace(target);
+      })();
+    </script>
+  </body>
+</html>
