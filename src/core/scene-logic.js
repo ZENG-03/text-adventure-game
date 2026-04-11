@@ -15,7 +15,9 @@ export function evaluateCondition(condStr) {
         case 'getFlag':
         case 'flag': return store.run.flags[target] === true;
         case 'notFlag': return store.run.flags[target] !== true;
-        case 'medalCount': return store.run.medals.length >= parseInt(target);          case 'hasEndings': return store.profile.achievements.length >= parseInt(target);        case 'hasAutoSave': return localStorage.getItem('adventure_save') !== null;
+        case 'medalCount': return store.run.medals.length >= parseInt(target);
+        case 'hasEndings': return store.profile.achievements.length >= parseInt(target);  
+        case 'hasAutoSave': return localStorage.getItem('adventure_save') !== null;
         default:
             console.warn(`Unknown condition type: ${type}`);
             return false;
