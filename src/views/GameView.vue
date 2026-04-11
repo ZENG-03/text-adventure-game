@@ -100,6 +100,7 @@ const gameStore = useGameStore()
 
 // 游戏状态
 const currentScene = ref('title')
+const currentSceneName = ref('')
 const sceneDesc = ref('')
   const availableOptions = shallowRef([])
 // 面板状态（收敛管理）
