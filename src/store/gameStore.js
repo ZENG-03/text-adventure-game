@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
-import scenes from '../data/game-scenes.js'
+export const scenesMap = {};
 import hints from '../data/hints.json'
+import { executeEffects, evaluateConditions } from '../core/scene-logic.js'
 
 // ===== 静态词典数据单独抽出，减少内存与网络开销 =====
 const staticData = {
@@ -64,7 +65,7 @@ export const useGameStore = defineStore('game', {
   getters: {
     // 获取当前场景
     currentScene: (state) => {
-      return scenes[state.run.current_scene_id] || null
+      return scenesMap[state.run.current_scene_id] || null
     },
     // 获取物品列表
     items: (state) => {
@@ -167,7 +168,10 @@ export const useGameStore = defineStore('game', {
     },
     saveState() { 
       // 向后兼容已有的全局调用
-      this.autoSync(); 
+      if (this._saveTimer) clearTimeout(this._saveTimer);
+      this._saveTimer = setTimeout(() => {
+        this.autoSync(); 
+      }, 500);
     },
 
     // ===== 在线特性动作 =====
@@ -262,7 +266,7 @@ export const useGameStore = defineStore('game', {
     },
     // 获取场景
     getScene(sceneId) {
-      return scenes[sceneId] || null
+      return scenesMap[sceneId] || null
     },
     // 添加物品
     addItem(item) {

@@ -1,0 +1,112 @@
+## 需求表达完善：打字机效果增加“点击跳过”功能
+
+### 一、当前问题描述
+
+> **现状**：游戏中的文本采用打字机效果逐字显示，速度固定（如 25ms/字）。当玩家已经阅读过当前场景或想快速跳过时，无法立即显示全部文本，必须等待打字动画结束。这导致体验拖沓，尤其在多周目或重复尝试时。
+
+> **期望**：在打字机播放过程中，**玩家点击文本区域（或屏幕任意位置）即可立即中断动画，一次性显示当前场景的完整文本**，同时正常渲染选项按钮。该功能应可配置（允许玩家在设置中关闭“点击跳过”），且不影响原有打字速度设置。
+
+### 二、功能需求文档（PRD）写法示例
+
+```markdown
+## 需求：打字机效果增加“点击跳过”交互
+
+### 背景
+当前游戏使用逐字打印动画展示场景描述，动画时长与文本长度成正比。长文本（如大厅初始描述）可能需要数秒才能显示完毕，影响操作流畅性，尤其对重复游玩的玩家造成等待焦虑。
+
+### 功能描述
+1. **点击跳过**：在打字机动画播放期间，玩家**点击文本区域（`.story-text`）**，动画立即停止，当前场景的完整 HTML 内容直接显示。
+2. **自动显示选项**：文本完整显示后，选项按钮区域正常渲染（与动画自然结束后的行为一致）。
+3. **可选开关**：在“设置”面板中增加“打字机跳过”开关（默认开启），允许玩家关闭点击跳过功能（此时必须等待动画结束）。
+4. **兼容性**：该功能应与现有“打字速度”设置、多周目、场景切换等逻辑无冲突。
+
+### 验收标准
+- [ ] 打字机播放时，点击文本区域，文本瞬间变为完整内容。
+- [ ] 点击后，选项按钮立即出现（无需等待原动画结束时间）。
+- [ ] 如果玩家在动画结束前多次点击，只触发一次跳过。
+- [ ] 设置中关闭“跳过”后，点击文本区域无效。
+- [ ] 不影响移动端触摸事件。
+
+### 技术备注
+- 使用 `clearInterval` 终止 `setInterval` 循环。
+- 移除 `onclick` 监听器，或通过标志位防止重复触发。
+- 在 Vue 组件中，可使用 `ref` 获取文本容器，挂载/解绑事件。
+```
+
+### 三、实现方案简述（Vue 3）
+
+#### 3.1 修改打字机函数，增加跳过逻辑
+
+在 `GameView.vue` 的 `typeText` 函数中：
+
+```javascript
+let typingInterval = null;
+let isTyping = false;
+
+const typeText = async (html) => {
+  if (typingInterval) clearInterval(typingInterval);
+  isTyping = true;
+  displayText.value = '';
+  
+  // 绑定点击跳过事件
+  const skipHandler = () => {
+    if (!isTyping) return;
+    if (typingInterval) clearInterval(typingInterval);
+    displayText.value = html;
+    isTyping = false;
+    storyElementRef.value?.removeEventListener('click', skipHandler);
+    // 直接渲染选项（原 onComplete 逻辑）
+    renderOptions();
+  };
+  storyElementRef.value?.addEventListener('click', skipHandler);
+  
+  let i = 0;
+  return new Promise((resolve) => {
+    typingInterval = setInterval(() => {
+      if (i >= html.length) {
+        clearInterval(typingInterval);
+        isTyping = false;
+        storyElementRef.value?.removeEventListener('click', skipHandler);
+        resolve();
+        return;
+      }
+      displayText.value += html[i];
+      i++;
+    }, typingSpeed.value);
+  });
+};
+```
+
+#### 3.2 设置面板增加开关
+
+在 `SettingsPanel.vue` 中添加：
+
+```html
+<div class="setting-item">
+  <label>打字机点击跳过：</label>
+  <input type="checkbox" v-model="skipTyping" @change="applySettings">
+</div>
+```
+
+在 `gameStore` 的 `settings` 中增加 `skipTyping: true`，并在 `applySettings` 中同步。
+
+#### 3.3 在 `typeText` 中读取设置
+
+```javascript
+const skipEnabled = gameStore.settings.skipTyping;
+if (skipEnabled) {
+  // 绑定点击事件
+} else {
+  // 不绑定
+}
+```
+
+### 四、用户反馈话术（用于向玩家说明）
+
+> **改进说明**：  
+> 我们优化了文本显示体验！现在，当打字机逐字显示文本时，**点击任意文本区域即可立即显示全部内容**，无需等待动画结束。你可以在“设置”中关闭此功能。  
+> 该改动让你在多周目或重复尝试时更加流畅，节省宝贵时间。
+
+---
+
+通过以上表达和实现，你的游戏将拥有更人性化的打字机效果。如果需要完整代码或更详细的 Vue 实现，我可以继续提供。

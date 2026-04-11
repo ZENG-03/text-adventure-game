@@ -1,0 +1,61 @@
+{
+  "game": {
+    "title": "幽暗庄园的秘密",
+    "subtitle": "探索每个房间，寻找线索，解开谜题",
+    "returnToHall": "返回大厅",
+    "achievements": "成就",
+    "hint": "提示",
+    "settings": "设置",
+    "combineItems": "物品组合",
+    "characters": "人物",
+    "inventory": "背包",
+    "location": "位置：{name}"
+  },
+  "scenes": {
+    "title": "欢迎来到幽暗庄园！",
+    "hall_main": "你在庄园的大厅里。",
+    "puzzle_mirror": "你发现了一面古老的镜子，上面刻着一行字：'真相就在你的倒影中。'"
+  },
+  "achievements": {
+    "ending_1": "永恒的回廊",
+    "ending_2": "自由的智者",
+    "ending_3": "永恒的守护者",
+    "ending_4": "谜语馆的回响",
+    "collect_all_medals": "徽章收集者",
+    "explore_all_rooms": "探索者",
+    "solve_all_puzzles": "解谜大师"
+  },
+  "items": {
+    "七色花苞": "七色花苞",
+    "古树血提取剂": "古树血提取剂",
+    "生命精华": "生命精华",
+    "机械齿轮": "机械齿轮",
+    "调音扳手": "调音扳手",
+    "精密齿轮": "精密齿轮",
+    "夜莺长笛": "夜莺长笛",
+    "调好的长笛": "调好的长笛",
+    "起始徽章": "起始徽章",
+    "旋律徽章": "旋律徽章",
+    "双徽章": "双徽章",
+    "生命徽章": "生命徽章",
+    "色彩徽章": "色彩徽章",
+    "自然之章": "自然之章"
+  },
+  "messages": {
+    "gameSaved": "游戏保存成功！",
+    "gameLoaded": "游戏加载成功！",
+    "achievementUnlocked": "成就解锁：{name}",
+    "noHints": "当前场景暂无提示",
+    "itemAdded": "物品已添加到背包：{item}",
+    "itemCombined": "物品组合成功：{result}",
+    "puzzleSolved": "谜题解开了！"
+  },
+  "settings": {
+    "language": "语言",
+    "typingSpeed": "打字速度",
+    "sound": "音效",
+    "music": "音乐",
+    "save": "保存设置",
+    "reset": "重置设置"
+  }
+}

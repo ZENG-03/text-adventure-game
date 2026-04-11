@@ -1,0 +1,61 @@
+{
+  "game": {
+    "title": "The Secrets of the Dark Manor",
+    "subtitle": "Explore each room, find clues, solve puzzles",
+    "returnToHall": "Return to Hall",
+    "achievements": "Achievements",
+    "hint": "Hint",
+    "settings": "Settings",
+    "combineItems": "Combine Items",
+    "characters": "Characters",
+    "inventory": "Inventory",
+    "location": "Location: {name}"
+  },
+  "scenes": {
+    "title": "Welcome to the Dark Manor!",
+    "hall_main": "You are in the grand hall of the manor.",
+    "puzzle_mirror": "You found an ancient mirror with a riddle: 'The truth is in your reflection.'"
+  },
+  "achievements": {
+    "ending_1": "Eternal Corridor",
+    "ending_2": "Free Sage",
+    "ending_3": "Eternal Guardian",
+    "ending_4": "Echoes of the Riddle House",
+    "collect_all_medals": "Medal Collector",
+    "explore_all_rooms": "Explorer",
+    "solve_all_puzzles": "Puzzle Master"
+  },
+  "items": {
+    "七色花苞": "Seven-colored Bud",
+    "古树血提取剂": "Ancient Tree Blood Extract",
+    "生命精华": "Life Essence",
+    "机械齿轮": "Mechanical Gear",
+    "调音扳手": "Tuning Wrench",
+    "精密齿轮": "Precision Gear",
+    "夜莺长笛": "Nightingale Flute",
+    "调好的长笛": "Tuned Flute",
+    "起始徽章": "Starting Badge",
+    "旋律徽章": "Melody Badge",
+    "双徽章": "Dual Badge",
+    "生命徽章": "Life Badge",
+    "色彩徽章": "Color Badge",
+    "自然之章": "Nature Badge"
+  },
+  "messages": {
+    "gameSaved": "Game saved successfully!",
+    "gameLoaded": "Game loaded successfully!",
+    "achievementUnlocked": "Achievement unlocked: {name}",
+    "noHints": "No hints available for this scene",
+    "itemAdded": "Item added to inventory: {item}",
+    "itemCombined": "Items combined: {result}",
+    "puzzleSolved": "Puzzle solved!"
+  },
+  "settings": {
+    "language": "Language",
+    "typingSpeed": "Typing Speed",
+    "sound": "Sound",
+    "music": "Music",
+    "save": "Save Settings",
+    "reset": "Reset Settings"
+  }
+}

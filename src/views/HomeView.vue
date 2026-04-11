@@ -1,7 +1,10 @@
 <template>
   <div class="home">
+    <!-- 动态背景组件 -->
+    <DynamicBackground />
+    
     <div class="hero">
-      <h1>谜语遗产：七重谜域</h1>
+      <h1 class="title-animation">谜语遗产：七重谜域</h1>
       <p>探索幽暗庄园，解开七重谜题，寻找隐藏的真相</p>
       <div class="buttons">
         <button @click="startNewGame" class="btn-primary">开始新游戏</button>
@@ -16,6 +19,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useGameStore } from '../store/gameStore'
+import DynamicBackground from '../components/DynamicBackground.vue'
 
 const router = useRouter()
 const gameStore = useGameStore()
@@ -49,9 +53,7 @@ const loadNGPlus = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('https://zeng-03.github.io/text-adventure-game/images/backgrounds/管家地窖.png');
-  background-size: cover;
-  background-position: center;
+  position: relative;
 }
 
 .hero {
@@ -120,5 +122,49 @@ p {
 .btn-secondary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* 羽毛笔书写效果 */
+.title-animation {
+  position: relative;
+  display: inline-block;
+}
+
+.title-animation::after {
+  content: '✍️';
+  position: absolute;
+  right: -30px;
+  top: 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.title-animation:hover::after {
+  opacity: 1;
+}
+
+/* 按钮悬停特效 */
+.btn-primary, .btn-secondary {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-primary::before, .btn-secondary::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(212,175,55,0.3) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  transition: width 0.4s, height 0.4s;
+}
+
+.btn-primary:hover::before, .btn-secondary:hover::before {
+  width: 200px;
+  height: 200px;
 }
 </style>

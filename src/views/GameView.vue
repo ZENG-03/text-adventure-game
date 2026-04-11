@@ -44,172 +44,35 @@
     </Transition>
     </main>
 
-    <!-- 背包面板 -->
+    <!-- 动态面板区 -->
     <Transition name="fade">
-    <div class="inventory-panel" v-show="inventoryOpen" style="right:0;">
-      <h2>侦探笔记</h2>
-      <div>
-        <h3>【已获徽章】 ({{ medalCount }}/7)</h3>
-        <p id="inv-medals">
-          <span v-for="(medal, index) in medals" :key="index" class="inv-item medal">{{ medal }}</span>
-          <span v-if="medals.length === 0" class="empty-text">无</span>
-        </p>
-
-        <h3>【收集道具】</h3>
-        <p id="inv-items">
-          <div 
-            v-for="(item, index) in items" 
-            :key="index"
-            class="inv-item"
-            @click="showItemDetails(item)"
-          >
-            <img :src="`${basePath}images/items/${item}.png`" :alt="item" onerror="this.style.display='none'">
-            <span>{{ item }}</span>
-          </div>
-          <span v-if="items.length === 0" class="empty-text">无</span>
-        </p>
-
-        <h3>【掌握线索】</h3>
-        <p id="inv-clues">
-          <div v-for="(clue, index) in clues" :key="index" class="clue-item">· {{ clue }}</div>
-          <span v-if="clues.length === 0" class="empty-text">无</span>
-        </p>
-      </div>
-      <button class="sys-btn" @click="toggleInventory">关闭笔记</button>
-    </div>
+      <InventoryPanel v-if="uiState.inventory" @close="uiState.inventory = false" @show-item="showItemDetails" />
     </Transition>
 
-    <!-- 成就面板 -->
     <Transition name="fade">
-    <div class="achievement-panel" v-show="achievementsOpen">
-      <h2>成就墙</h2>
-      <div class="achievement-stats">
-        已解锁成就：<span id="ach-total">{{ achievementCount }}</span>
-        <span>结局：<span id="ach-ending-count">{{ endingCount }}</span></span>
-        <span>轮回：<span id="ach-ng-count">{{ playCount }}</span></span>
-      </div>
-      <div id="ach-list">
-        <div v-for="(ending, index) in endings" :key="index" class="ach-item">
-          <div class="ach-icon">🏆</div>
-          <div class="ach-info">
-            <div class="ach-name">{{ ending }}</div>
-            <div class="ach-desc">已解锁该结局</div>
-          </div>
-        </div>
-        <span v-if="endings.length === 0" class="empty-text">暂无成就</span>
-      </div>
-      <button class="sys-btn" @click="toggleAchievements">关闭成就墙</button>
-    </div>
+      <AchievementPanel v-if="uiState.achievements" @close="uiState.achievements = false" />
     </Transition>
 
-    <!-- 设置面板 -->
     <Transition name="fade">
-    <div class="settings-panel" v-show="settingsOpen">
-      <h2>设置</h2>
-      <div class="setting-item">
-        <label>字体大小：</label>
-        <input type="range" id="setting-fontsize" min="14" max="24" v-model.number="fontSize" @input="applySettings">
-        <span id="fontsize-val">{{ fontSize }}px</span>
-      </div>
-      <div class="setting-item">
-        <label>打字机速度：</label>
-        <input type="range" id="setting-typespeed" min="10" max="60" v-model.number="typeSpeed" @input="applySettings">
-        <span id="typespeed-val">{{ typeSpeed }}ms</span>
-      </div>
-      <div class="setting-item">
-        <label>关闭动画：</label>
-        <input type="checkbox" id="setting-noanim" v-model="noAnim" @change="applySettings">
-      </div>
-      <div class="setting-item">
-        <label>亮度：</label>
-        <input type="range" id="setting-brightness" min="50" max="150" v-model.number="brightness" @input="applySettings">
-        <span id="brightness-val">{{ brightness }}%</span>
-      </div>
-      <div class="setting-item">
-        <label>云存档通讯：</label>
-        <button class="sys-btn" @click="handleCloudSync" 
-                :style="{ background: gameStore.isOnline ? '#4caf50' : '#d4af37', padding: '5px 10px', fontSize: '14px', borderRadius: '4px', border: 'none', cursor: 'pointer', color: '#1a1a1a', marginLeft: '10px' }">
-          {{ gameStore.isOnline ? '已连接云端 (点击强制拉取)' : '开启云同步' }}
-        </button>
-      </div>
-      <button class="sys-btn" @click="toggleSettings">关闭设置</button>
-    </div>
+      <SettingsPanel v-if="uiState.settings" @close="uiState.settings = false" @sync-login="uiState.login = true" />
     </Transition>
 
-    <!-- 人物图鉴面板 -->
     <Transition name="fade">
-    <div class="character-panel" v-show="charactersOpen">
-      <h2>人物图鉴 <span id="char-count">({{ characters.length }}/{{ characters.length }})</span></h2>
-      <div id="char-list">
-        <div v-for="(character, index) in characters" :key="index" class="char-card">
-          <div class="char-image">
-            <img :src="`${basePath}images/characters/${character.image}`" :alt="character.name">
-          </div>
-          <h4>{{ character.name }}</h4>
-          <p class="char-role">{{ character.role }}</p>
-          <p class="char-description">{{ character.description }}</p>
-        </div>
-      </div>
-      <button class="sys-btn" @click="toggleCharacters">关闭图鉴</button>
-    </div>
+      <CharacterPanel v-if="uiState.characters" @close="uiState.characters = false" />
     </Transition>
 
-    <!-- 物品组合界面 -->
     <Transition name="fade">
-    <div class="combine-popup" v-if="combineOpen">
-      <h3>物品组合</h3>
-      <div class="combine-form">
-        <div class="form-group">
-          <label>物品 1:</label>
-          <select v-model="selectedItem1">
-            <option v-for="item in items" :key="item" :value="item">{{ item }}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>物品 2:</label>
-          <select v-model="selectedItem2">
-            <option v-for="item in items" :key="item" :value="item">{{ item }}</option>
-          </select>
-        </div>
-        <button class="btn-primary" @click="combineItems">组合物品</button>
-        <button class="btn-secondary" @click="combineOpen = false">关闭</button>
-      </div>
-    </div>
+      <CombinePopup v-if="uiState.combine" @close="uiState.combine = false" />
     </Transition>
 
-    <!-- 物品详情弹窗 -->
     <Transition name="fade">
-    <div class="item-modal" v-if="itemDetailsOpen">
-      <h3>{{ selectedItem }}</h3>
-      <div class="item-image">
-        <img :src="`${basePath}images/items/${selectedItem}.png`" :alt="selectedItem" onerror="this.style.display='none'">
-      </div>
-      <p>{{ itemDescription }}</p>
-      <button class="sys-btn" @click="itemDetailsOpen = false">关闭</button>
-    </div>
+      <ItemModal v-if="uiState.itemDetails" :selected-item="selectedItem" :item-description="itemDescription" @close="uiState.itemDetails = false" />
     </Transition>
 
     
     <!-- 登录注册弹窗 -->
     <Transition name="fade">
-    <div class="login-modal" v-if="loginOpen" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a1a1a;border:2px solid #d4af37;padding:20px;border-radius:8px;z-index:9999;box-shadow:0 0 15px rgba(212,175,55,0.3);width:300px;color:#d4af37;">
-      <h3 style="margin-top:0;text-align:center;">连接到云端档案室</h3>
-      <div class="login-form">
-        <div class="form-group" style="margin-bottom:10px;">
-          <label style="display:block;margin-bottom:5px;">账号:</label>
-          <input type="text" v-model="loginForm.username" placeholder="请输入用户名" style="width:100%;padding:8px;background:#2a2a2a;border:1px solid #555;color:#f0f0f0;box-sizing:border-box;">
-        </div>
-        <div class="form-group" style="margin-bottom:15px;">
-          <label style="display:block;margin-bottom:5px;">密码:</label>
-          <input type="password" v-model="loginForm.password" placeholder="请输入密码" style="width:100%;padding:8px;background:#2a2a2a;border:1px solid #555;color:#f0f0f0;box-sizing:border-box;">
-        </div>
-        <div class="modal-buttons" style="display:flex;gap:10px;justify-content:center;">
-          <button class="sys-btn" style="flex:1;background:#2a2a2a;color:#d4af37;border:1px solid #d4af37;padding:5px;cursor:pointer;" @click="submitLogin">登录</button>
-          <button class="sys-btn" style="flex:1;background:#2a2a2a;color:#d4af37;border:1px solid #d4af37;padding:5px;cursor:pointer;" @click="submitRegister">注册</button>
-          <button class="sys-btn" style="flex:1;background:#2a2a2a;color:#d4af37;border:1px solid #d4af37;padding:5px;cursor:pointer;" @click="loginOpen = false">取消</button>
-        </div>
-      </div>
-    </div>
+      <LoginModal v-if="uiState.login" @close="uiState.login = false" />
     </Transition>
 \n    <!-- 遮罩层 -->
     <Transition name="fade">
@@ -219,8 +82,17 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, shallowRef, reactive, computed, onMounted, watch } from 'vue'
 import { useGameStore } from '../store/gameStore'
+import { executeEffects, evaluateConditions } from '../core/scene-logic.js'
+import { defineAsyncComponent } from 'vue'
+const InventoryPanel = defineAsyncComponent(() => import('../components/InventoryPanel.vue'))
+const AchievementPanel = defineAsyncComponent(() => import('../components/AchievementPanel.vue'))
+const SettingsPanel = defineAsyncComponent(() => import('../components/SettingsPanel.vue'))
+const CharacterPanel = defineAsyncComponent(() => import('../components/CharacterPanel.vue'))
+const CombinePopup = defineAsyncComponent(() => import('../components/CombinePopup.vue'))
+const ItemModal = defineAsyncComponent(() => import('../components/ItemModal.vue'))
+const LoginModal = defineAsyncComponent(() => import('../components/LoginModal.vue'))
 
 const basePath = import.meta.env.BASE_URL;
 
@@ -229,83 +101,26 @@ const gameStore = useGameStore()
 // 游戏状态
 const currentScene = ref('title')
 const sceneDesc = ref('')
-const availableOptions = ref([])
-const currentSceneName = ref('主界面')
+  const availableOptions = shallowRef([])
+// 面板状态（收敛管理）
+const uiState = reactive({
+  inventory: false,
+  achievements: false,
+  settings: false,
+  characters: false,
+  combine: false,
+  itemDetails: false,
+  login: false
+})
+const overlayOpen = computed(() => Object.values(uiState).some(v => v))
 
-// 面板状态
-const inventoryOpen = ref(false)
-const achievementsOpen = ref(false)
-const settingsOpen = ref(false)
-const charactersOpen = ref(false)
-const combineOpen = ref(false)
-const itemDetailsOpen = ref(false)
-const overlayOpen = ref(false)
-const loginOpen = ref(false)
-const loginForm = ref({ username: '', password: '' })
-
-// 物品组合
-const selectedItem1 = ref('')
-const selectedItem2 = ref('')
 
 // 物品详情
 const selectedItem = ref('')
 const itemDescription = ref('')
 
-// 游戏设置
-const fontSize = ref(16)
-const typeSpeed = ref(25)
-const noAnim = ref(false)
-const brightness = ref(100)
 
-// 人物数据
-const characters = ref([
-  {
-    name: '阿斯特·克劳利',
-    role: '谜语馆主人',
-    description: '庄园的主人，一个神秘的人物，似乎隐藏着许多秘密。',
-    image: '谜语馆主人阿斯特·克劳利1.png'
-  },
-  {
-    name: '奥尔德斯·克劳利',
-    role: '管家',
-    description: '庄园的管家，忠诚且神秘，似乎知道许多关于庄园的秘密。',
-    image: '管家奥尔德斯·克劳利1.png'
-  },
-  {
-    name: '伊莲娜·韦恩',
-    role: '画中女子',
-    description: '一幅画中的女子，似乎与庄园的历史有着密切的联系。',
-    image: '画中女子伊莲娜·韦恩1.png'
-  },
-  {
-    name: '埃莉诺·布莱克伍德',
-    role: '制琴师',
-    description: '一位才华横溢的制琴师，与音乐室有着不解之缘。',
-    image: '制琴师埃莉诺·布莱克伍德1.png'
-  },
-  {
-    name: '托马斯·赫胥黎',
-    role: '地质学家',
-    description: '一位专注的地质学家，对庄园的地下室有着浓厚的兴趣。',
-    image: '地质学家托马斯·赫胥黎1.png'
-  },
-  {
-    name: '塞拉斯·诺斯',
-    role: '神秘访客',
-    description: '一位神秘的访客，似乎与庄园的秘密有着某种联系。',
-    image: '塞拉斯·诺斯.png'
-  }
-])
 
-// 计算属性
-const items = computed(() => gameStore.items)
-const clues = computed(() => gameStore.clues)
-const medals = computed(() => gameStore.medals)
-const medalCount = computed(() => gameStore.medals.length)
-const achievementCount = computed(() => gameStore.endings.length)
-const endingCount = computed(() => gameStore.endings.length)
-const playCount = computed(() => gameStore.playCount)
-const endings = computed(() => gameStore.endings)
 
 // 生命周期
 onMounted(() => {
@@ -314,17 +129,36 @@ onMounted(() => {
 
 // 方法
 const selectOption = (targetId) => {
-  if (targetId) {
-    loadScene(targetId)
+    if (targetId) {
+      if (targetId === 'system_load_auto') {
+        gameStore.loadGame()
+        loadScene(gameStore.run.current_scene_id || 'title')
+        return
+      }
+      loadScene(targetId)
+    }
   }
-}
 
 const loadScene = (sceneId) => {
-  currentScene.value = sceneId
-  const scene = gameStore.getScene(sceneId)
+    currentScene.value = sceneId
+    if (sceneId !== 'title' && sceneId !== 'system_load_auto') {
+      gameStore.run.current_scene_id = sceneId
+      if (sceneId.startsWith('ending_') || sceneId === 'epilogue_true_end') {
+        gameStore.addEnding(sceneId)
+      }
+    }
+    const scene = gameStore.getScene(sceneId)
   if (scene) {
     currentSceneName.value = scene.name || sceneId
     let descHtml = typeof scene.desc === 'function' ? scene.desc() : scene.desc
+
+    // 执行场景进入特效（获取物品、进入特殊状态等）
+    if (scene.effs && scene.effs.length > 0) {
+        const effectHtml = executeEffects(scene.effs)
+        if (effectHtml) {
+            descHtml += '\n' + effectHtml
+        }
+    }
     
     // 如果是大厅，则单独渲染动态描述与庄园简图
     if (sceneId === 'hall_main') {
@@ -355,7 +189,10 @@ const loadScene = (sceneId) => {
     
     // 渲染打字机效果并替换 \n
     sceneDesc.value = descHtml.replace(/\\n/g, "<br>");
-    availableOptions.value = scene.options || []
+    
+    // 过滤选项，如果 options 中存在 cond 数组，根据条件验证显示
+    const rawOptions = scene.options || []
+    availableOptions.value = rawOptions.filter(opt => evaluateConditions(opt.cond))
   }
 }
 
@@ -366,29 +203,20 @@ const returnToHall = () => {
   loadScene('hall_main')
 }
 
-const toggleAchievements = () => {
-  achievementsOpen.value = !achievementsOpen.value
-  overlayOpen.value = achievementsOpen.value
+const togglePanel = (panelName) => {
+  const current = uiState[panelName]
+  closePanels()
+  uiState[panelName] = !current
 }
 
-const toggleSettings = () => {
-  settingsOpen.value = !settingsOpen.value
-  overlayOpen.value = settingsOpen.value
-}
-
-const toggleCharacters = () => {
-  charactersOpen.value = !charactersOpen.value
-  overlayOpen.value = charactersOpen.value
-}
-
-const toggleInventory = () => {
-  inventoryOpen.value = !inventoryOpen.value
-  overlayOpen.value = inventoryOpen.value
-}
+const toggleAchievements = () => togglePanel('achievements')
+const toggleSettings = () => togglePanel('settings')
+const toggleCharacters = () => togglePanel('characters')
+const toggleInventory = () => togglePanel('inventory')
 
 const showItemCombine = () => {
-  combineOpen.value = true
-  overlayOpen.value = true
+  closePanels()
+  uiState.combine = true
 }
 
 const showHint = () => {
@@ -396,69 +224,23 @@ const showHint = () => {
 }
 
 const showItemDetails = (item) => {
+  closePanels()
   selectedItem.value = item
   itemDescription.value = gameStore.getItemDescription(item)
-  itemDetailsOpen.value = true
-  overlayOpen.value = true
+  uiState.itemDetails = true
 }
 
 const closePanels = () => {
-  inventoryOpen.value = false
-  achievementsOpen.value = false
-  settingsOpen.value = false
-  charactersOpen.value = false
-  combineOpen.value = false
-  itemDetailsOpen.value = false
-  overlayOpen.value = false
+  Object.keys(uiState).forEach(k => uiState[k] = false)
 }
 
-const handleCloudSync = () => {
-  if (!gameStore.isOnline) {
-    loginOpen.value = true;
-  } else {
-    gameStore.loadFromCloud();
-  }
+const handleCloudSyncLogin = () => {
+    uiState.login = true;
 }
 
-const submitLogin = async () => {
-  const success = await gameStore.loginAndConnect(loginForm.value.username, loginForm.value.password);
-  if (success) {
-    loginOpen.value = false;
-    loginForm.value.username = '';
-    loginForm.value.password = '';
-  }
-}
-
-const submitRegister = async () => {
-  await gameStore.registerAccount(loginForm.value.username, loginForm.value.password);
-}
-
-const applySettings = () => {
-  gameStore.applySettings({
-    fontSize: fontSize.value,
-    typeSpeed: typeSpeed.value,
-    noAnim: noAnim.value,
-    brightness: brightness.value
-  })
-}
-
-const combineItems = () => {
-  if (selectedItem1.value && selectedItem2.value && selectedItem1.value !== selectedItem2.value) {
-    const result = gameStore.combineItems(selectedItem1.value, selectedItem2.value)
-    if (result) {
-      gameStore.showToast(`成功组合 ${selectedItem1.value} 和 ${selectedItem2.value}，获得 ${result}！`)
-      combineOpen.value = false
-      overlayOpen.value = false
-    } else {
-      gameStore.showToast('这两个物品无法组合')
-    }
-  } else {
-    gameStore.showToast('请选择两个不同的物品')
-  }
-}
 </script>
 
-<style scoped>
+<style>
 .game {
   min-height: 100vh;
   display: flex;

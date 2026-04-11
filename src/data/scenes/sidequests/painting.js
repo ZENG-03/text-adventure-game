@@ -1,0 +1,342 @@
+import { useGameStore } from '../../../store/gameStore'
+import { metaDialogues } from '../../../data/metaDialogues'
+
+export default {
+  'side_story_2_start': {
+    desc: (store) => {
+      const metaLevel = store.metaLevel;
+      const dialogueList = metaDialogues.astre_ghost[metaLevel];
+      const randomIndex = Math.floor(Math.random() * dialogueList.length);
+      const voiceLine = dialogueList[randomIndex];
+      
+      return `
+      <h3 style="color: #d4af37; margin-bottom: 20px;">画中的影子</h3>
+      <p>你站在画室中央，环顾四周。七幅画已完成，但此刻它们似乎有了生命。你走近那幅赤色画（红日），在太阳的光芒中，你隐约看到一个女子的侧脸。橙色画（秋叶）的落叶间，她的裙摆一闪而过。黄色画（麦田）的麦浪里，她的长发随风飘扬。绿色画（森林）的树影间，她的眼眸明亮如星。青色画（湖水）的水面下，她的倒影清晰可见。蓝色画（海洋）的波浪中，她的手臂在划水。紫色画（晚霞）的云层里，她的微笑若隐若现。</p>
+      <p>七幅画，同一张面孔，七种姿态。</p>
+      <p>你的手不自觉地抬起，触碰赤色画的表面。画面微微发烫，你的指尖感到一种从未有过的震颤。一个声音在脑海中响起，轻柔却清晰："${voiceLine}"</p>
+      <p>你猛地缩手，声音消失了。但你知道，画室里还有未解的秘密。</p>
+      `;
+    },
+    on_enter: () => {
+      const store = useGameStore()
+      store.setFlag('side_painting_triggered', true)
+    },
+    options: [
+      {
+        text: '检查七幅画的背面',
+        target: 'side_painting_back'
+      },
+      {
+        text: '研究调色板和画笔（是否有残留颜料）',
+        target: 'side_palette_clue'
+      },
+      {
+        text: '再次观察大肖像画中的镜子',
+        target: 'side_mirror_again'
+      },
+      {
+        text: '询问管家（若尚未触发管家支线或已完成）',
+        target: 'side_ask_butler'
+      },
+      {
+        text: '在画室中寻找隐藏的暗格或抽屉',
+        target: 'side_hidden_drawer'
+      }
+    ]
+  },
+  'side_painting_back': {
+    on_enter: () => {
+      const store = useGameStore()
+      store.addClue('画背面的女子自述')
+      store.addClue('1890年，紫藤花架')
+    },
+    desc: `
+    <h3 style="color: #d4af37; margin-bottom: 20px;">画背面的秘密</h3>
+    <p>你小心翼翼地将七幅画从墙上取下（它们只是挂着，没有固定）。每幅画的背面都写着一行字，笔迹娟秀，似乎是女子手书：</p>
+    <p>赤色画背面："1890年春，他第一次见我，在紫藤花架下。"</p>
+    <p>橙色画背面："他说我是他的缪斯，我信了。"</p>
+    <p>黄色画背面："他画我的笑，却不知我的心在哭。"</p>
+    <p>绿色画背面："我成了画中的囚徒，每一笔都是牢笼。"</p>
+    <p>青色画背面："他爱我吗？还是只爱画中的我？"</p>
+    <p>蓝色画背面："我试图逃离，却发现自己已经变成了颜料。"</p>
+    <p>紫色画背面："最后一幅画完成时，我消失了。他哭了，但已经太迟。"</p>
+    <p>这些文字让你感到一阵寒意。你重新挂好画，心中有了一个轮廓：一位女模特，被画家过度迷恋，最终在艺术中迷失自我，甚至可能遭遇不测。</p>
+    `,
+    options: [
+      {
+        text: '前往庄园的紫藤花架（花园角落）',
+        target: 'side_wisteria'
+      },
+      {
+        text: '继续研究画室其他物品',
+        target: 'side_story_2_start'
+      }
+    ]
+  },
+  'side_wisteria': {
+    on_enter: () => {
+      const store = useGameStore()
+      store.addItem('画展目录')
+      store.addItem('艺术奖章')
+    },
+    desc: `
+    <h3 style="color: #d4af37; margin-bottom: 20px;">紫藤花架</h3>
+    <p>紫藤花架在花园东南角，靠近画室的窗户。如今紫藤早已枯死，只剩下锈蚀的铁架。你拨开枯藤，发现花架下的石板上刻着两行字："献给伊莲娜，我的光与影。阿斯特·克劳利，1890。"</p>
+    <p>伊莲娜——这是画中女子的名字。石板周围有被翻动过的痕迹。你搬开石板，下面是一个铁盒，盒子里有一本小册子和一枚铜质奖章。小册子是画展的目录，封面上印着"阿斯特·克劳利个人画展，1890年秋"。目录中列出了七幅画：《晨光》《秋韵》《麦浪》《幽林》《镜湖》《海潮》《暮色》——正是你画室中的那七幅！但目录的备注栏写着："模特：伊莲娜·韦恩，可惜她在画展前失踪，未能亲眼见到自己的美被永恒定格。"</p>
+    <p>奖章是某艺术协会颁发的"年度最佳肖像画家"奖，背面刻着阿斯特的名字。</p>
+    `,
+    options: [
+      {
+        text: '继续寻找伊莲娜的踪迹',
+        target: 'side_search_elenor'
+      },
+      {
+        text: '将奖章带回画室，也许有机关',
+        target: 'side_medal_trigger'
+      }
+    ]
+  },
+  'side_medal_trigger': {
+    on_enter: () => {
+      const store = useGameStore()
+      store.addItem('铜钥匙')
+      store.addClue('纸条（地窖第七级台阶）')
+    },
+    desc: `
+    <h3 style="color: #d4af37; margin-bottom: 20px;">画室中的机关</h3>
+    <p>你将铜质奖章带回画室。奖章的大小与调色板中央的凹陷恰好吻合。你将奖章放入，调色板发出一声轻响，颜料槽里的颜料开始自动搅拌，最终在调色板中央浮现出一幅微型画像——一个年轻女子的面容，与画中一致。画像下方出现一行字："你找到了我的过去，但你能找到我的现在吗？"</p>
+    <p>调色板侧面弹出一个抽屉，里面是一把铜钥匙和一张纸条。纸条上写着："地窖，第七级台阶下。"</p>
+    `,
+    options: [
+      {
+        text: '前往地窖',
+        target: 'side_cellar_steps'
+      }
+    ]
+  },
+  'side_cellar_steps': {
+    on_enter: () => {
+      const store = useGameStore()
+      store.addItem('伊莲娜的日记')
+      store.addItem('银手镯')
+    },
+    desc: `
+    <h3 style="color: #d4af37; margin-bottom: 20px;">地窖的第七级台阶</h3>
+    <p>地窖你已经来过（如果触发过管家支线），但这次你专注于台阶。地窖的石阶共有十二级，你从下往上数，第七级台阶的边缘有一条细缝。你用铜钥匙插入，轻轻旋转，台阶表面弹开，露出一个暗格。</p>
+    <p>暗格里有一本皮革日记，封面烫金："伊莲娜·韦恩的日记"。还有一只银质手镯，内壁刻着"A.C. to E.W."（阿斯特·克劳利赠伊莲娜·韦恩）。</p>
+    <p>你翻开日记，纸张已经泛黄，字迹时而工整时而潦草，记录着一段悲伤的故事。</p>
+    `,
+    options: [
+      {
+        text: '阅读伊莲娜的日记',
+        target: 'side_read_diary'
+      }
+    ]
+  },
+  'side_read_diary': {
+    on_enter: () => {
+      const store = useGameStore()
+      store.addClue('伊莲娜的失踪与阿斯特的悔恨')
+    },
+    desc: `
+    <h3 style="color: #d4af37; margin-bottom: 20px;">伊莲娜的日记</h3>
+    <p>你坐在石阶上，借着油灯阅读日记。以下是关键内容：</p>
+    <p>"3月2日，1890年。今天在艺术沙龙遇见阿斯特·克劳利先生。他是一位天才画家，也是谜语爱好者。他邀请我去他的庄园做客，说那里的光线最适合创作。我答应了。"</p>
+    <p>"4月15日。他为我画了第一幅肖像，在紫藤花下。他说我是他见过的最美的光。我的心跳得好快。"</p>
+    <p>"6月。他越来越沉迷于作画，每天要我摆出不同的姿势。他说要画一组七幅画，献给七种光。我累了，但他不肯停。每次我想休息，他就说'再坚持一下，伊莲娜，这幅画会永垂不朽'。"</p>
+    <p>"8月。我开始害怕。他看我的眼神变了，不再是看一个人，而是看一件艺术品。他抚摸我的脸颊，说'这抹红，这个角度，完美'。我感觉自己正在消失，变成画布上的颜料。"</p>
+    <p>"9月。我试图离开，但他锁了庄园的门。他说画展在即，我不能走。我在夜里哭泣，他把我的眼泪也画进了画里——在青色那幅的湖水中。"</p>
+    <p>"10月15日。七幅画完成了。他看着它们，喃喃自语：'还不够，伊莲娜的灵魂我还没有画出来。' 他看着我，眼神狂热。我害怕极了。"</p>
+    <p>"10月16日。最后一页。我决定今晚逃走。如果失败，我会躲进地窖的暗格里，那是他带我看过的地方，但他以为我忘了。我要把真相留在这里。阿斯特，我爱你，但我不能成为你的囚徒。再见。"</p>
+    <p>日记到此结束。最后一页的空白处，有人用另一种笔迹（很可能是阿斯特的）写了几行字："伊莲娜，你走了，带走了我的光。我找了你七年，画了无数幅画，却再也画不出你眼中的星辰。我错了。我把你画进了每一幅画，却忘了把你留在身边。如果你读到这些，请原谅我。"</p>
+    `,
+    options: [
+      {
+        text: '检查地窖暗格深处',
+        target: 'side_cellar_hidden'
+      },
+      {
+        text: '返回画室，用银手镯触发什么',
+        target: 'side_bracelet_trigger'
+      }
+    ]
+  },
+  'side_cellar_hidden': {
+    on_enter: () => {
+      const store = useGameStore()
+      store.addItem('紫藤花束')
+      store.addItem('照片')
+      store.addItem('画布碎片')
+    },
+    desc: `
+    <h3 style="color: #d4af37; margin-bottom: 20px;">暗格深处</h3>
+    <p>你仔细检查放置日记的暗格，发现底部还有一层隔板。撬开后，里面是一束干枯的紫藤花，用丝带扎着，旁边有一张褪色的照片——照片中，伊莲娜和阿斯特并肩站在紫藤花架下，两人都年轻而幸福。照片背面写着："1890年春，我们曾拥有过一切。"</p>
+    <p>在照片下面，还有一小块画布碎片。碎片上画着一只眼睛，是伊莲娜的眼睛，画得极其传神，仿佛在凝视着你。画布背面有字："我的灵魂在这里。"</p>
+    <p>你感到一阵莫名的心酸。你将照片和画布碎片小心收好。</p>
+    `,
+    options: [
+      {
+        text: '返回画室，用银手镯触发机关',
+        target: 'side_bracelet_trigger'
+      }
+    ]
+  },
+  'side_bracelet_trigger': {
+    on_enter: () => {
+      const store = useGameStore()
+      store.addItem('阿斯特的遗信')
+    },
+    desc: `
+    <h3 style="color: #d4af37; margin-bottom: 20px;">银手镯的机关</h3>
+    <p>你回到画室，将银手镯放在调色板中央。手镯与奖章的凹槽不同，这次调色板没有反应。你将手镯靠近七幅画，当靠近紫色画（暮色）时，手镯微微发光。你将手镯贴在紫色画的云层处，画面中的云突然散开，露出一扇门——一扇画在画布上的门，但门把手是真实的金属。</p>
+    <p>你转动把手，画布像真正的门一样打开，露出后面一个狭窄的空间——画中画！原来这七幅画背后藏着一个密室，入口就在紫色画的后面。</p>
+    <p>你侧身挤进去，发现里面是一间狭小的工作室，只有一张桌子、一把椅子，和满墙的素描。素描画的都是同一个女人——伊莲娜的各种姿态。桌上有一封未写完的信，是阿斯特的笔迹：</p>
+    <p>"伊莲娜，如果你看到这封信，说明有人找到了这里。我建造谜语馆，不是为了财富，而是为了纪念你。七谜考验是为了筛选出真正有耐心、有同情心的人，因为只有这样的人，才会发现你的故事。画室的谜题是我最用心的——因为那是关于你的。七色光，七种心情，七幅画。你是我永远的谜题，而我永远解不开。如果你在天有灵，请原谅一个用艺术囚禁爱情的人。"</p>
+    <p>信的末尾，日期是1897年——阿斯特去世前一年。</p>
+    `,
+    options: [
+      {
+        text: '继续探索工作室',
+        target: 'side_elenor_fate'
+      }
+    ]
+  },
+  'side_elenor_fate': {
+    on_enter: () => {
+      const store = useGameStore()
+      store.addItem('伊莲娜纪念徽章')
+    },
+    desc: `
+    <h3 style="color: #d4af37; margin-bottom: 20px;">伊莲娜的最终归宿</h3>
+    <p>你在工作室里继续搜寻。桌子抽屉里有一本小册子，记录了伊莲娜离开庄园后的行踪。阿斯特雇了侦探寻找她，但始终没有找到。最后一页写着："侦探最后一次报告：伊莲娜·韦恩于1890年11月在伦敦街头因贫病交加去世。她始终没有回到庄园。"</p>
+    <p>你的眼眶湿润了。两个相爱的人，一个因过度痴迷而失去所爱，一个因恐惧而逃离，最终在孤独中死去。而谜语馆，这座看似辉煌的建筑，竟是一座巨大的哀悼纪念碑。</p>
+    <p>你将阿斯特的信和伊莲娜的日记放在一起，放在工作室的桌上。突然，室内的蜡烛全部自动点燃，墙壁上所有的素描画中的伊莲娜都露出了微笑。一个轻柔的声音在空气中回荡："谢谢。我终于被完整地看见了。"</p>
+    <p>声音消散后，工作室的墙壁上浮现出一行金色的字："传承他们的故事，让后来者懂得：爱不是占有，而是成全。"</p>
+    <p>在你站立的桌面上，出现了一枚心形的彩虹色徽章——不是主线中的徽章，而是一枚特殊的纪念徽章，背面刻着"伊莲娜与阿斯特，永存于画中"。</p>
+    `,
+    options: [
+      {
+        text: '将徽章带回大厅',
+        target: 'side_ending_reconciliation'
+      },
+      {
+        text: '将徽章留在画室',
+        target: 'side_ending_legacy'
+      }
+    ]
+  },
+  'side_ending_reconciliation': {
+    on_enter: () => {
+      const store = useGameStore()
+      store.setFlag('side_painting_completed', true)
+    },
+    desc: `
+    <h3 style="color: #d4af37; margin-bottom: 20px;">和解</h3>
+    <p>你将纪念徽章带回大厅，放在壁炉台上。几天后（游戏内时间），你发现管家在徽章旁边放了一束新鲜的紫藤花（他从哪里弄来的？）。他没有说什么，只是默默地点了点头。</p>
+    <p>从此以后，画室里的七幅画似乎比以前更加明亮了。有时候深夜，你能听到画室里传来轻柔的笑声，像是两个人在对话。你不再害怕，你知道那是阿斯特和伊莲娜终于重逢了。</p>
+    <p>（支线结束。获得特殊能力：在画室谜题中，你可以直接获得"伊莲娜的祝福"，跳过部分解谜步骤。同时，在主线结局中，你会多出一个选项："将谜语馆改造成纪念伊莲娜和阿斯特的艺术馆"，这将解锁一个独特的和平结局。）</p>
+    `,
+    options: [
+      {
+        text: '返回大厅',
+        target: 'hall_main'
+      }
+    ]
+  },
+  'side_ending_legacy': {
+    on_enter: () => {
+      const store = useGameStore()
+      store.setFlag('side_painting_completed', true)
+    },
+    desc: `
+    <h3 style="color: #d4af37; margin-bottom: 20px;">传承</h3>
+    <p>你将纪念徽章留在画室的工作室里，让它永远陪伴着阿斯特的遗信和伊莲娜的日记。你决定将他们的故事写成书，让更多人知道这段悲伤而美丽的往事。</p>
+    <p>多年后，你的书出版了，名为《画中囚徒》。谜语馆因此闻名，无数人前来参观，不是为了遗产，而是为了感受这段跨越生死的爱情。画室成了最受欢迎的地方，七幅画前总是有人驻足沉思。</p>
+    <p>管家的身影也出现在了签售会上。他微笑着对你说："哥哥会为你骄傲的。"</p>
+    <p>（支线结束。获得特殊结局：作家之路。在主线结局中，你将自动获得"传播者"路线的最佳版本，并得到出版商的资助。）</p>
+    `,
+    options: [
+      {
+        text: '返回大厅',
+        target: 'hall_main'
+      }
+    ]
+  },
+  'side_butler_knows': {
+    desc: `
+    <h3 style="color: #d4af37; margin-bottom: 20px;">管家的回忆</h3>
+    <p>你向管家询问伊莲娜的死讯。管家沉默了片刻，缓缓道："是的，我知道。阿斯特先生雇佣了最好的侦探去寻找她。当侦探带回她的死讯时，先生把自己关在画室里三天三夜。后来，他开始建造谜语馆，说要把伊莲娜的故事永远保存下去。"</p>
+    `,
+    options: [
+      {
+        text: '返回画室',
+        target: 'side_story_2_start'
+      }
+    ]
+  },
+  'side_butler_last_days': {
+    desc: `
+    <h3 style="color: #d4af37; margin-bottom: 20px;">阿斯特的最后时光</h3>
+    <p>你询问管家阿斯特的最后时光。管家眼神变得柔和："先生最后的日子里，几乎每天都在画室度过。他说他能听到伊莲娜的声音，说她原谅了他。他去世前一天，把我叫到画室，说谜语馆的使命已经完成，剩下的就交给后人了。"</p>
+    `,
+    options: [
+      {
+        text: '返回画室',
+        target: 'side_story_2_start'
+      }
+    ]
+  },
+  'side_hidden_drawer': {
+    desc: `
+    <h3 style="color: #d4af37; margin-bottom: 20px;">隐藏抽屉</h3>
+    <p>梳妆台的暗格里有一本褪色的日记，扉页写着："埃莉诺·布莱克伍德，1887。" 日记记录了她在庄园的最后时光，以及阿斯特为她画的素描。最后一页写着："我把秘密藏在紫藤花下，如果你找到，请替我完成第七乐章。"</p>
+    `,
+    on_enter: () => {
+      const store = useGameStore()
+      store.addClue('埃莉诺的日记：秘密藏在紫藤花下')
+    },
+    options: [
+      { text: '返回大厅', target: 'hall_main' }
+    ]
+  },
+  'side_mirror_again': {
+    desc: `
+    <h3 style="color: #d4af37; margin-bottom: 20px;">镜子中的音符</h3>
+    <p>镜中的光斑排列顺序与乐谱的音符顺序一致：红-Do、橙-Re、黄-Mi、绿-Fa、青-Sol、蓝-La、紫-Si。你记下了这个对应关系——也许可以用来补全第七乐章的旋律。</p>
+    `,
+    on_enter: () => {
+      const store = useGameStore()
+      store.addClue('镜子中的音符顺序：红-Do，橙-Re，黄-Mi，绿-Fa，青-Sol，蓝-La，紫-Si')
+    },
+    options: [
+      { text: '返回画室', target: 'studio_entry' },
+      { text: '返回大厅', target: 'hall_main' }
+    ]
+  },
+  'side_palette_clue': {
+    desc: `
+    <h3 style="color: #d4af37; margin-bottom: 20px;">调色板上的线索</h3>
+    <p>调色板中央的凹陷处有一个极小的字母"E"，旁边还有一行几乎看不见的字："用银手镯唤醒我。" 你想起在画室支线中获得的银手镯，也许它才是真正的钥匙。</p>
+    `,
+    on_enter: () => {
+      const store = useGameStore()
+      store.addClue('调色板上的E标记，银手镯可能是钥匙')
+    },
+    options: [
+      { text: '返回画室', target: 'studio_entry' }
+    ]
+  },
+  'side_search_elenor': {
+    desc: `
+    <h3 style="color: #d4af37; margin-bottom: 20px;">寻找伊莲娜</h3>
+    <p>你根据画展目录的备注，在伦敦的旧档案中找到了伊莲娜的死亡记录：1890年11月15日，死于贫民窟，死因是肺炎。记录旁还有一行铅笔字："她的遗物中有一幅未完成的自画像，画中她手里拿着一封信。" 那封信后来被阿斯特找到，就是你在画室密室里看到的那封。</p>
+    `,
+    on_enter: () => {
+      const store = useGameStore()
+      store.addItem('伊莲娜的旧信')
+    },
+    options: [
+      { text: '返回画室', target: 'studio_entry' }
+    ]
+  }
+}

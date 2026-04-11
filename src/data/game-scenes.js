@@ -18,20 +18,20 @@
 const scenes = {};
 
 scenes["title"] = {
-    desc: `《谜语遗产：七重谜域》\n\n黑幕中，七条弧线交织的徽记在黑暗中旋转，逐渐化作七道光芒...\n远处，一座维多利亚风格的庄园若隐若现。`,
+    desc: `《遗产之迷：庄园解密录》\n\n黑幕中，七条弧线交织的徽记在黑暗中旋转，逐渐化作七道光芒...\n远处，一座维多利亚风格的庄园若隐若现。`,
     on_enter: () => {
         return "";
     },
     options: [
-        { text: "开始新游戏", target: "opening_studio" },
+        { text: "开始新游戏", target: "start" },
         { 
             text: "继续游戏 (读取自动存档)", 
             target: "system_load_auto",
-            condition: () => localStorage.getItem("riddle_auto_save") !== null 
+            condition: () => localStorage.getItem("adventure_save") !== null 
         },
         { 
             text: "带着记忆苏醒 (开启多周目)", 
-            target: "opening_studio_ng_plus", 
+            target: "start_ng_plus", 
             condition: () => true 
         }
     ]
@@ -69,16 +69,20 @@ scenes["opening_gate"] = {
 };
 
 scenes["hall_initial_enter"] = {
-    desc: `门厅宏伟，水晶吊灯蒙着薄灰。壁炉台上的油灯还在冒着青烟。\n管家奥尔德斯如同幽灵般出现。\n\n“欢迎，探索者。庄园内设有七道谜题，分别位于七个房间。\n每解开一道，你将获得一枚宝石徽章。集齐七枚徽章，便可开启密室。”\n他冷冷地看着你：“你确定要开始吗？”`,
+    desc: `铁门没有锁，只是虚掩着。你推开时，锈蚀的铰链发出刺耳的尖叫。一条碎石路通向主楼，路两旁的梧桐树遮天蔽日，将夕阳切割成碎片。空气里弥漫着潮湿的霉味和某种淡淡的香料气息。\n\n主楼是一座三层英式建筑，石墙上爬满了常春藤，有些窗户用木板钉死，有些则黑洞洞地敞着。门廊下站着一个穿黑色燕尾服的老人，满头银发梳理得一丝不苟。他看见你，微微欠身。\n\n"沈墨先生。我是霍华德·格雷，庄园管家。您比预定时间早了十分钟。"\n\n"其他人呢？"\n\n"加上您，一共五位参赛者。还有四位正在路上。"他引你进入大厅。天花板极高，水晶灯蒙着灰，墙壁上挂满了油画和动物标本。最显眼的是正对门的壁炉上方，一幅巨大的油画：一个中年男人坐在书桌前，手里握着一本书，眼神锐利而忧郁。画框底部刻着名字——多尔法尔·索尔维。\n\n壁炉前的长桌上已经摆好了四份文件。格雷示意你坐下，为你倒了一杯红茶。\n\n半小时后，其余四人陆续到达：\n\n方晓，男，27岁，自称"独立历史研究员"，戴金丝眼镜，说话慢条斯理，背包里塞满文献复印件。\n\n林小禾，女，22岁，你同校的计算机系研究生，短发，T恤上印着二进制代码，一进门就掏出手机扫描墙上的画。\n\n艾琳，女，30岁出头，混血面孔，自称是伦敦一家拍卖行的鉴定师，衣着考究，随身带一个皮制工具箱。\n\n老周，男，五十多岁，穿工装裤，沉默寡言，自称是附近村里的木匠，收到信时以为开玩笑。\n\n格雷关上大门，从怀中取出一只铜质怀表，放在桌上。\n\n"诸位，规则很简单：庄园内共有七个谜题，分布在不同的房间。你们需要在明天黎明前解开所有谜题，到达最终密室。第一个完成的人就是胜者。如果无人完成，比赛作废，庄园将永久封闭。"\n\n他顿了顿："容我提醒，庄园年久失修，有些地方不太安全。请诸君小心。"\n\n方晓举起手："格雷先生，您说'第一个完成的人获胜'，那我们可以合作吗？"\n\n格雷面无表情："规则没有禁止合作。但遗产只有一份。"\n\n林小禾低声对你说："合作的话，信息可以共享，但最后怎么分？"\n\n艾琳已经站起来，拎起工具箱："各位，我先去熟悉一下环境。祝好运。"高跟鞋敲击地板的声音渐渐远去。\n\n老周却看着壁炉上的油画，喃喃道："这画……我好像见过。"\n\n格雷宣布比赛开始。你站在大厅中央，手里攥着那张羊皮纸。你的第一个选择是：`,
     options: [
-        { text: "我准备好了", target: "hall_main" },
-        { text: "打听庄园历史", target: "hall_history" }
+        { text: "独自探索二楼，从书房开始", target: "library_entry" },
+        { text: "跟着林小禾，她似乎有电子设备辅助", target: "musicroom_entry" },
+        { text: "找老周聊聊，他说的'见过'是什么意思", target: "hall_history" },
+        { text: "先仔细观察大厅，寻找线索", target: "hall_fireplace" }
     ]
 };
 
 scenes["hall_history"] = {
-    desc: `管家冷冷地回答：“主人多尔法尔·索尔维是密码学家，这里的一切都是他的杰作。其余的，你自己去发现。”`,
-    options: [{ text: "我准备好了，开始探索", target: "hall_main" }]
+    desc: `你走到老周身边，他正盯着壁炉上的油画发呆。\n\n"您说您见过这幅画？"\n\n老周回头看了你一眼，点了点头："我父亲年轻时在这庄园里做过帮工。他说庄园主人是个外国绅士，总把自己关在书房里研究什么。有一次他给我父亲看过一张照片，就是这幅画。"\n\n"照片？"\n\n"嗯，背面还写着字。我父亲不识字，就拿给村里的先生看。先生说上面写着'致我的挚友，愿我们的秘密永远沉睡'。"\n\n管家奥尔德斯不知何时站在你们身后："老周，你的父亲是个忠诚的人。他守口如瓶，直到去世。"\n\n老周哼了一声："他只是个普通人，不想惹麻烦。"\n\n奥尔德斯转向你："探索者，时间宝贵。你确定要开始了吗？"`,
+    options: [
+        { text: "我准备好了，开始探索", target: "hall_main" }
+    ]
 };
 
 scenes["hall_main"] = {
@@ -114,18 +118,16 @@ scenes["hall_fireplace"] = {
         }
         return msg;
     },
-    desc: `你用壁炉钳拨开灰烬，找到几片未完全烧毁的纸。
-写着：“第五个房间的钥匙藏在音乐里... 小心音不准...”
-壁炉的暗盒上有一个密码锁，以及一串神秘数字：
-3-15-21-18-20-5-19-25
-(提示: 数字可能对应字母的顺序。)`,
+    desc: `你用壁炉钳拨开灰烬，找到几片未完全烧毁的纸，上面有手写的字迹：\n\n"……第五个房间的钥匙藏在音乐里，但小心那个……音不准……"\n\n另一片纸上只有一行数字：11-15-21-18-20-5-19-25。你认出这是凯撒密码，但偏移量未知。你试着用常见的偏移量（3）解码，得到"HOURTESY"——无意义。换成偏移量5，得到"FMPOZPN"——也不对。\n\n林小禾凑过来："烧掉的是什么？"\n\n"好像是提示。"你把碎片给她看。她皱眉，用手机拍下照片，快速写了个小程序，几秒钟后说："凯撒偏移量是9，解码是'COURTESY'——礼貌。什么意思？"\n\n你环顾大厅，壁炉上方油画里，索尔维手里那本书的封面有几个烫金字母：C O U R T E S Y。正是这个词。你走到油画前，踮起脚试图取下那本书，但它只是画上去的。可你发现书的侧面有一道细微的缝隙。你轻轻按下去，"咔嗒"一声，壁炉左侧的墙壁弹开一道暗门。\n\n林小禾瞪大眼睛："你怎么知道的？"\n\n"因为碎片提示'第五个房间的钥匙藏在音乐里，但小心音不准'——那应该不是这个谜题。但这条线索让我想到，大厅本身可能就是第一个谜题。"\n\n暗门后是一条向下的石阶，漆黑一片。林小禾打开手机闪光灯照进去："下去吗？"`,
     options: [
-        { text: "不理会，返回大厅", target: "hall_main" }
+        { text: "下去探索", target: "basement_entry" },
+        { text: "先记录位置，回头再来", target: "hall_main" },
+        { text: "叫其他人一起", target: "hall_main" }
     ],
     hints: [
         "A=1, B=2, C=3...",
-        "3=C, 15=O, 21=U... 这个词代表礼貌(Courtesy)",
-        "答案是 courtesy"
+        "11=K, 15=O, 21=U... 凯撒偏移量是9，解码是'COURTESY'",
+        "答案是 courtesy，对应油画中书的封面字母"
     ],
     input: {
         validate: (ans) => ans.trim().toLowerCase() === "courtesy",
@@ -281,24 +283,29 @@ function markEnding(name) {
 }
 
 scenes["ending_1"] = { 
-    desc: `【结局一：永恒的回廊】\n你成为了主人，大门紧闭，你永远被囚禁，等待下一个挑战者...`, 
-    on_enter: () => markEnding("永恒的回廊"),
-    options: [{text:"重新步入轮回", target:"title", effectMsg:"时间沙漏倒转，一切归零..."}] 
+    desc: `【结局一：守护者】\n你选择带走著作，并承诺用一生保护它。你拒绝了其他参赛者的金钱诱惑，独自离开庄园。此后，你成为密码学领域的传奇人物，但从不公开那部著作。格雷在送你上车时微笑："老爷会欣慰的。"`, 
+    on_enter: () => markEnding("守护者"),
+    options: [{text:"重新开始", target:"title", effectMsg:"时间沙漏倒转，一切归零..."}] 
 };
 scenes["ending_2"] = { 
-    desc: `【结局二：自由的智者】\n你失去财富出版了笔记，成了名士，重获自由！`, 
-    on_enter: () => markEnding("自由的智者"),
-    options: [{text:"重新步入轮回", target:"title", effectMsg:"时间沙漏倒转，一切归零..."}] 
+    desc: `【结局二：共享者】\n你认为这部著作应该被科学界共享，你邀请其他四位参赛者共同研究，并计划匿名发表。你们五人在庄园里连续工作数月，最终将成果发布在顶级期刊上。但你的名字被隐去，你选择默默无闻。`, 
+    on_enter: () => markEnding("共享者"),
+    options: [{text:"重新开始", target:"title", effectMsg:"时间沙漏倒转，一切归零..."}] 
 };
 scenes["ending_3"] = { 
-    desc: `【结局三：永恒的守护者 (大结局)】\n因为你读过地质日记，你明白了他的苦心，你选择永恒封印了毁灭的力量，拯救了世人。`, 
-    on_enter: () => markEnding("永恒的守护者"),
-    options: [{text:"重新步入轮回", target:"title", effectMsg:"时间沙漏倒转，一切归零..."}] 
+    desc: `【结局三：毁灭者】\n你担心这部著作被滥用，于是将稿纸付之一炬。信纸在火焰中卷曲时，你看到索尔维的最后一句话："你做出了正确的选择，但也失去了人类进步的阶梯。"你离开庄园，从此不再碰密码学。`, 
+    on_enter: () => markEnding("毁灭者"),
+    options: [{text:"重新开始", target:"title", effectMsg:"时间沙漏倒转，一切归零..."}] 
 };
 scenes["ending_4"] = { 
-    desc: `【结局四：谜语馆的回响 (大结局)】\n因为你读懂了女主人的悲剧，你公开了这绝美的爱情故事，使其名留青史...`, 
-    on_enter: () => markEnding("谜语馆的回响"),
-    options: [{text:"重新步入轮回", target:"title", effectMsg:"时间沙漏倒转，一切归零..."}] 
+    desc: `【结局四：竞争者】\n其他参赛者中有人试图抢夺著作（取决于你在游戏中的好感度与选择，可能是方晓或艾琳）。你被迫与他们斗智斗勇，最终带着著作逃脱。但你意识到，真正的考验才刚刚开始。这个结局留下续集伏笔。`, 
+    on_enter: () => markEnding("竞争者"),
+    options: [{text:"重新开始", target:"title", effectMsg:"时间沙漏倒转，一切归零..."}] 
+};
+scenes["ending_5"] = { 
+    desc: `【隐藏结局：传承者】\n你在所有谜题中均未求助他人，且选择与老周合作（因为他父亲与索尔维的关系）。老周告诉你，索尔维晚年曾与当地村民交好，将一部分财富用于修建学校。你决定将著作捐给村里的学校图书馆，并设立"索尔维密码奖学金"。多年后，你在该校任教，培养出一批又一批密码学人才。庄园则被改建为密码学博物馆。`, 
+    on_enter: () => markEnding("传承者"),
+    options: [{text:"重新开始", target:"title", effectMsg:"时间沙漏倒转，一切归零..."}] 
 };
 
 
@@ -6317,4 +6324,349 @@ scenes["greenhouse_lab_success"] = {
     ]
 };
 
+// 新增结局：完美和谐
+scenes["ending_7_harmony"] = {
+    on_enter: () => {
+        let msg = "";
+        msg += markEnding("完美和谐");
+        return msg;
+    },
+    desc: `【结局七：完美和谐】
+你成功解开了所有谜题，收集了所有徽章，并且完成了所有支线任务。
+在最终的抉择中，你选择了一条全新的道路：将谜语馆改造成一个知识与艺术的殿堂，
+同时保留其神秘的氛围，让更多的人能够体验解谜的乐趣。
+
+你成为了谜语馆的守护者，与所有的灵魂达成了和解，
+庄园里的每一个角落都充满了和谐与生机。
+（结局：完美和谐）`,
+    options: [
+        { text: "时光荏苒，一年以后...（进入日谈）", target: "epilogue_true_end" }
+    ]
+};
+
+// 新增结局：时空旅行者
+scenes["ending_8_time"] = {
+    on_enter: () => {
+        let msg = "";
+        msg += markEnding("时空旅行者");
+        return msg;
+    },
+    desc: `【结局八：时空旅行者】
+在解开钟楼谜题时，你意外激活了一个古老的时空装置。
+一道光芒闪过，你发现自己回到了过去，回到了谜语馆刚刚建成的时代。
+
+你成为了多尔法尔·索尔维的助手，帮助他设计谜题，
+见证了谜语馆的诞生和所有故事的起源。
+也许，你才是真正的谜语馆创始人...
+（结局：时空旅行者）`,
+    options: [
+        { text: "时光荏苒，一年以后...（进入日谈）", target: "epilogue_true_end" }
+    ]
+};
+
+// 新增结局：暗影主宰
+scenes["ending_9_shadow"] = {
+    on_enter: () => {
+        let msg = "";
+        msg += markEnding("暗影主宰");
+        return msg;
+    },
+    desc: `【结局九：暗影主宰】
+在探索地下室时，你被黑暗力量侵蚀了心灵。
+你选择了拥抱黑暗，成为了庄园的新主人，
+但代价是永远失去了人性和光明。
+
+现在，你在黑暗中等待着下一个挑战者，
+希望有人能够打破你的诅咒...
+（结局：暗影主宰）`,
+    options: [
+        { text: "时光荏苒，一年以后...（进入日谈）", target: "epilogue_true_end" }
+    ]
+};
+
+// 新增结局：光明使者
+scenes["ending_10_light"] = {
+    on_enter: () => {
+        let msg = "";
+        msg += markEnding("光明使者");
+        return msg;
+    },
+    desc: `【结局十：光明使者】
+你不仅解开了所有谜题，还净化了庄园中的黑暗力量。
+你成为了光明的使者，将谜语馆的秘密转化为正能量，
+帮助那些迷失的灵魂找到归宿。
+
+现在，庄园成为了一个充满希望和奇迹的地方，
+而你则成为了传说中的英雄...
+（结局：光明使者）`,
+    options: [
+        { text: "时光荏苒，一年以后...（进入日谈）", target: "epilogue_true_end" }
+    ]
+};
+
+// 新增谜题：数字序列谜题
+scenes["puzzle_number_sequence"] = {
+    desc: `你发现了一个古老的机关，上面有一个数字键盘。
+机关上刻着一行字："从前有座山，山上有座庙，庙里有个老和尚，老和尚在给小和尚讲故事，讲的是：从前有座山..."
+
+你需要输入正确的数字序列才能打开机关。`,
+    options: [
+        { text: "输入 12345", target: "puzzle_number_sequence_wrong" },
+        { text: "输入 33333", target: "puzzle_number_sequence_wrong" },
+        { text: "输入 142857", target: "puzzle_number_sequence_correct" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["puzzle_number_sequence_wrong"] = {
+    desc: `你输入了错误的数字序列，机关发出了刺耳的声音，然后恢复了原状。
+你需要重新思考...`,
+    options: [
+        { text: "重新尝试", target: "puzzle_number_sequence" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["puzzle_number_sequence_correct"] = {
+    desc: `你输入了正确的数字序列！机关发出了清脆的声音，一个暗格打开了，里面放着一把钥匙和一张纸条。
+纸条上写着："恭喜你解开了数字谜题，这把钥匙将帮助你打开下一扇门。"`,
+    options: [
+        { text: "拿起钥匙和纸条", target: "puzzle_number_sequence_reward" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["puzzle_number_sequence_reward"] = {
+    on_enter: () => {
+        let msg = "";
+        msg += addItem("数字钥匙");
+        msg += addClue("数字谜题的秘密：142857是一个循环小数，象征着无限循环的故事");
+        return msg;
+    },
+    desc: `你获得了数字钥匙和关于数字谜题的线索。
+这把钥匙看起来可以打开某个特殊的门。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+// 新增谜题：文字谜语谜题
+scenes["puzzle_word_riddle"] = {
+    desc: `你在图书馆发现了一本古老的书，书中夹着一张纸条，上面写着一个谜语：
+
+"什么东西早上四条腿，中午两条腿，晚上三条腿？"`,
+    options: [
+        { text: "答案：人", target: "puzzle_word_riddle_correct" },
+        { text: "答案：动物", target: "puzzle_word_riddle_wrong" },
+        { text: "答案：怪物", target: "puzzle_word_riddle_wrong" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["puzzle_word_riddle_wrong"] = {
+    desc: `你的答案不正确，纸条上的文字开始模糊，然后又恢复了原状。
+你需要重新思考...`,
+    options: [
+        { text: "重新尝试", target: "puzzle_word_riddle" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["puzzle_word_riddle_correct"] = {
+    desc: `你的答案正确！书中突然发光，一个隐藏的暗格打开了，里面放着一本智慧之书和一张纸条。
+纸条上写着："恭喜你解开了文字谜语，这本书将帮助你获得更多知识。"`,
+    options: [
+        { text: "拿起智慧之书和纸条", target: "puzzle_word_riddle_reward" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["puzzle_word_riddle_reward"] = {
+    on_enter: () => {
+        let msg = "";
+        msg += addItem("智慧之书");
+        msg += addClue("文字谜语的秘密：这个谜语是著名的斯芬克斯之谜，象征着人生的不同阶段");
+        return msg;
+    },
+    desc: `你获得了智慧之书和关于文字谜语的线索。
+这本书看起来包含了很多古老的知识。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+// 新增谜题：物品组合谜题
+scenes["puzzle_item_combination"] = {
+    desc: `你在地下室发现了一个特殊的祭坛，上面有两个凹槽，似乎需要放入特定的物品才能激活。
+祭坛上刻着一行字："火与水的结合，将开启通往真相的道路。"`,
+    options: [
+        { text: "放入火把和水瓶", target: "puzzle_item_combination_correct" },
+        { text: "放入石头和羽毛", target: "puzzle_item_combination_wrong" },
+        { text: "放入钥匙和纸条", target: "puzzle_item_combination_wrong" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["puzzle_item_combination_wrong"] = {
+    desc: `你放入的物品组合不正确，祭坛发出了红色的光芒，然后恢复了原状。
+你需要重新思考...`,
+    options: [
+        { text: "重新尝试", target: "puzzle_item_combination" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["puzzle_item_combination_correct"] = {
+    desc: `你放入的物品组合正确！祭坛发出了蓝色的光芒，一个隐藏的通道打开了，里面放着一个神秘的盒子和一张纸条。
+纸条上写着："恭喜你解开了物品组合谜题，这个盒子里装着重要的东西。"`,
+    options: [
+        { text: "打开盒子", target: "puzzle_item_combination_reward" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["puzzle_item_combination_reward"] = {
+    on_enter: () => {
+        let msg = "";
+        msg += addItem("神秘盒子");
+        msg += addClue("物品组合谜题的秘密：火与水的结合象征着平衡与和谐");
+        return msg;
+    },
+    desc: `你获得了神秘盒子和关于物品组合谜题的线索。
+这个盒子看起来需要特殊的钥匙才能打开。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+// 新增谜题：记忆谜题
+scenes["puzzle_memory"] = {
+    desc: `你在钟楼发现了一个记忆装置，上面有一系列闪烁的灯光。
+装置上显示："记住灯光的顺序，然后按正确的顺序重复。"
+
+灯光闪烁的顺序是：红、蓝、绿、黄、红、蓝`,
+    options: [
+        { text: "按顺序：红、蓝、绿、黄、红、蓝", target: "puzzle_memory_correct" },
+        { text: "按顺序：红、绿、蓝、黄、红、蓝", target: "puzzle_memory_wrong" },
+        { text: "按顺序：蓝、红、绿、黄、蓝、红", target: "puzzle_memory_wrong" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["puzzle_memory_wrong"] = {
+    desc: `你输入的顺序不正确，装置发出了错误的声音，然后重新开始。
+你需要重新记忆...`,
+    options: [
+        { text: "重新尝试", target: "puzzle_memory" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["puzzle_memory_correct"] = {
+    desc: `你输入的顺序正确！装置发出了成功的声音，一个小抽屉打开了，里面放着一块时空碎片和一张纸条。
+纸条上写着："恭喜你解开了记忆谜题，这块碎片将帮助你理解时间的奥秘。"`,
+    options: [
+        { text: "拿起时空碎片和纸条", target: "puzzle_memory_reward" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["puzzle_memory_reward"] = {
+    on_enter: () => {
+        let msg = "";
+        msg += addItem("时空碎片");
+        msg += addClue("记忆谜题的秘密：记忆是连接过去、现在和未来的桥梁");
+        return msg;
+    },
+    desc: `你获得了时空碎片和关于记忆谜题的线索。
+这块碎片看起来具有特殊的力量。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+// 新增谜题：逻辑谜题
+scenes["puzzle_logic"] = {
+    desc: `你在画室发现了一个逻辑谜题，上面写着：
+
+"有三个人：A、B、C。其中一个是画家，一个是音乐家，一个是作家。
+已知：
+1. A不是画家
+2. B不是音乐家
+3. C不是作家
+
+请问：谁是画家？"`,
+    options: [
+        { text: "答案：A", target: "puzzle_logic_wrong" },
+        { text: "答案：B", target: "puzzle_logic_correct" },
+        { text: "答案：C", target: "puzzle_logic_wrong" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["puzzle_logic_wrong"] = {
+    desc: `你的答案不正确，谜题上的文字开始变化，然后又恢复了原状。
+你需要重新思考...`,
+    options: [
+        { text: "重新尝试", target: "puzzle_logic" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["puzzle_logic_correct"] = {
+    desc: `你的答案正确！谜题发出了金色的光芒，一个隐藏的抽屉打开了，里面放着一幅画和一张纸条。
+纸条上写着："恭喜你解开了逻辑谜题，这幅画将帮助你理解艺术的真谛。"`,
+    options: [
+        { text: "拿起画和纸条", target: "puzzle_logic_reward" },
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+scenes["puzzle_logic_reward"] = {
+    on_enter: () => {
+        let msg = "";
+        msg += addItem("神秘画作");
+        msg += addClue("逻辑谜题的秘密：通过逻辑推理，我们可以发现事物的真相");
+        return msg;
+    },
+    desc: `你获得了神秘画作和关于逻辑谜题的线索。
+这幅画看起来包含了某种秘密。`,
+    options: [
+        { text: "返回大厅", target: "hall_main" }
+    ]
+};
+
+// 新增场景：主线序章
+scenes["start"] = {
+    desc: `《遗产之迷：庄园解密录》\n\n你叫沈墨，是江南大学密码学专业的大三学生。期末考试刚结束，你正打算回家过暑假，却在宿舍信箱里发现了一封没有邮票的信。信封用暗红色的火漆封口，上面压着一枚古老的徽章——一只展翅的渡鸦，嘴里衔着一把钥匙。\n\n拆开信封，里面是一张泛黄的羊皮纸，字迹优雅而庄重：\n\n尊敬的沈墨先生/女士：\n您的名字出现在一份已尘封六十年的遗嘱附录中。我们诚挚地邀请您参加"索尔维庄园解密挑战赛"，本届挑战赛的胜者将获得庄园主人遗留下的全部财产及一份特殊的"传承"。\n比赛将于七月十五日黄昏时分开始，请持此函前往浙江西部的索尔维庄园。\n——索尔维庄园管家 霍华德·格雷\n\n羊皮纸背面用铅笔草草写着几个字："别来。这不是比赛。"但字迹模糊，像是被匆忙擦去又留下的痕迹。\n\n你盯着那行字看了很久。室友凑过来："又是哪个诈骗团伙？这种老宅解密游戏网上几十块一个。"\n\n你没有回答。因为你翻到信纸背面，在火漆印的余温下，浮现出一串数字：4-15-26-1-18-5。这是最简单的字母序密码——D-O-W-N-F-A-R-E。向下？还是"多尔法尔"？你忽然想起，本科《密码学导论》第一节课，教授提到过一个传奇人物：多尔法尔·索尔维，英国贵族、数学家、密码学家，上世纪三十年代隐居中国，留下了一座布满谜题的庄园。据说他死前将毕生财富和一本"终极密码"藏于庄园某处，六十年来无人破解。\n\n你合上信。窗外蝉声如沸。\n\n七月十五日，你背着帆布包，站在了索尔维庄园的铁门前。`,
+    options: [
+        { text: "进入庄园", target: "hall_initial_enter" }
+    ]
+};
+
+scenes["start_ng_plus"] = {
+    on_enter: () => {
+        gameState.items.push("怀表");
+        gameState.clues.push("前世记忆");
+        return `<div class="system-message">【多周目奖励】：这是你一次新的轮回。<br>你醒来时，手中紧紧握着一块没有指针的[怀表]。同时脑海里闪过了许多[前世记忆]的碎片。</div>`;
+    },
+    desc: `《遗产之迷：庄园解密录》\n\n你叫沈墨，是江南大学密码学专业的大三学生。期末考试刚结束，你正打算回家过暑假，却在宿舍信箱里发现了一封没有邮票的信。信封用暗红色的火漆封口，上面压着一枚古老的徽章——一只展翅的渡鸦，嘴里衔着一把钥匙。\n\n你拆开信封，熟悉的羊皮纸和字迹映入眼帘。这一次，你注意到了更多细节，脑海中闪过前世的记忆片段。\n\n你知道，这不仅仅是一场比赛，而是一段命运的轮回。`,
+    options: [
+        { text: "进入庄园", target: "hall_initial_enter" }
+    ]
+};
+
+// 导出场景数据
 export default scenes;
+
+// 导出场景数据的按需加载函数
+export const loadSceneModule = async (moduleName) => {
+  try {
+    const module = await import(`./scenes/${moduleName}.js`);
+    Object.assign(scenes, module.default);
+    return true;
+  } catch (error) {
+    console.error(`Failed to load scene module ${moduleName}:`, error);
+    return false;
+  }
+};

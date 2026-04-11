@@ -1,0 +1,739 @@
+## 剧情强化完整实施方案
+
+以下为“角色情感线强化”三大系统的具体技术实现方案，包括代码示例、设计思路和剧情示例，可直接集成到现有 Vue + Pinia 架构中。
+
+---
+
+## 一、“回忆碎片”系统
+
+### 1.1 设计目标
+
+- 在关键场景（画室完成、音乐室演奏后、支线关键节点）自动触发一段**第一人称闪回**。
+- 闪回以**全屏半透明遮罩 + 手写体文字 + 淡入淡出**的形式呈现，模拟记忆涌上心头的效果。
+- 每个闪回只触发一次（记录在 profile 中）。
+
+### 1.2 数据结构
+
+在 `gameStore.js` 的 `profile` 中添加：
+
+```javascript
+profile: {
+  // ... existing
+  triggered_flashbacks: [], // 已触发的闪回ID列表
+  character_affection: {    // 角色好感度/共鸣值（后续使用）
+    butler: 0,
+    elenor: 0,
+    elena: 0,
+    thomas: 0
+  }
+}
+```
+
+### 1.3 闪回配置表
+
+在 `src/data/flashbacks.js` 中定义所有闪回：
+
+```javascript
+export const flashbacks = {
+  // 画室支线 - 伊莲娜离开后的阿斯特
+  'studio_painting_complete': {
+    id: 'studio_painting_complete',
+    title: '记忆碎片：最后的画笔',
+    content: '她走的那天，我把最后一笔红色涂在她的唇上……那是血的颜色。\n\n我画了无数个她，却永远画不出她的灵魂。',
+    trigger: { type: 'flag', key: 'side_painting_completed', value: true },
+    character: 'astre',
+    position: 'center',  // 或 'left', 'right'
+    autoClose: 5000      // 毫秒，0表示需手动关闭
+  },
+  // 音乐室支线 - 埃莉诺的绝唱
+  'music_room_complete': {
+    id: 'music_room_complete',
+    title: '记忆碎片：未完成的乐章',
+    content: '我咳血了。阿斯特哭了。\n我对他说，不要悲伤，等我走了，把乐器留在音乐室里，总有一天，会有人让它们再次歌唱。',
+    trigger: { type: 'flag', key: 'side_music_completed', value: true },
+    character: 'elenor',
+    autoClose: 6000
+  },
+  // 管家支线 - 兄弟的决裂
+  'butler_reconciliation': {
+    id: 'butler_reconciliation',
+    title: '记忆碎片：兄弟之约',
+    content: '弟弟，原谅我。我本想让你继承庄园，却把你困在了这里七年。',
+    trigger: { type: 'flag', key: 'side_butler_completed', value: true },
+    character: 'astre',
+    autoClose: 4000
+  },
+  // 地下支线 - 托马斯的最后
+  'underground_complete': {
+    id: 'underground_complete',
+    title: '记忆碎片：地下的回响',
+    content: '亲爱的玛格丽特，我可能无法按时回来。这里的发现太过惊人……如果我出了什么事，请来找我。',
+    trigger: { type: 'flag', key: 'side_underground_completed', value: true },
+    character: 'thomas',
+    autoClose: 5000
+  },
+  // 多周目特殊闪回
+  'ngplus_awakening': {
+    id: 'ngplus_awakening',
+    title: '记忆碎片：轮回的烙印',
+    content: '你又来了。\n\n不，不对……你从未离开过。',
+    trigger: { type: 'playCount', min: 2 },
+    character: 'astre',
+    autoClose: 3000
+  }
+};
+```
+
+### 1.4 Store 中增加触发方法
+
+在 `gameStore.js` 的 `actions` 中添加：
+
+```javascript
+// 触发闪回（由场景调用）
+async triggerFlashback(flashbackId) {
+  if (this.profile.triggered_flashbacks.includes(flashbackId)) return;
+  const flash = flashbacks[flashbackId];
+  if (!flash) return;
+
+  // 检查触发条件
+  let conditionMet = false;
+  const trigger = flash.trigger;
+  if (trigger.type === 'flag') {
+    conditionMet = this.getFlag(trigger.key) === trigger.value;
+  } else if (trigger.type === 'playCount') {
+    conditionMet = this.profile.play_count >= trigger.min;
+  } else if (trigger.type === 'item') {
+    conditionMet = this.run.items.includes(trigger.item);
+  }
+
+  if (!conditionMet) return;
+
+  // 标记已触发
+  this.profile.triggered_flashbacks.push(flashbackId);
+  this.saveState();
+
+  // 通过事件总线发送闪回事件
+  emitter.emit('show-flashback', flash);
+}
+```
+
+### 1.5 在场景中触发闪回
+
+修改各房间的成功场景，在 `on_enter` 中调用触发方法。例如在 `studio.js` 的 `studio_gem_correct` 中：
+
+```javascript
+'studio_gem_correct': {
+  on_enter: (store) => {
+    // ... 原有获得徽章逻辑
+    store.triggerFlashback('studio_painting_complete');
+  },
+  // ...
+}
+```
+
+### 1.6 闪回组件（FlashbackModal.vue）
+
+创建 `src/components/FlashbackModal.vue`：
+
+```vue
+<template>
+  <Transition name="fade">
+    <div v-if="visible" class="flashback-overlay" @click="manualClose">
+      <div class="flashback-container" :class="positionClass">
+        <div class="flashback-header">
+          <span class="flashback-title">{{ flash.title }}</span>
+          <button class="close-btn" @click="manualClose">✕</button>
+        </div>
+        <div class="flashback-content">
+          <p>{{ flash.content }}</p>
+        </div>
+        <div class="flashback-footer">
+          <span class="character-signature">—— {{ characterName }}</span>
+        </div>
+      </div>
+    </div>
+  </Transition>
+</template>
+
+<script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { emitter } from '@/utils/eventBus';
+
+const visible = ref(false);
+const flash = ref(null);
+let autoTimer = null;
+
+const characterName = computed(() => {
+  const map = {
+    astre: '阿斯特·克劳利',
+    elenor: '埃莉诺·布莱克伍德',
+    elena: '伊莲娜·韦恩',
+    thomas: '托马斯·赫胥黎'
+  };
+  return map[flash.value?.character] || '谜语馆';
+});
+
+const positionClass = computed(() => {
+  const pos = flash.value?.position || 'center';
+  return `flashback-${pos}`;
+});
+
+const manualClose = () => {
+  if (autoTimer) clearTimeout(autoTimer);
+  visible.value = false;
+};
+
+onMounted(() => {
+  emitter.on('show-flashback', (data) => {
+    flash.value = data;
+    visible.value = true;
+    if (data.autoClose && data.autoClose > 0) {
+      autoTimer = setTimeout(() => {
+        visible.value = false;
+      }, data.autoClose);
+    }
+  });
+});
+
+onUnmounted(() => {
+  emitter.off('show-flashback');
+  if (autoTimer) clearTimeout(autoTimer);
+});
+</script>
+
+<style scoped>
+.flashback-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flashback-container {
+  max-width: 500px;
+  background: #1e1a14;
+  border: 2px solid #d4af37;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+  animation: fadeInUp 0.4s ease-out;
+}
+
+.flashback-center {
+  margin: 0 auto;
+}
+
+.flashback-left {
+  align-self: flex-start;
+  margin-left: 10%;
+}
+
+.flashback-right {
+  align-self: flex-end;
+  margin-right: 10%;
+}
+
+.flashback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #d4af37;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+}
+
+.flashback-title {
+  font-family: 'Georgia', serif;
+  font-size: 1.2em;
+  color: #d4af37;
+  letter-spacing: 2px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: #d4af37;
+}
+
+.flashback-content {
+  font-family: 'Courier New', monospace;
+  font-size: 1.1em;
+  line-height: 1.6;
+  color: #f0e6d0;
+  white-space: pre-wrap;
+  margin-bottom: 15px;
+}
+
+.flashback-footer {
+  text-align: right;
+  font-style: italic;
+  color: #b8860b;
+  font-size: 0.9em;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+</style>
+```
+
+### 1.7 在 `GameView.vue` 中引入闪回组件
+
+```vue
+<template>
+  <!-- 原有内容 -->
+  <FlashbackModal />
+</template>
+
+<script setup>
+import FlashbackModal from '@/components/FlashbackModal.vue';
+// ...
+</script>
+```
+
+---
+
+## 二、角色好感度/共鸣值系统
+
+### 2.1 设计目标
+
+- 玩家在支线对话、关键选择中的态度，影响各角色的“共鸣值”。
+- 共鸣值影响最终结局中的细节（角色是否微笑、是否赠送特殊道具、对话变化）。
+- 不强制影响结局走向，但增强“我的选择有意义”的体验。
+
+### 2.2 数据结构
+
+已在 `profile` 中预留 `character_affection`，初始值均为 0，范围 -5 到 +10。
+
+```javascript
+character_affection: {
+  butler: 0,   // 管家奥尔德斯
+  elenor: 0,   // 埃莉诺（制琴师）
+  elena: 0,    // 伊莲娜（画中女子）
+  thomas: 0    // 托马斯（地质学家）
+}
+```
+
+### 2.3 修改选项效果
+
+在支线场景中，为不同选项添加 `effect` 来改变好感度。例如在 `butler.js` 的 `side_reveal_1` 中：
+
+```javascript
+// 原选项
+{ text: '质问他的身份', target: 'side_reveal_1' }
+
+// 修改为带效果
+{ 
+  text: '质问他的身份', 
+  target: 'side_reveal_1',
+  effect: (store) => {
+    store.modifyAffection('butler', -2);
+    store.addClue('管家对质问感到愧疚');
+  }
+},
+{ 
+  text: '平静地询问', 
+  target: 'side_reveal_1_gentle',
+  effect: (store) => {
+    store.modifyAffection('butler', +3);
+    store.addClue('管家愿意敞开心扉');
+  }
+}
+```
+
+### 2.4 Store 中增加好感度修改方法
+
+```javascript
+// gameStore.js actions
+modifyAffection(character, delta) {
+  const current = this.profile.character_affection[character] || 0;
+  let newVal = current + delta;
+  // 限制范围 -5 到 10
+  newVal = Math.min(10, Math.max(-5, newVal));
+  this.profile.character_affection[character] = newVal;
+  this.saveState();
+  
+  // 可选：触发提示
+  if (delta > 0) {
+    this.showToast(`你与${this.getCharacterName(character)}的关系更加亲近了。`);
+  } else if (delta < 0) {
+    this.showToast(`你与${this.getCharacterName(character)}的关系变得疏远。`);
+  }
+},
+
+getCharacterName(character) {
+  const names = {
+    butler: '管家奥尔德斯',
+    elenor: '埃莉诺',
+    elena: '伊莲娜',
+    thomas: '托马斯'
+  };
+  return names[character] || character;
+}
+```
+
+### 2.5 结局中根据好感度改变细节
+
+在 `endings.js` 的真结局中，动态修改描述：
+
+```javascript
+'ending_5_truth': {
+  desc: (store) => {
+    const aff = store.profile.character_affection;
+    let extraText = '';
+    if (aff.elena >= 5) {
+      extraText += '\n\n伊莲娜的灵魂向你微笑，她的眼中不再有忧伤。';
+    } else if (aff.elena <= -2) {
+      extraText += '\n\n伊莲娜的身影在光芒中模糊，她似乎仍在逃避。';
+    }
+    if (aff.butler >= 3) {
+      extraText += '\n\n管家深深地鞠了一躬，眼中含着感激的泪光。';
+    }
+    // ... 其他角色
+    return `
+    <h3 style="color: #d4af37; margin-bottom: 20px;">真结局：七重谜语的真相</h3>
+    <p>你成功解开了所有的谜题...</p>
+    ${extraText}
+    `;
+  },
+  // ...
+}
+```
+
+### 2.6 好感度影响特殊对话
+
+在管家支线的最后，根据好感度解锁额外对话：
+
+```javascript
+'side_ending_spreader': {
+  on_enter: (store) => {
+    const aff = store.profile.character_affection.butler;
+    let extra = '';
+    if (aff >= 7) {
+      extra = '管家从怀中取出一枚怀表：“这是哥哥的遗物，现在交给你了。”';
+      store.addItem('阿斯特的怀表');
+    } else if (aff >= 3) {
+      extra = '管家微笑着拍了拍你的肩膀：“谢谢你，孩子。”';
+    }
+    store.showToast(extra);
+  }
+}
+```
+
+---
+
+## 三、多结局的因果回溯（记忆之书）
+
+### 3.1 设计目标
+
+- 在游戏结局后，提供一个“记忆之书”界面。
+- 以时间线或节点树形式，展示玩家在关键节点的选择，并解释如何导向当前结局。
+- 允许玩家从某个节点重新开始（分支跳转），增加重玩价值。
+
+### 3.2 数据结构
+
+在 `profile` 中记录关键选择：
+
+```javascript
+profile: {
+  // ...
+  key_choices: []  // 存储 { nodeId, choiceText, timestamp, sceneId }
+}
+```
+
+### 3.3 记录关键选择
+
+在场景选项中，为关键选择添加 `recordChoice` 效果：
+
+```javascript
+{
+  text: '选择成为传播者',
+  target: 'side_ending_spreader',
+  effect: (store) => {
+    store.recordKeyChoice('final_choice', '成为传播者', 'final_chamber');
+  }
+}
+```
+
+在 `gameStore.js` 中添加方法：
+
+```javascript
+recordKeyChoice(nodeId, choiceText, sceneId) {
+  this.profile.key_choices.push({
+    nodeId,
+    choiceText,
+    sceneId,
+    timestamp: Date.now()
+  });
+  this.saveState();
+}
+```
+
+### 3.4 记忆之书组件（BookOfMemories.vue）
+
+```vue
+<template>
+  <div class="memory-book-overlay" @click.self="close">
+    <div class="memory-book">
+      <h2>记忆之书</h2>
+      <p class="subtitle">你走过的路，铸就了你的结局</p>
+      
+      <div class="timeline">
+        <div 
+          v-for="(choice, index) in keyChoices" 
+          :key="index"
+          class="timeline-node"
+        >
+          <div class="node-marker"></div>
+          <div class="node-content">
+            <div class="node-scene">{{ getSceneName(choice.sceneId) }}</div>
+            <div class="node-choice">{{ choice.choiceText }}</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="ending-analysis">
+        <h3>结局分析</h3>
+        <p>{{ endingExplanation }}</p>
+      </div>
+      
+      <div class="buttons">
+        <button class="restart-btn" @click="restartFromBeginning">重新开始</button>
+        <button class="close-btn" @click="close">关闭</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { computed } from 'vue';
+import { useGameStore } from '@/store/gameStore';
+
+const store = useGameStore();
+const emit = defineEmits(['close']);
+
+const keyChoices = computed(() => store.profile.key_choices || []);
+
+const getSceneName = (sceneId) => {
+  const map = {
+    'final_chamber': '最终密室',
+    'side_butler_quarters': '管家起居室',
+    'side_painting_trigger': '画室',
+    // ...
+  };
+  return map[sceneId] || sceneId;
+};
+
+const endingExplanation = computed(() => {
+  // 根据玩家的关键选择和好感度生成动态分析
+  const choices = keyChoices.value;
+  const aff = store.profile.character_affection;
+  let text = '你的旅程中，';
+  if (choices.some(c => c.choiceText === '成为传播者')) {
+    text += '你选择了将谜语公之于众，这让你获得了自由，但也失去了庄园的物质财富。';
+  } else if (choices.some(c => c.choiceText === '成为守护者')) {
+    text += '你选择了承担守护的责任，虽然失去了自由，但获得了内心的安宁。';
+  }
+  if (aff.elena >= 5) {
+    text += ' 伊莲娜感受到了你的理解，她的灵魂得以安息。';
+  }
+  return text;
+});
+
+const restartFromBeginning = () => {
+  // 重置游戏
+  store.startNewGame();
+  emit('close');
+  window.location.reload(); // 或路由跳转
+};
+
+const close = () => {
+  emit('close');
+};
+</script>
+
+<style scoped>
+.memory-book-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.memory-book {
+  width: 80%;
+  max-width: 600px;
+  max-height: 80vh;
+  background: #2a2418;
+  border: 3px solid #d4af37;
+  border-radius: 12px;
+  padding: 20px;
+  overflow-y: auto;
+  color: #f0e6d0;
+}
+
+.timeline {
+  margin: 20px 0;
+  position: relative;
+  padding-left: 30px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #d4af37;
+}
+
+.timeline-node {
+  display: flex;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.node-marker {
+  position: absolute;
+  left: -22px;
+  top: 5px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #d4af37;
+  border: 2px solid #1a1a1a;
+}
+
+.node-content {
+  background: #1e1a14;
+  padding: 10px;
+  border-radius: 8px;
+  flex: 1;
+}
+
+.node-scene {
+  font-size: 0.8em;
+  color: #b8860b;
+  margin-bottom: 5px;
+}
+
+.node-choice {
+  font-weight: bold;
+}
+
+.ending-analysis {
+  background: #1e1a14;
+  padding: 15px;
+  border-left: 4px solid #d4af37;
+  margin: 20px 0;
+}
+
+.buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.restart-btn, .close-btn {
+  padding: 10px 20px;
+  background: #333;
+  border: 1px solid #d4af37;
+  color: #d4af37;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.restart-btn:hover, .close-btn:hover {
+  background: #d4af37;
+  color: #1a1a1a;
+}
+</style>
+```
+
+### 3.5 在结局后显示记忆之书
+
+修改 `endings.js` 中的结局场景，在最后添加一个选项“翻开记忆之书”：
+
+```javascript
+'ending_5_truth': {
+  // ...
+  options: [
+    { text: '翻开记忆之书', target: 'show_memory_book' },
+    { text: '返回标题画面', target: 'title' }
+  ]
+},
+
+'show_memory_book': {
+  desc: '',
+  on_enter: (store) => {
+    // 触发显示记忆之书组件，不渲染文本
+    emitter.emit('show-memory-book');
+    return { type: 'redirect', target: 'title' }; // 或者停留
+  }
+}
+```
+
+在 `GameView.vue` 中监听事件并显示组件。
+
+---
+
+## 四、整合与测试
+
+### 4.1 需要新增的文件
+
+- `src/data/flashbacks.js`
+- `src/components/FlashbackModal.vue`
+- `src/components/BookOfMemories.vue`
+- `src/utils/eventBus.js`（如果还没有）
+
+### 4.2 事件总线（eventBus.js）
+
+```javascript
+import mitt from 'mitt';
+export const emitter = mitt();
+```
+
+### 4.3 测试清单
+
+- [ ] 完成画室支线后，闪回是否正确弹出？
+- [ ] 在管家对话中选择不同选项，好感度是否变化？
+- [ ] 真结局后，记忆之书是否显示关键选择？
+- [ ] 好感度是否影响结局描述？
+
+---
+
+通过以上实现，你的游戏将具备深度情感叙事、动态角色关系和可追溯的选择系统，显著提升玩家的沉浸感和重玩价值。
